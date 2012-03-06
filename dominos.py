@@ -37,14 +37,15 @@ def tri_decr(m):
   decroissant lexocographique
   - Exemple :
   >>> tri_decr([ [1,2], [3,4], [1,3], [2,0] ])
-  [[3,4],[2,0],[1,3],[1,2]]
+  [[3, 4], [2, 0], [1, 3], [1, 2]]
   """
   m = sorted(m)
   m.reverse()
   return m
 
-def is_joueur_A_first(jA,jB):
-  if est_avant(jA[0],jB[0]):
+def is_player1_first(pl1,pl2):
+  """Le joueur A a-t-il une meilleure main que le joueur B ?"""
+  if est_avant(pl1[0],pl2[0]):
    return True
   return False
 
@@ -54,12 +55,22 @@ if __name__ == "__main__":
   doctest.testmod()
   
   jeu = creation_jeu()
-  joueur_A = tri_decr(distribue(jeu))
-  joueur_B = tri_decr(distribue(jeu))
-  print "Joueur A : ",joueur_A
-  print "Joueur B : ",joueur_B
+  player1 = tri_decr(distribue(jeu))
+  player2 = tri_decr(distribue(jeu))
+  print "Joueur 1 : ",player1
+  print "Joueur 2 : ",player2
   print "Talon : ",jeu
-  if is_joueur_A_first(joueur_A,joueur_B):
-    print "Joueur A commence"
+  # la partie commence
+  if is_player1_first(player1,player2):
+    print "Joueur1 commence"
+    table = [ player1[0] ]
+    player1.pop(0)
+    a_qui_le_tour = 2
   else:
-    print "Joueur B commence"
+    print "Joueur2 commence"
+    table = [ player2[0] ]
+    player2.pop(0)
+    a_qui_le_tour = 1
+  
+
+

@@ -32,22 +32,42 @@ def est_avant(d,e):
     return True
   return False
 
-def tri_decr(m):
-  """Trie les dominos de la main m dans l'odre
+def tri_decr(player):
+  """Trie les dominos du joueur dans l'odre
   decroissant lexocographique
   - Exemple :
   >>> tri_decr([ [1,2], [3,4], [1,3], [2,0] ])
   [[3, 4], [2, 0], [1, 3], [1, 2]]
   """
-  m = sorted(m)
-  m.reverse()
-  return m
+  player = sorted(player)
+  player.reverse()
+  return player
 
 def is_player1_first(pl1,pl2):
   """Le joueur A a-t-il une meilleure main que le joueur B ?"""
   if est_avant(pl1[0],pl2[0]):
    return True
   return False
+
+def possibilites(table,pl):
+  """Donne, la liste des dominos de pl qui peuvent
+  etre places sur la table
+  >>> possibilites([3,4], [[2,3],[1,5],[4,6]])
+  [[2, 3, 0], [4, 6, 2]]
+  """
+  possbl = []
+  x=table[0]
+  y=table[-1]
+  for i in range(len(pl)):
+    if pl[i][0]==x or pl[i][1]==x or pl[i][0]==y or pl[i][1]==y:
+      possbl = possbl + [ pl[i] + [i] ] 
+  return possbl
+
+def un_tour_de_jeu(table,player,passe):
+  """Tente de placer sur un des deux bouts de la table un
+  domino de la maon du player. Si ce n'est pas spossible,
+  on incremente passed_tours.
+  """
 
 
 if __name__ == "__main__":
@@ -71,6 +91,14 @@ if __name__ == "__main__":
     table = [ player2[0] ]
     player2.pop(0)
     a_qui_le_tour = 1
-  
 
+  passed_tours = 0
+  #while passed_tours<2 and len(player1)>0 and len(player2)>0:
+  #  if a_qui_le_tour==1:
+  #    passe = un_tour_de_jeu(table,player1,passed_tours)
+  #    a_qui_le_tour = 2
+  #  else:
+  #    passe = un_tour_de_jeu(table,player2,passed_tours)
+  #    a_qui_le_tour = 1
+   
 

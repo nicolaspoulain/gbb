@@ -28,18 +28,38 @@ def est_avant(d,e):
   True
   False
   """
-  if d[1]>e[1] or ( d[1]==e[1] and d[2]>e[2] ):
+  if d[0]>e[0] or ( d[0]==e[0] and d[1]>e[1] ):
     return True
   return False
+
+def tri_decr(m):
+  """Trie les dominos de la main m dans l'odre
+  decroissant lexocographique
+  - Exemple :
+  >>> tri_decr([ [1,2], [3,4], [1,3], [2,0] ])
+  [[3,4],[2,0],[1,3],[1,2]]
+  """
+  m = sorted(m)
+  m.reverse()
+  return m
+
+def is_joueur_A_first(jA,jB):
+  if est_avant(jA[0],jB[0]):
+   return True
+  return False
+
 
 if __name__ == "__main__":
   import doctest
   doctest.testmod()
   
   jeu = creation_jeu()
-  joueur_A = distribue(jeu)
-  joueur_B = distribue(jeu)
+  joueur_A = tri_decr(distribue(jeu))
+  joueur_B = tri_decr(distribue(jeu))
   print "Joueur A : ",joueur_A
   print "Joueur B : ",joueur_B
   print "Talon : ",jeu
-  print est_avant([2,3],[1,2])
+  if is_joueur_A_first(joueur_A,joueur_B):
+    print "Joueur A commence"
+  else:
+    print "Joueur B commence"

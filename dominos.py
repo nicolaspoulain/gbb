@@ -22,7 +22,7 @@ def distribue(jeu,n=10):
   return main
 
 def est_avant(d,e):
-  """Compare deux dominos en fonction de l'ordre lexicographique
+  """Verifie si deux dominos sont dans l'ordre lexicographique
   - Exemples :
   >>> est_avant( [2,3], [1,2] ); est_avant( [2,3], [2,4] )
   True

@@ -52,12 +52,12 @@ def is_player1_first(pl1,pl2):
 def possibilites(table,pl):
   """Donne, la liste des dominos de pl qui peuvent
   etre places sur la table
-  >>> possibilites([3,4], [[2,3],[1,5],[4,6]])
+  >>> possibilites([[3,4],[4,4]], [[2,3],[1,5],[4,6]])
   [0, 2]
   """
   possbl = []
-  x=table[0]
-  y=table[-1]
+  x=table[0][0]
+  y=table[-1][1]
   for i in range(len(pl)):
     if pl[i][0]==x or pl[i][1]==x or pl[i][0]==y or pl[i][1]==y:
       possbl = possbl + [ i ] 
@@ -71,7 +71,7 @@ def un_tour_de_jeu(table,player,passe):
   possbl = possibilites(table,player)
   if len(possbl)==0:
     return table,player,passe + 1
-  table = table + player[ possbl[0] ]
+  table = table + [ player[ possbl[0] ] ]
   player.pop(possbl[0])
   return table,player,0
 
@@ -85,18 +85,20 @@ if __name__ == "__main__":
   print "Joueur 1 : ",player1
   print "Joueur 2 : ",player2
   print ""
-  # la partie commence
+  # initialisation de la partie
   if is_player1_first(player1,player2):
     print "Joueur1 commence"
-    table = player1[0]
+    table = [ player1[0] ]
     player1.pop(0)
     a_qui_le_tour = 2
   else:
     print "Joueur2 commence"
-    table = player2[0] 
+    table = [ player2[0] ]
     player2.pop(0)
     a_qui_le_tour = 1
   print "Table : ", table
+  
+  # c'est parti
   passed_tours = 0
   while passed_tours<2 and len(player1)>0 and len(player2)>0:
     if a_qui_le_tour==1:

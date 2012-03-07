@@ -71,9 +71,21 @@ def un_tour_de_jeu(table,player,passe):
   possbl = possibilites(table,player)
   if len(possbl)==0:
     return table,player,passe + 1
-  table = table + [ player[ possbl[0] ] ]
+  table = positionne(player[ possbl[0] ], table)
   player.pop(possbl[0])
   return table,player,0
+
+def positionne(domino,table):
+  """Positionne le domino correctement sur la table"""
+  if domino[0]==table[0][0]:
+    table = [ [ domino[1],domino[0] ] ] + table
+  elif domino[1]==table[0][0]:
+    table = [ [ domino[0],domino[1] ] ] + table
+  elif domino[0]==table[-1][1]:
+    table = table + [ [ domino[0],domino[1] ] ]
+  else: 
+    table = table + [ [ domino[1],domino[0] ] ]
+  return table 
 
 if __name__ == "__main__":
   import doctest
@@ -101,15 +113,21 @@ if __name__ == "__main__":
   # c'est parti
   passed_tours = 0
   while passed_tours<2 and len(player1)>0 and len(player2)>0:
+    p = passed_tours
     if a_qui_le_tour==1:
       table,player1,passed_tours = un_tour_de_jeu(table,player1,passed_tours)
       a_qui_le_tour = 2
-      print "j1->Table : ", table
+      if p!=passed_tours:
+        print "Joueur 1 passe"
     else:
-
       table,player2,passed_tours = un_tour_de_jeu(table,player2,passed_tours)
       a_qui_le_tour = 1
-      print "j2->Table : ", table
+      if p!=passed_tours:
+        print "Joueur 2 passe"
+    if p==passed_tours:
+      print "Table : ", table
+  
+  # Fin de partie
   print "Joueur 1 : ",player1
   print "Joueur 2 : ",player2
   

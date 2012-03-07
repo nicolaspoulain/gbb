@@ -71,7 +71,7 @@ def un_tour_de_jeu(table,player,passe):
   possbl = possibilites(table,player)
   if len(possbl)==0:
     return table,player,passe + 1
-  table = table + [ player[ possbl[0] ] ]
+  table = table + player[ possbl[0] ]
   player.pop(possbl[0])
   return table,player,0
 
@@ -88,12 +88,12 @@ if __name__ == "__main__":
   # la partie commence
   if is_player1_first(player1,player2):
     print "Joueur1 commence"
-    table = [ player1[0] ]
+    table = player1[0]
     player1.pop(0)
     a_qui_le_tour = 2
   else:
     print "Joueur2 commence"
-    table = [ player2[0] ]
+    table = player2[0] 
     player2.pop(0)
     a_qui_le_tour = 1
   print "Table : ", table
@@ -102,12 +102,13 @@ if __name__ == "__main__":
     if a_qui_le_tour==1:
       table,player1,passed_tours = un_tour_de_jeu(table,player1,passed_tours)
       a_qui_le_tour = 2
-      print "j1->Table : ", table, passed_tours, player1
+      print "j1->Table : ", table
     else:
 
       table,player2,passed_tours = un_tour_de_jeu(table,player2,passed_tours)
       a_qui_le_tour = 1
-      print "j2->Table : ", table, passed_tours, player2
-
+      print "j2->Table : ", table
+  print "Joueur 1 : ",player1
+  print "Joueur 2 : ",player2
   
 

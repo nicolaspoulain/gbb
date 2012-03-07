@@ -53,14 +53,14 @@ def possibilites(table,pl):
   """Donne, la liste des dominos de pl qui peuvent
   etre places sur la table
   >>> possibilites([3,4], [[2,3],[1,5],[4,6]])
-  [[2, 3, 0], [4, 6, 2]]
+  [0, 2]
   """
   possbl = []
   x=table[0]
   y=table[-1]
   for i in range(len(pl)):
     if pl[i][0]==x or pl[i][1]==x or pl[i][0]==y or pl[i][1]==y:
-      possbl = possbl + [ pl[i] + [i] ] 
+      possbl = possbl + [ i ] 
   return possbl
 
 def un_tour_de_jeu(table,player,passe):
@@ -68,7 +68,12 @@ def un_tour_de_jeu(table,player,passe):
   domino de la maon du player. Si ce n'est pas spossible,
   on incremente passed_tours.
   """
-
+  possbl = possibilites(table,player)
+  if len(possbl)==0:
+    return table,player,passe + 1
+  table = table + [ player[ possbl[0] ] ]
+  player.pop(possbl[0])
+  return table,player,0
 
 if __name__ == "__main__":
   import doctest
@@ -79,7 +84,7 @@ if __name__ == "__main__":
   player2 = tri_decr(distribue(jeu))
   print "Joueur 1 : ",player1
   print "Joueur 2 : ",player2
-  print "Talon : ",jeu
+  print ""
   # la partie commence
   if is_player1_first(player1,player2):
     print "Joueur1 commence"
@@ -91,14 +96,16 @@ if __name__ == "__main__":
     table = [ player2[0] ]
     player2.pop(0)
     a_qui_le_tour = 1
-
+  print "Table : ", table
   passed_tours = 0
-  #while passed_tours<2 and len(player1)>0 and len(player2)>0:
-  #  if a_qui_le_tour==1:
-  #    passe = un_tour_de_jeu(table,player1,passed_tours)
-  #    a_qui_le_tour = 2
-  #  else:
-  #    passe = un_tour_de_jeu(table,player2,passed_tours)
-  #    a_qui_le_tour = 1
-   
+  while passed_tours<2 and len(player1)>0 and len(player2)>0:
+    if a_qui_le_tour==1:
+      table,player1,passed_tours = un_tour_de_jeu(table,player1,passed_tours)
+      a_qui_le_tour = 2
+      print "j1->Table : ", table
+    else:
+      table,player2,passed_tours = un_tour_de_jeu(table,player2,passed_tours)
+      a_qui_le_tour = 1
+      print "j2->Table : ", table
+  
 

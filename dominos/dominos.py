@@ -102,10 +102,12 @@ if __name__ == "__main__":
     if a_qui_le_tour==1:
       table,player1,passed_tours = un_tour_de_jeu(table,player1,passed_tours)
       a_qui_le_tour = 2
-      print "j1->Table : ", table
+      print "j1->Table : ", table, passed_tours, player1
     else:
+
       table,player2,passed_tours = un_tour_de_jeu(table,player2,passed_tours)
       a_qui_le_tour = 1
-      print "j2->Table : ", table
+      print "j2->Table : ", table, passed_tours, player2
+
   
 

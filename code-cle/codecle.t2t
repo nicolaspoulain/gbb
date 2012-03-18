@@ -259,7 +259,7 @@ Dans cette partie, le typage fort du langage python ne pardonne pas les approxim
 
 Des algorithmes récursifs seront mis en œuvre chaque fois que la situation s'y prêtera.
 
-==Programmation==
+==Programme Python==
 
 Adapter (si l'héritage ne suffit pas) toutes les méthodes de la classe ```cle``` à la classe ```cle_etendu```.
 

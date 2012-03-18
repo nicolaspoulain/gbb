@@ -2,7 +2,7 @@
 %Nicolas Poulain
 
 %!postproc(md):  \\\[(.*?)\\\]   $$\1$$
-% txt2tags-svn -t md codecle.t2t && pandoc --smart -s codecle.md -o codecle.tex && pdflatex codecle.tex && evince codecle.pdf
+% txt2tags-svn -t md codecle.t2t && pandoc --toc --number-sections --listings --smart --include-in-header=include.tex -s codecle.md -o codecle.tex && pdflatex codecle.tex && evince codecle.pdf
 
 =Introduction=
 
@@ -60,8 +60,6 @@ d'un tableau est fixée à la création et les opérations d'ajout ou de supress
 - Programmation orientée objet. Comme le projet commence par traiter le cas des nombres entiers naturels non nuls avant de généraliser aux nombres décimaux relatifs, on fait le choix de la prgrammation orientée objet en commençant par définir une classe ```cle``` avec ses méthodes pour ensuite créer une classe dérivée ```cle_etendu``` qui héritera de la première et pour laquelle on pourra au besoin surcharger les méthodes.
 
 - Commentaires et tests. Un programme Python est généralement documenté au sein même de son code source par un texte entouré de triple guillemets au début de chaque fonction afin de résumer ce qu'elle réalise et détailler les variables. Il est souvent utile de présenter des cas d'utilisation de la fonction et ce qui sera retourné, c'est pourquoi python propose un module appelé ```doctest``` dont le but est de permettre de réaliser des tests unitaires à l'intérieur même du commentaire. Un utilisateur pourra ainsi en regardant la documentation d'une fonction avoir directement accès à des exemples d'utilisation, exemples nécessairement à jour, puisque capables de passer les tests.
-
-voir http://code.google.com/p/code-cle/ pour le code à jour.
 
 
 ==Premières fonctions==
@@ -192,6 +190,16 @@ Construire un algorithme de division euclidienne pour des nombres en code CLE.
 Écrire les fonctions ```quotient``` et ```reste``` capables de donner 
 le quotient et le reste dans la divsion de deux nombres en code CLE.
 
+==Programme Python==
+
+
+~~~~
+%!include: ``classCle.py``
+~~~~
+
+
+voir http://code.google.com/p/code-cle/ pour le code à jour.
+
 =Code CLE et nombres décimaux relatifs=
 
 Afin d'aller plus loin, et de pouvoir traiter les nombres décimaux relatifs, il faut redéfinir le cadre, c'est à dire repenser la représentation du nombre. Avant cela, voyons comment est généralement défini un nombre réel dans une machine.
@@ -255,4 +263,6 @@ Des algorithmes récursifs seront mis en œuvre chaque fois que la situation s'y
 
 Adapter (si l'héritage ne suffit pas) toutes les méthodes de la classe ```cle``` à la classe ```cle_etendu```.
 
-\lstinputlisting{classCleEtendu.py}
+~~~~
+%!include: ``classCleEtendu.py``
+~~~~

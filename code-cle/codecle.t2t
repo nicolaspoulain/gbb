@@ -255,4 +255,4 @@ Des algorithmes récursifs seront mis en œuvre chaque fois que la situation s'y
 
 Adapter (si l'héritage ne suffit pas) toutes les méthodes de la classe ```cle``` à la classe ```cle_etendu```.
 
-
+\lstinputlisting{classCleEtendu.py}

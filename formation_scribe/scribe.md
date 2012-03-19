@@ -22,16 +22,11 @@ installer est proposé au démarage (boot).
 
 Les modules sont disponibles en deux versions 
 
-EoleNg 2.2 
--   Disponible depuis le 16 Janvier 2009.
--   basée sur la version 8.04 Ubuntu
--   Arrêt du support mises à jour : Juin 2013
-
-
-EoleNg 2.3
--   Disponible depuis le 8 Juin 2011.
--   basée sur la version 10.04 Ubuntu
--   Arrêt du support mises à jour : Juin 2015
+EoleNg 2.3                                      EoleNg 2.2 
+------------------------------------------      ---------------------------------------
+-   Disponible depuis le 16 Janvier 2009.       -   Disponible depuis le 8 Juin 2011.
+-   basée sur la version 8.04 Ubuntu            -   basée sur la version 10.04 Ubuntu
+-   Arrêt du support mises à jour : Juin 2013   -   Arrêt du support mises à jour : Juin 2015
 
 
 ## Scribe : Un serveur pédagogique complet.
@@ -155,9 +150,11 @@ Une fois ces opérations terminées,
 
 On peut alors mettre en marche la machine virtuelle.
 
-# 2. Mise en place du serveur
+# Mise en place du serveur
 
-## Installation![image](scribe_html_m1451a7db.png)
+## Installation
+
+![image](scribe_html_m1451a7db.png)
 
 Après avoir vérifié au niveau du BIOS
 que la machine démarre prioritairement
@@ -168,7 +165,6 @@ afin d’éviter de perdre du temps avec une installation qui échouerait
 sans doute.
 
 Une fois ceci fait, lançons l’installation de Scribe.
-
 La procédure est automatique et vous n’avez qu’à observer les étapes
 
 ![image](scribe_html_4b5e166b.png)
@@ -189,27 +185,19 @@ scribe, notons ici quelques informations réseau dont nous aurons besoin
 pour configurer notre serveur :
 
 
-L'adresse IP fixe que nous allons lui attribuer : _ _ _ . _ _ _ .
+- L'adresse IP fixe que nous allons lui attribuer : _ _ _ . _ _ _ .
 _ _ _ . _ _ _
-
-Le masque de sous-réseau : _ _ _ . _ _ _ . _ _ _ . _ _ _
-
-L'adresse de broadcast : _ _ _ . _ _ _ . _ _ _ . _ _ _
-
-L'adresse IP du ou des serveur(s) DNS : _ _ _ . _ _ _ . _ _ _ .
+- Le masque de sous-réseau : _ _ _ . _ _ _ . _ _ _ . _ _ _
+- L'adresse de broadcast : _ _ _ . _ _ _ . _ _ _ . _ _ _
+- L'adresse IP du ou des serveur(s) DNS : 
+    - _ _ _ . _ _ _ . _ _ _ .
 _ _ _
-
-_ _ _ . _ _ _ . _ _ _ . _ _ _
-
-Le nom que nous donnerons à la machine :
-
-Le nom du domaine auquel les clients vont s'authentifier :
-
-Le mot de passe root : ``dog!cat$mouse``
-
-Le mot de passe eole ou scribe : ``fox!bird$fly``
-
-Le mot de passe admin : ``plop``
+    - _ _ _ . _ _ _ . _ _ _ . _ _ _
+- Le nom que nous donnerons à la machine :
+- Le nom du domaine auquel les clients vont s'authentifier :
+- Le mot de passe root : ``dog!cat$mouse``
+- Le mot de passe eole ou scribe : ``fox!bird$fly``
+- Le mot de passe admin : ``plop``
 
 root : utiisateur linux ; a tous les droits sur le serveur
 
@@ -221,14 +209,49 @@ connectées au domaine , c'est l'administrateur réseau).
 
 Mise à jour :
 
-``Maj-Auto -i``
+``root@scribeng:~# Maj-Auto -i``
 
-
-Saisissez la commande gen\_config qui va lancer le générateur de
+Saisissez la commande ``gen_config`` qui va lancer le générateur de
 configuration
 
-``root@scribeng:\~\# gen\_config``
+``root@scribeng:~# gen_config``
 
 La série d’écrans est à renseigner en étant très attentif.
+
+### Configuration scribe 2.2
+
+Voir fugures \ref{m4d52829f} à \ref{m44b07c21}.
+
+![Scribe 2.2 \label{m4d52829f}](scribe_html_m4d52829f.jpg)
+
+![Scribe 2.2 ](scribe_html_1f004f88.jpg)
+
+![Scribe 2.2 ](scribe_html_m5ada8c94.jpg)
+
+![Scribe 2.2 \label{m44b07c21}](scribe_html_m44b07c21.jpg)
+
+### Configuration scribe 2.3
+
+Voir fugures \ref{5dc039bc} à \ref{m6ec096b1}.
+
+![Scribe 2.3 \label{5dc039bc}](scribe_html_5dc039bc.png)
+
+![Scribe 2.3 ](scribe_html_m291b378c.png)
+
+![Scribe 2.3 ](scribe_html_m408bb4bb.png)
+
+![Scribe 2.3 ](scribe_html_43381116.jpg)
+
+![Scribe 2.3 ](scribe_html_m672d0ca.png)
+
+![Scribe 2.3 ](scribe_html_71d87af7.png)
+
+![Scribe 2.3 ](scribe_html_m51dc1543.png)
+
+![Scribe 2.3 ](scribe_html_28489be3.png)
+
+![Scribe 2.3 \label{m6ec096b1}](scribe_html_m6ec096b1.png)
+
+### Instanciation
 
 

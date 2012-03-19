@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.15)  19 MAR 2012 09:20
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.15)  19 MAR 2012 10:16
 entering extended mode
  %&-line parsing enabled.
 **scribe.tex
@@ -111,6 +111,14 @@ Package: inputenc 2008/03/30 v1.1d Input encoding file
 (/usr/share/texmf-texlive/tex/latex/ucs/utf8x.def
 File: utf8x.def 2004/10/17 UCS: Input encoding UTF-8
 ))
+(/usr/share/texmf-texlive/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen112
+\extrarowheight=\dimen113
+\NC@list=\toks25
+\extratabsurround=\skip46
+\backup@length=\skip47
+)
 (/usr/share/texmf-texlive/tex/latex/ltxmisc/url.sty
 \Urlmuskip=\muskip11
 Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
@@ -120,7 +128,7 @@ Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
 (/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
-\KV@toks@=\toks25
+\KV@toks@=\toks26
 )
 (/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
@@ -137,8 +145,8 @@ Package graphics Info: Driver file: pdftex.def on input line 91.
 File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
 \Gread@gobject=\count100
 ))
-\Gin@req@height=\dimen112
-\Gin@req@width=\dimen113
+\Gin@req@height=\dimen114
+\Gin@req@width=\dimen115
 )
 (/usr/share/texmf-texlive/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2009/10/09 v6.79a Hypertext links for LaTeX
@@ -161,7 +169,7 @@ O)
 (/usr/share/texmf-texlive/tex/latex/oberdiek/xcolor-patch.sty
 Package: xcolor-patch 2009/10/02 xcolor patch
 ))
-\@linkdim=\dimen114
+\@linkdim=\dimen116
 \Hy@linkcounter=\count101
 \Hy@pagecounter=\count102
 
@@ -230,9 +238,9 @@ Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 )))
 \Fld@menulength=\count103
-\Field@Width=\dimen115
-\Fld@charsize=\dimen116
-\Field@toks=\toks26
+\Field@Width=\dimen117
+\Fld@charsize=\dimen118
+\Field@toks=\toks27
 Package hyperref Info: Hyper figures OFF on input line 4377.
 Package hyperref Info: Link nesting OFF on input line 4382.
 Package hyperref Info: Hyper index ON on input line 4385.
@@ -256,16 +264,16 @@ File: hpdftex.def 2009/10/09 v6.79a Hyperref driver for pdfTeX
 (/usr/share/texmf-texlive/tex/latex/listings/listings.sty
 \lst@mode=\count108
 \lst@gtempboxa=\box28
-\lst@token=\toks27
+\lst@token=\toks28
 \lst@length=\count109
-\lst@currlwidth=\dimen117
+\lst@currlwidth=\dimen119
 \lst@column=\count110
 \lst@pos=\count111
-\lst@lostspace=\dimen118
-\lst@width=\dimen119
+\lst@lostspace=\dimen120
+\lst@width=\dimen121
 \lst@newlines=\count112
 \lst@lineno=\count113
-\lst@maxwidth=\dimen120
+\lst@maxwidth=\dimen122
 
 (/usr/share/texmf-texlive/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
@@ -283,11 +291,11 @@ Package: geometry 2008/12/21 v4.2 Page Geometry
 \Gm@cnth=\count116
 \Gm@cntv=\count117
 \c@Gm@tempcnt=\count118
-\Gm@bindingoffset=\dimen121
-\Gm@wd@mp=\dimen122
-\Gm@odd@mp=\dimen123
-\Gm@even@mp=\dimen124
-\Gm@dimlist=\toks28
+\Gm@bindingoffset=\dimen123
+\Gm@wd@mp=\dimen124
+\Gm@odd@mp=\dimen125
+\Gm@even@mp=\dimen126
+\Gm@dimlist=\toks29
 
 (/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
 (/usr/share/texmf-texlive/tex/generic/babel/babel.sty
@@ -299,16 +307,16 @@ Language: frenchb 2009/03/16 v2.3d French support from the babel system
 (/usr/share/texmf-texlive/tex/generic/babel/babel.def
 File: babel.def 2008/07/06 v3.8l Babel common definitions
 \babel@savecnt=\count119
-\U@D=\dimen125
+\U@D=\dimen127
 )
 Package babel Info: Making : an active character on input line 120.
 Package babel Info: Making ; an active character on input line 121.
 Package babel Info: Making ! an active character on input line 122.
 Package babel Info: Making ? an active character on input line 123.
-\FB@Mht=\dimen126
+\FB@Mht=\dimen128
 \std@mcc=\count120
 \dec@mcc=\count121
-\parindentFFN=\dimen127
+\parindentFFN=\dimen129
 
 *************************************
 * Local config file frenchb.cfg used
@@ -328,22 +336,22 @@ File: lstlang1.sty 2004/09/05 1.3 listings language file
 ) (./scribe.aux)
 \openout1 = `scribe.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
 
 (/usr/share/texmf-texlive/tex/latex/ucs/ucsencs.def
 File: ucsencs.def 2003/11/29 Fixes to fontencodings LGR, T3
@@ -351,17 +359,17 @@ File: ucsencs.def 2003/11/29 Fixes to fontencodings LGR, T3
 (/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count122
-\scratchdimen=\dimen128
+\scratchdimen=\dimen130
 \scratchbox=\box30
 \nofMPsegments=\count123
 \nofMParguments=\count124
-\everyMPshowfont=\toks29
+\everyMPshowfont=\toks30
 \MPscratchCnt=\count125
-\MPscratchDim=\dimen129
+\MPscratchDim=\dimen131
 \MPnumerator=\count126
-\everyMPtoPDFconversion=\toks30
+\everyMPtoPDFconversion=\toks31
 )
-Package hyperref Info: Link coloring OFF on input line 31.
+Package hyperref Info: Link coloring OFF on input line 35.
  (/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
 Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 
@@ -370,8 +378,8 @@ Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
 \c@section@level=\count127
 )
-LaTeX Info: Redefining \ref on input line 31.
-LaTeX Info: Redefining \pageref on input line 31.
+LaTeX Info: Redefining \ref on input line 35.
+LaTeX Info: Redefining \pageref on input line 35.
  (./scribe.out)
 (./scribe.out)
 \@outlinefile=\write3
@@ -421,19 +429,19 @@ driver: pdftex
 
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
-LaTeX Info: Redefining \degres on input line 31.
-LaTeX Info: Redefining \dots on input line 31.
-LaTeX Info: Redefining \up on input line 31.
+LaTeX Info: Redefining \degres on input line 35.
+LaTeX Info: Redefining \dots on input line 35.
+LaTeX Info: Redefining \up on input line 35.
 
 Package frenchb.ldf Warning: OT1 encoding should not be used for French. 
 (frenchb.ldf)                Add \usepackage[T1]{fontenc} to the preamble
-(frenchb.ldf)                of your document, on input line 31.
+(frenchb.ldf)                of your document, on input line 35.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 33.
+LaTeX Font Info:    Try loading font information for U+msa on input line 37.
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 33.
+LaTeX Font Info:    Try loading font information for U+msb on input line 37.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
@@ -442,7 +450,7 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 \openout4 = `scribe.toc'.
 
 
-<scribe_html_2ce1ff75.png, id=38, 100.375pt x 89.33376pt>
+<scribe_html_2ce1ff75.png, id=63, 100.375pt x 89.33376pt>
 File: scribe_html_2ce1ff75.png Graphic file (type png)
 
 <use scribe_html_2ce1ff75.png>
@@ -452,53 +460,137 @@ File: uni-0.def 2004/10/17 UCS: Unicode data U+0000..U+00FF
 
 {/home/nico/.texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./scribe_html_2ce1f
 f75.png>]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 113.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 124.
 
 
 (/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 113.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 124.
 
-<scribe_html_2149feac.png, id=58, 847.165pt x 568.1225pt>
+<scribe_html_2149feac.png, id=83, 847.165pt x 568.1225pt>
 File: scribe_html_2149feac.png Graphic file (type png)
 
 <use scribe_html_2149feac.png>
-<scribe_html_413f4ff1.png, id=59, 1012.78375pt x 680.5425pt>
+<scribe_html_413f4ff1.png, id=84, 1012.78375pt x 680.5425pt>
 File: scribe_html_413f4ff1.png Graphic file (type png)
 
 <use scribe_html_413f4ff1.png>
-<scribe_html_78733841.png, id=62, 857.2025pt x 489.83pt>
+<scribe_html_78733841.png, id=87, 857.2025pt x 489.83pt>
 File: scribe_html_78733841.png Graphic file (type png)
 
 <use scribe_html_78733841.png> [2] [3 <./scribe_html_2149feac.png (PNG copy)> <
 ./scribe_html_413f4ff1.png (PNG copy)>]
-<scribe_html_m69a9bc5b.png, id=77, 778.91pt x 284.06125pt>
+<scribe_html_m69a9bc5b.png, id=101, 778.91pt x 284.06125pt>
 File: scribe_html_m69a9bc5b.png Graphic file (type png)
 
-<use scribe_html_m69a9bc5b.png> [4 <./scribe_html_78733841.png (PNG copy)> <./s
-cribe_html_m69a9bc5b.png (PNG copy)>] (./scribe.aux) ) 
+<use scribe_html_m69a9bc5b.png>
+<scribe_html_m1451a7db.png, id=102, 642.4pt x 482.80376pt>
+File: scribe_html_m1451a7db.png Graphic file (type png)
+
+<use scribe_html_m1451a7db.png> [4 <./scribe_html_78733841.png (PNG copy)> <./s
+cribe_html_m69a9bc5b.png (PNG copy)>]
+<scribe_html_4b5e166b.png, id=109, 614.295pt x 132.495pt>
+File: scribe_html_4b5e166b.png Graphic file (type png)
+
+<use scribe_html_4b5e166b.png>
+<scribe_html_m6522c87a.png, id=110, 584.1825pt x 168.63pt>
+File: scribe_html_m6522c87a.png Graphic file (type png)
+
+<use scribe_html_m6522c87a.png> [5 <./scribe_html_m1451a7db.png> <./scribe_html
+_4b5e166b.png>] <scribe_html_m4d52829f.jpg, id=121, 1029.8475pt x 622.325pt>
+File: scribe_html_m4d52829f.jpg Graphic file (type jpg)
+
+<use scribe_html_m4d52829f.jpg>
+<scribe_html_1f004f88.jpg, id=122, 1029.8475pt x 471.7625pt>
+File: scribe_html_1f004f88.jpg Graphic file (type jpg)
+
+<use scribe_html_1f004f88.jpg>
+<scribe_html_m5ada8c94.jpg, id=123, 1029.8475pt x 506.89375pt>
+File: scribe_html_m5ada8c94.jpg Graphic file (type jpg)
+
+<use scribe_html_m5ada8c94.jpg>
+<scribe_html_m44b07c21.jpg, id=124, 1029.8475pt x 365.365pt>
+File: scribe_html_m44b07c21.jpg Graphic file (type jpg)
+
+<use scribe_html_m44b07c21.jpg>
+
+LaTeX Warning: Reference `5dc039bc' on page 6 undefined on input line 357.
+
+
+LaTeX Warning: Reference `m6ec096b1' on page 6 undefined on input line 357.
+
+<scribe_html_5dc039bc.png, id=125, 805.0075pt x 765.86125pt>
+File: scribe_html_5dc039bc.png Graphic file (type png)
+
+<use scribe_html_5dc039bc.png>
+<scribe_html_m291b378c.png, id=126, 804.00375pt x 316.18124pt>
+File: scribe_html_m291b378c.png Graphic file (type png)
+
+<use scribe_html_m291b378c.png>
+<scribe_html_m408bb4bb.png, id=127, 804.00375pt x 322.20375pt>
+File: scribe_html_m408bb4bb.png Graphic file (type png)
+
+<use scribe_html_m408bb4bb.png>
+<scribe_html_43381116.jpg, id=128, 805.0075pt x 614.295pt>
+File: scribe_html_43381116.jpg Graphic file (type jpg)
+
+<use scribe_html_43381116.jpg>
+<scribe_html_m672d0ca.png, id=129, 804.00375pt x 197.73875pt>
+File: scribe_html_m672d0ca.png Graphic file (type png)
+
+<use scribe_html_m672d0ca.png>
+<scribe_html_71d87af7.png, id=130, 804.00375pt x 487.8225pt>
+File: scribe_html_71d87af7.png Graphic file (type png)
+
+<use scribe_html_71d87af7.png>
+<scribe_html_m51dc1543.png, id=131, 801.99625pt x 34.1275pt>
+File: scribe_html_m51dc1543.png Graphic file (type png)
+
+<use scribe_html_m51dc1543.png>
+<scribe_html_28489be3.png, id=132, 804.00375pt x 488.82625pt>
+File: scribe_html_28489be3.png Graphic file (type png)
+
+<use scribe_html_28489be3.png>
+<scribe_html_m6ec096b1.png, id=133, 805.0075pt x 313.17pt>
+File: scribe_html_m6ec096b1.png Graphic file (type png)
+
+<use scribe_html_m6ec096b1.png> [6 <./scribe_html_m6522c87a.png>] [7 <./scribe_
+html_m4d52829f.jpg> <./scribe_html_1f004f88.jpg>] [8 <./scribe_html_m5ada8c94.j
+pg> <./scribe_html_m44b07c21.jpg>] [9 <./scribe_html_5dc039bc.png (PNG copy)> <
+./scribe_html_m291b378c.png (PNG copy)>] [10 <./scribe_html_m408bb4bb.png (PNG 
+copy)> <./scribe_html_43381116.jpg>] [11 <./scribe_html_m672d0ca.png (PNG copy)
+> <./scribe_html_71d87af7.png (PNG copy)> <./scribe_html_m51dc1543.png (PNG cop
+y)>] [12 <./scribe_html_28489be3.png (PNG copy)> <./scribe_html_m6ec096b1.png (
+PNG copy)>] (./scribe.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 9502 strings out of 495028
- 128608 string characters out of 1181229
- 237815 words of memory out of 3000000
- 12530 multiletter control sequences out of 15000+50000
- 11972 words of font info for 47 fonts, out of 3000000 for 9000
+ 9976 strings out of 495028
+ 134273 string characters out of 1181229
+ 240516 words of memory out of 3000000
+ 12954 multiletter control sequences out of 15000+50000
+ 12140 words of font info for 48 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 38i,6n,40p,887b,488s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive
-/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type
-1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/am
-sfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
-cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive
-/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texmf-texlive/fonts/type1
-/public/amsfonts/cm/cmtt10.pfb>
-Output written on scribe.pdf (4 pages, 491604 bytes).
+ 38i,7n,40p,887b,1135s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
+re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/font
+s/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/pub
+lic/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
+/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pf
+b></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/shar
+e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-tex
+live/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on scribe.pdf (12 pages, 1347101 bytes).
 PDF statistics:
- 117 PDF objects out of 1000 (max. 8388607)
- 14 named destinations out of 1000 (max. 500000)
- 58 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 224 PDF objects out of 1000 (max. 8388607)
+ 43 named destinations out of 1000 (max. 500000)
+ 178 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -2,6 +2,10 @@
 \usepackage{amssymb,amsmath}
 \usepackage[mathletters]{ucs}
 \usepackage[utf8x]{inputenc}
+\usepackage{array}
+% This is needed because raggedright in table elements redefines \\:
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\let\PBS=\PreserveBackslash
 \usepackage{url}
 \usepackage{graphicx}
 % We will generate all images so they have a width \maxwidth. This means
@@ -57,11 +61,18 @@ installer est proposé au démarage (boot).
 
 Les modules sont disponibles en deux versions
 
-EoleNg 2.2 - Disponible depuis le 16 Janvier 2009. - basée sur la
-version 8.04 Ubuntu - Arrêt du support mises à jour : Juin 2013
-
-EoleNg 2.3 - Disponible depuis le 8 Juin 2011. - basée sur la version
-10.04 Ubuntu - Arrêt du support mises à jour : Juin 2015
+\begin{center}
+\begin{tabular}{ll}
+EoleNg 2.3 & EoleNg 2.2\\
+\hline
+- Disponible depuis le 16 Janvier 2009. & - Disponible depuis le 8 Juin
+2011.\\
+- basée sur la version 8.04 Ubuntu & - basée sur la version 10.04
+Ubuntu\\
+- Arrêt du support mises à jour : Juin 2013 & - Arrêt du support mises à
+jour : Juin 2015\\
+\end{tabular}
+\end{center}
 
 \subsection{Scribe : Un serveur pédagogique complet.}
 
@@ -219,5 +230,186 @@ Une fois ces opérations terminées,
 \end{itemize}
 \includegraphics{scribe_html_m69a9bc5b.png}\\ On peut alors mettre en
 marche la machine virtuelle.
+
+\section{Mise en place du serveur}
+
+\subsection{Installation}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m1451a7db.png}
+\caption{image}
+\end{figure}
+
+Après avoir vérifié au niveau du BIOS que la machine démarre
+prioritairement sur le CD, le menu ci-contre apparaît.
+
+Une bonne idée consiste à vérifier si le disque (le CD) a des défauts
+afin d'éviter de perdre du temps avec une installation qui échouerait
+sans doute.
+
+Une fois ceci fait, lançons l'installation de Scribe. La procédure est
+automatique et vous n'avez qu'à observer les étapes
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_4b5e166b.png}
+\caption{image}
+\end{figure}
+
+Après redémarrage, le gestionnaire de démarrage GRUB vous propose
+plusiers entrées. Nous choisissons celle par défaut
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m6522c87a.png}
+\caption{image}
+\end{figure}
+
+Vous pouvez maintenant vous identifier avec le login «root».
+
+\begin{itemize}
+\item
+  Pour scribe 2.2, le mot de passe est \lstinline!eole!,
+\item
+  Pour scribe 2.3, le mot de passe est \lstinline!$eole&123456$!.
+\end{itemize}
+Avant de nous lancer dans la configuration de notre contôleur de domaine
+scribe, notons ici quelques informations réseau dont nous aurons besoin
+pour configurer notre serveur :
+
+\begin{itemize}
+\item
+  L'adresse IP fixe que nous allons lui attribuer : \_ \_ \_ . \_ \_ \_
+  . \_ \_ \_ . \_ \_ \_
+\item
+  Le masque de sous-réseau : \_ \_ \_ . \_ \_ \_ . \_ \_ \_ . \_ \_ \_
+\item
+  L'adresse de broadcast : \_ \_ \_ . \_ \_ \_ . \_ \_ \_ . \_ \_ \_
+\item
+  L'adresse IP du ou des serveur(s) DNS :
+  \begin{itemize}
+  \item
+    \_ \_ \_ . \_ \_ \_ . \_ \_ \_ . \_ \_ \_
+  \item
+    \_ \_ \_ . \_ \_ \_ . \_ \_ \_ . \_ \_ \_
+  \end{itemize}
+\item
+  Le nom que nous donnerons à la machine :
+\item
+  Le nom du domaine auquel les clients vont s'authentifier :
+\item
+  Le mot de passe root : \lstinline"dog!cat$mouse"
+\item
+  Le mot de passe eole ou scribe : \lstinline"fox!bird$fly"
+\item
+  Le mot de passe admin : \lstinline!plop!
+\end{itemize}
+root : utiisateur linux ; a tous les droits sur le serveur
+
+scribe : utilisateur linux ; peut faire certains tests via une interface
+graphique
+
+admin : utilisateur samba ; gestionnaire des machines une fois celles-ci
+connectées au domaine , c'est l'administrateur réseau).
+
+Mise à jour :
+
+\lstinline!root@scribeng:~# Maj-Auto -i!
+
+Saisissez la commande \lstinline!gen_config! qui va lancer le générateur
+de configuration
+
+\lstinline!root@scribeng:~# gen_config!
+
+La série d'écrans est à renseigner en étant très attentif.
+
+\subsubsection{Configuration scribe 2.2}
+
+Voir fugures \ref{m4d52829f} à \ref{m44b07c21}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m4d52829f.jpg}
+\caption{Scribe 2.2 \label{m4d52829f}}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_1f004f88.jpg}
+\caption{Scribe 2.2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m5ada8c94.jpg}
+\caption{Scribe 2.2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m44b07c21.jpg}
+\caption{Scribe 2.2 \label{m44b07c21}}
+\end{figure}
+
+\subsubsection{Configuration scribe 2.3}
+
+Voir fugures \ref{5dc039bc} à \ref{m6ec096b1}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_5dc039bc.png}
+\caption{Scribe 2.3 \label{5dc039bc}}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m291b378c.png}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m408bb4bb.png}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_43381116.jpg}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m672d0ca.png}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_71d87af7.png}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m51dc1543.png}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_28489be3.png}
+\caption{Scribe 2.3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{scribe_html_m6ec096b1.png}
+\caption{Scribe 2.3 \label{m6ec096b1}}
+\end{figure}
+
+\subsubsection{Instanciation}
 
 \end{document}

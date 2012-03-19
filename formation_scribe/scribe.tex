@@ -63,7 +63,7 @@ Les modules sont disponibles en deux versions
 
 \begin{center}
 \begin{tabular}{ll}
-EoleNg 2.3 & EoleNg 2.2\\
+EoleNg 2.2 & EoleNg 2.3\\
 \hline
 - Disponible depuis le 16 Janvier 2009. & - Disponible depuis le 8 Juin
 2011.\\
@@ -82,83 +82,37 @@ annuaire qui référence, élèves, parents, personnels enseignant et
 administratifs, il propose un service de messagerie et héberge vos
 applications web au sein d'un portail Web 2.0.
 
-Scribe est un contrôleur de domaine.
+Scribe est un contrôleur de domaine. - gestion des connexions réseau des
+utilisateurs ; - partage de fichiers et de répertoires ; - support des
+ACL ; - partage d'imprimantes ; - gestion des comptes utilisateurs et
+des accès ; - exécution d'applications utilisateurs ;
 
-\begin{itemize}
-\item
-  gestion des connexions réseau des utilisateurs ;
-\item
-  partage de fichiers et de répertoires ;
-\item
-  support des ACL ;
-\item
-  partage d'imprimantes ;
-\item
-  gestion des comptes utilisateurs et des accès ;
-\item
-  exécution d'applications utilisateurs ;
-\end{itemize}
 Scribe est un système de messagerie articulé autour d'un annuaire
-performant.
+performant. - l'annuaire est initialisé à partir d'importation de
+comptes (SCONET, BE1D, AAF, CSV,\ldots{}) ; - l'annuaire peut servir de
+base d'authentification pour d'autres services réseaux ; - la messagerie
+gère deux domaines distincts (l'Internet et l'intranet académique) ; -
+utilisation au choix d'une interface web multilingue ou d'un client de
+messagerie standards. - un service de listes de diffusion ; - une
+sécurité anti­spam, un anti­virus, une gestion de quotas (taille des
+boites aux lettres)
 
-\begin{itemize}
-\item
-  l'annuaire est initialisé à partir d'importation de comptes (SCONET,
-  BE1D, AAF, CSV,\ldots{}) ;
-\item
-  l'annuaire peut servir de base d'authentification pour d'autres
-  services réseaux ;
-\item
-  la messagerie gère deux domaines distincts (l'Internet et l'intranet
-  académique) ;
-\item
-  utilisation au choix d'une interface web multilingue ou d'un client de
-  messagerie standards.
-\item
-  un service de listes de diffusion ;
-\item
-  une sécurité anti­spam, un anti­virus, une gestion de quotas (taille
-  des boites aux lettres)
-\end{itemize}
-Scribe offre des services web
-=\textgreater{}\href{http://eole.orion.education.fr/projects/envole/wiki/Descriptif}{}\href{http://eole.orion.education.fr/projects/envole/wiki/Descriptif}{Envole}\href{http://eole.orion.education.fr/projects/envole/wiki/Descriptif}{2.0}
+Scribe offre des services web - un serveur web; - un portail web; - des
+applications pré-installés
 
-\begin{itemize}
-\item
-  un serveur web;
-\item
-  un portail web;
-\item
-  des applications pré-installés
-\end{itemize}
-Scribe est un serveur d'authenfication unqiue (SSO)
+Scribe est un serveur d'authenfication unqiue (SSO) - Eole SSO Utilise
+l'annuaire LDAP - Les standards C.A.S 2 et OpenID sont supportés - La
+féération d'identité est possible via le protocole SAML.
 
-\begin{itemize}
-\item
-  Eole SSO Utilise l'annuaire LDAP
-\item
-  Les standards C.A.S 2 et OpenID sont supportés
-\item
-  La féération d'identité est possible via le protocole SAML.
-\end{itemize}
 Scribe dispose d'une gestion avancée des utilisateurs et des postes
-clients
+clients - Distribution de devoir - Controle d'acces à Internet et au
+services réseaux - appliquer des restrictions ou pré­configurer des
+applications, en fonction du login de l'utilisateur ou de ses groupes et
+du nom de la machine sur laquelle il se connecte ; - effectuer des
+actions distantes sur les stations (fermer la session, éteindre ou
+redémarrer un ou plusieurs postes) ; - surveiller la détection de virus
+par le serveur ;
 
-\begin{itemize}
-\item
-  Distribution de devoir
-\item
-  Controle d'acces à Internet et au services réseaux
-\item
-  appliquer des restrictions ou pré­configurer des applications, en
-  fonction du login de l'utilisateur ou de ses groupes et du nom de la
-  machine sur laquelle il se connecte ;
-\item
-  effectuer des actions distantes sur les stations (fermer la session,
-  éteindre ou redémarrer un ou plusieurs postes) ;
-\item
-  surveiller la détection de virus par le serveur ;
-\end{itemize}
 \subsection{Schéma d'un réseau d'établissement}
 
 Sur l'académie de Paris, les réseaux d'établissement sont organisés par
@@ -212,22 +166,17 @@ d'exploitaion (ici Linux-Ubuntu), passez toutes les étapes en acceptant
 les choix par défaut (sauf pour la mémoire vive que nous passerons de
 512Mo à 256Mo).
 
-Une fois ces opérations terminées,
+Une fois ces opérations terminées, - cocher la case
+\textless{}\textgreater{} dans l'onglet «Processeur» de la section
+\textless{}\textgreater{} de votre machine virtuelle. - choisir le mode
+d'accès par pont pour la carte réseau 1. Elle prendra ainsi une adresse
+sur le réseau sur lequel se trouve la machine hôte. - L'image iso du dvd
+eole, téléchargée sur le site Eole
+\url{http://eoleng.ac-dijon.fr/pub/iso/} doit être monté comme un cd(ou
+dvd) virtuel, pour cela cliquez sur l'icône cd-rom dans l'onglet
+\textless{}\textgreater{}, comme sur l'image ci-dessous puis naviguez
+dans l'arborescence pour indiquer le fichier .iso.
 
-\begin{itemize}
-\item
-  cocher la case \textless{}\textgreater{} dans l'onglet «Processeur» de
-  la section \textless{}\textgreater{} de votre machine virtuelle.
-\item
-  choisir le mode d'accès par pont pour la carte réseau 1. Elle prendra
-  ainsi une adresse sur le réseau sur lequel se trouve la machine hôte.
-\item
-  L'image iso du dvd eole, téléchargée sur le site Eole
-  \url{http://eoleng.ac-dijon.fr/pub/iso/} doit être monté comme un
-  cd(ou dvd) virtuel, pour cela cliquez sur l'icône cd-rom dans l'onglet
-  \textless{}\textgreater{}, comme sur l'image ci-dessous puis naviguez
-  dans l'arborescence pour indiquer le fichier .iso.
-\end{itemize}
 \includegraphics{scribe_html_m69a9bc5b.png}\\ On peut alors mettre en
 marche la machine virtuelle.
 
@@ -299,20 +248,20 @@ pour configurer notre serveur :
 \item
   Le nom du domaine auquel les clients vont s'authentifier :
 \item
-  Le mot de passe root : \lstinline"dog!cat$mouse"
+  Le mot de passe root\footnote{root : utiisateur linux ; a tous les
+    droits sur le serveur
+
+    scribe : utilisateur linux ; peut faire certains tests via une
+    interface graphique
+
+    admin : utilisateur samba ; gestionnaire des machines une fois
+    celles-ci connectées au domaine , c'est l'administrateur réseau).} :
+  \lstinline"dog!cat$mouse"
 \item
   Le mot de passe eole ou scribe : \lstinline"fox!bird$fly"
 \item
   Le mot de passe admin : \lstinline!plop!
 \end{itemize}
-root : utiisateur linux ; a tous les droits sur le serveur
-
-scribe : utilisateur linux ; peut faire certains tests via une interface
-graphique
-
-admin : utilisateur samba ; gestionnaire des machines une fois celles-ci
-connectées au domaine , c'est l'administrateur réseau).
-
 Mise à jour :
 
 \lstinline!root@scribeng:~# Maj-Auto -i!

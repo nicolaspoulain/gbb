@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.15)  19 MAR 2012 10:16
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.15)  19 MAR 2012 10:27
 entering extended mode
  %&-line parsing enabled.
 **scribe.tex
@@ -460,46 +460,46 @@ File: uni-0.def 2004/10/17 UCS: Unicode data U+0000..U+00FF
 
 {/home/nico/.texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./scribe_html_2ce1f
 f75.png>]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 124.
+<scribe_html_2149feac.png, id=80, 847.165pt x 568.1225pt>
+File: scribe_html_2149feac.png Graphic file (type png)
+
+<use scribe_html_2149feac.png> [2 <./scribe_html_2149feac.png (PNG copy)>]
+<scribe_html_413f4ff1.png, id=86, 1012.78375pt x 680.5425pt>
+File: scribe_html_413f4ff1.png Graphic file (type png)
+
+<use scribe_html_413f4ff1.png>
+<scribe_html_78733841.png, id=89, 857.2025pt x 489.83pt>
+File: scribe_html_78733841.png Graphic file (type png)
+
+<use scribe_html_78733841.png>
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 170.
 
 
 (/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 124.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 170.
 
-<scribe_html_2149feac.png, id=83, 847.165pt x 568.1225pt>
-File: scribe_html_2149feac.png Graphic file (type png)
-
-<use scribe_html_2149feac.png>
-<scribe_html_413f4ff1.png, id=84, 1012.78375pt x 680.5425pt>
-File: scribe_html_413f4ff1.png Graphic file (type png)
-
-<use scribe_html_413f4ff1.png>
-<scribe_html_78733841.png, id=87, 857.2025pt x 489.83pt>
-File: scribe_html_78733841.png Graphic file (type png)
-
-<use scribe_html_78733841.png> [2] [3 <./scribe_html_2149feac.png (PNG copy)> <
-./scribe_html_413f4ff1.png (PNG copy)>]
-<scribe_html_m69a9bc5b.png, id=101, 778.91pt x 284.06125pt>
+<scribe_html_m69a9bc5b.png, id=91, 778.91pt x 284.06125pt>
 File: scribe_html_m69a9bc5b.png Graphic file (type png)
 
-<use scribe_html_m69a9bc5b.png>
-<scribe_html_m1451a7db.png, id=102, 642.4pt x 482.80376pt>
+<use scribe_html_m69a9bc5b.png> [3 <./scribe_html_413f4ff1.png (PNG copy)>]
+<scribe_html_m1451a7db.png, id=101, 642.4pt x 482.80376pt>
 File: scribe_html_m1451a7db.png Graphic file (type png)
 
-<use scribe_html_m1451a7db.png> [4 <./scribe_html_78733841.png (PNG copy)> <./s
-cribe_html_m69a9bc5b.png (PNG copy)>]
-<scribe_html_4b5e166b.png, id=109, 614.295pt x 132.495pt>
+<use scribe_html_m1451a7db.png>
+<scribe_html_4b5e166b.png, id=102, 614.295pt x 132.495pt>
 File: scribe_html_4b5e166b.png Graphic file (type png)
 
 <use scribe_html_4b5e166b.png>
-<scribe_html_m6522c87a.png, id=110, 584.1825pt x 168.63pt>
+<scribe_html_m6522c87a.png, id=103, 584.1825pt x 168.63pt>
 File: scribe_html_m6522c87a.png Graphic file (type png)
 
-<use scribe_html_m6522c87a.png> [5 <./scribe_html_m1451a7db.png> <./scribe_html
-_4b5e166b.png>] <scribe_html_m4d52829f.jpg, id=121, 1029.8475pt x 622.325pt>
+<use scribe_html_m6522c87a.png> [4 <./scribe_html_78733841.png (PNG copy)> <./s
+cribe_html_m69a9bc5b.png (PNG copy)>] [5 <./scribe_html_m1451a7db.png> <./scrib
+e_html_4b5e166b.png> <./scribe_html_m6522c87a.png>]
+<scribe_html_m4d52829f.jpg, id=121, 1029.8475pt x 622.325pt>
 File: scribe_html_m4d52829f.jpg Graphic file (type jpg)
 
 <use scribe_html_m4d52829f.jpg>
@@ -515,66 +515,56 @@ File: scribe_html_m5ada8c94.jpg Graphic file (type jpg)
 File: scribe_html_m44b07c21.jpg Graphic file (type jpg)
 
 <use scribe_html_m44b07c21.jpg>
-
-LaTeX Warning: Reference `5dc039bc' on page 6 undefined on input line 357.
-
-
-LaTeX Warning: Reference `m6ec096b1' on page 6 undefined on input line 357.
-
-<scribe_html_5dc039bc.png, id=125, 805.0075pt x 765.86125pt>
+<scribe_html_5dc039bc.png, id=127, 805.0075pt x 765.86125pt>
 File: scribe_html_5dc039bc.png Graphic file (type png)
 
-<use scribe_html_5dc039bc.png>
-<scribe_html_m291b378c.png, id=126, 804.00375pt x 316.18124pt>
+<use scribe_html_5dc039bc.png> [6 <./scribe_html_m4d52829f.jpg>] [7 <./scribe_h
+tml_1f004f88.jpg> <./scribe_html_m5ada8c94.jpg> <./scribe_html_m44b07c21.jpg>]
+<scribe_html_m291b378c.png, id=145, 804.00375pt x 316.18124pt>
 File: scribe_html_m291b378c.png Graphic file (type png)
 
 <use scribe_html_m291b378c.png>
-<scribe_html_m408bb4bb.png, id=127, 804.00375pt x 322.20375pt>
+<scribe_html_m408bb4bb.png, id=146, 804.00375pt x 322.20375pt>
 File: scribe_html_m408bb4bb.png Graphic file (type png)
 
 <use scribe_html_m408bb4bb.png>
-<scribe_html_43381116.jpg, id=128, 805.0075pt x 614.295pt>
+<scribe_html_43381116.jpg, id=147, 805.0075pt x 614.295pt>
 File: scribe_html_43381116.jpg Graphic file (type jpg)
 
 <use scribe_html_43381116.jpg>
-<scribe_html_m672d0ca.png, id=129, 804.00375pt x 197.73875pt>
+<scribe_html_m672d0ca.png, id=148, 804.00375pt x 197.73875pt>
 File: scribe_html_m672d0ca.png Graphic file (type png)
 
 <use scribe_html_m672d0ca.png>
-<scribe_html_71d87af7.png, id=130, 804.00375pt x 487.8225pt>
+<scribe_html_71d87af7.png, id=149, 804.00375pt x 487.8225pt>
 File: scribe_html_71d87af7.png Graphic file (type png)
 
 <use scribe_html_71d87af7.png>
-<scribe_html_m51dc1543.png, id=131, 801.99625pt x 34.1275pt>
+<scribe_html_m51dc1543.png, id=150, 801.99625pt x 34.1275pt>
 File: scribe_html_m51dc1543.png Graphic file (type png)
 
 <use scribe_html_m51dc1543.png>
-<scribe_html_28489be3.png, id=132, 804.00375pt x 488.82625pt>
+<scribe_html_28489be3.png, id=151, 804.00375pt x 488.82625pt>
 File: scribe_html_28489be3.png Graphic file (type png)
 
 <use scribe_html_28489be3.png>
-<scribe_html_m6ec096b1.png, id=133, 805.0075pt x 313.17pt>
+<scribe_html_m6ec096b1.png, id=152, 805.0075pt x 313.17pt>
 File: scribe_html_m6ec096b1.png Graphic file (type png)
 
-<use scribe_html_m6ec096b1.png> [6 <./scribe_html_m6522c87a.png>] [7 <./scribe_
-html_m4d52829f.jpg> <./scribe_html_1f004f88.jpg>] [8 <./scribe_html_m5ada8c94.j
-pg> <./scribe_html_m44b07c21.jpg>] [9 <./scribe_html_5dc039bc.png (PNG copy)> <
-./scribe_html_m291b378c.png (PNG copy)>] [10 <./scribe_html_m408bb4bb.png (PNG 
-copy)> <./scribe_html_43381116.jpg>] [11 <./scribe_html_m672d0ca.png (PNG copy)
-> <./scribe_html_71d87af7.png (PNG copy)> <./scribe_html_m51dc1543.png (PNG cop
-y)>] [12 <./scribe_html_28489be3.png (PNG copy)> <./scribe_html_m6ec096b1.png (
-PNG copy)>] (./scribe.aux)
-
-LaTeX Warning: There were undefined references.
-
+<use scribe_html_m6ec096b1.png> [8 <./scribe_html_5dc039bc.png (PNG copy)>]
+[9 <./scribe_html_m291b378c.png (PNG copy)> <./scribe_html_m408bb4bb.png (PNG c
+opy)>] [10 <./scribe_html_43381116.jpg> <./scribe_html_m672d0ca.png (PNG copy)>
+] [11 <./scribe_html_71d87af7.png (PNG copy)> <./scribe_html_m51dc1543.png (PNG
+ copy)> <./scribe_html_28489be3.png (PNG copy)>] [12 <./scribe_html_m6ec096b1.p
+ng (PNG copy)>] (./scribe.aux)
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 9976 strings out of 495028
- 134273 string characters out of 1181229
- 240516 words of memory out of 3000000
+ 9977 strings out of 495028
+ 134284 string characters out of 1181229
+ 237516 words of memory out of 3000000
  12954 multiletter control sequences out of 15000+50000
  12140 words of font info for 48 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
@@ -585,12 +575,14 @@ xlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/font
 s/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/pub
 lic/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
 /cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr17.pf
-b></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/shar
-e/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-tex
-live/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on scribe.pdf (12 pages, 1347101 bytes).
+b></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share
+/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texliv
+e/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texmf-texlive/fonts/type
+1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-texlive/fonts/type1/public/am
+sfonts/cm/cmtt8.pfb>
+Output written on scribe.pdf (12 pages, 1367481 bytes).
 PDF statistics:
- 224 PDF objects out of 1000 (max. 8388607)
- 43 named destinations out of 1000 (max. 500000)
+ 233 PDF objects out of 1000 (max. 8388607)
+ 44 named destinations out of 1000 (max. 500000)
  178 words of extra memory for PDF output out of 10000 (max. 10000000)
 

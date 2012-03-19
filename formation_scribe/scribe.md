@@ -22,7 +22,7 @@ installer est proposé au démarage (boot).
 
 Les modules sont disponibles en deux versions 
 
-EoleNg 2.3                                      EoleNg 2.2 
+EoleNg 2.2                                      EoleNg 2.3 
 ------------------------------------------      ---------------------------------------
 -   Disponible depuis le 16 Janvier 2009.       -   Disponible depuis le 8 Juin 2011.
 -   basée sur la version 8.04 Ubuntu            -   basée sur la version 10.04 Ubuntu
@@ -38,7 +38,6 @@ administratifs, il propose un service de messagerie et héberge vos
 applications web au sein d'un portail Web 2.0.
 
 Scribe est un contrôleur de domaine.
-
 -   gestion des connexions réseau des utilisateurs ;
 -   partage de fichiers et de répertoires ;
 -   support des ACL ;
@@ -49,7 +48,6 @@ Scribe est un contrôleur de domaine.
 
 Scribe est un système de messagerie articulé autour d'un annuaire
 performant.
-
 -   l'annuaire est initialisé à partir d'importation de comptes (SCONET,
     BE1D, AAF, CSV,...) ;
 -   l'annuaire peut servir de base d'authentification pour d'autres
@@ -64,17 +62,12 @@ performant.
 
 
 Scribe offre des services web
-=\>[
-](http://eole.orion.education.fr/projects/envole/wiki/Descriptif)[Envole](http://eole.orion.education.fr/projects/envole/wiki/Descriptif)[
-2.0](http://eole.orion.education.fr/projects/envole/wiki/Descriptif)
-
 -   un serveur web;
 -   un portail web;
 -   des applications pré-installés
 
 
 Scribe est un serveur d'authenfication unqiue (SSO)
-
 -   Eole SSO Utilise l'annuaire LDAP
 -   Les standards C.A.S 2 et OpenID sont supportés
 -   La féération d'identité est possible via le protocole SAML.
@@ -82,7 +75,6 @@ Scribe est un serveur d'authenfication unqiue (SSO)
 
 Scribe dispose d'une gestion avancée des utilisateurs et des
 postes clients
-
 -   Distribution de devoir
 -   Controle d'acces à Internet et au services réseaux
 -   appliquer des restrictions ou pré­configurer des applications, en
@@ -134,7 +126,6 @@ les choix par défaut (sauf pour la mémoire vive que nous passerons de
 512Mo à 256Mo).
 
 Une fois ces opérations terminées,
-
 -   cocher la case <<Activer PAE/NX>> dans l’onglet «Processeur» de la
     section <<Système>> de votre machine virtuelle.
 -   choisir le mode d’accès par pont pour la carte réseau 1. Elle
@@ -195,17 +186,18 @@ _ _ _
     - _ _ _ . _ _ _ . _ _ _ . _ _ _
 - Le nom que nous donnerons à la machine :
 - Le nom du domaine auquel les clients vont s'authentifier :
-- Le mot de passe root : ``dog!cat$mouse``
+- Le mot de passe root[^1] : ``dog!cat$mouse``
 - Le mot de passe eole ou scribe : ``fox!bird$fly``
 - Le mot de passe admin : ``plop``
 
-root : utiisateur linux ; a tous les droits sur le serveur
+[^1]: root : utiisateur linux ; a tous les droits sur le serveur
+    
+    scribe : utilisateur linux ; peut faire certains tests via 
+    une interface graphique
 
-scribe : utilisateur linux ; peut faire certains tests via une interface
-graphique
+    admin : utilisateur samba ; gestionnaire des machines une fois 
+    celles-ci connectées au domaine , c'est l'administrateur réseau).
 
-admin : utilisateur samba ; gestionnaire des machines une fois celles-ci
-connectées au domaine , c'est l'administrateur réseau).
 
 Mise à jour :
 

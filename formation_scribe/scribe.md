@@ -1,0 +1,234 @@
+%Formation scribe
+%Nicolas Poulain - Dafor 2012
+
+
+# Les modules EOLE
+
+Extrait de
+[http](http://eole.orion.education.fr/index.php/home)[://](http://eole.orion.education.fr/index.php/home)[eole](http://eole.orion.education.fr/index.php/home)[.](http://eole.orion.education.fr/index.php/home)[orion](http://eole.orion.education.fr/index.php/home)[.](http://eole.orion.education.fr/index.php/home)[education](http://eole.orion.education.fr/index.php/home)[.](http://eole.orion.education.fr/index.php/home)[fr](http://eole.orion.education.fr/index.php/home)[/](http://eole.orion.education.fr/index.php/home)[index](http://eole.orion.education.fr/index.php/home)[.](http://eole.orion.education.fr/index.php/home)[php](http://eole.orion.education.fr/index.php/home)[/](http://eole.orion.education.fr/index.php/home)[home](http://eole.orion.education.fr/index.php/home)
+
+![Logo EOLE](scribe_html_2ce1ff75.png)
+
+Eole est un projet collaboratif basée sur la philosophie du logiciel libre.
+La mutualisation des compétences et des moyens permet de
+réaliser des solutions économiques, fiables et performantes.
+
+Chaque module constitue une distribution GNU/LINUX spécifique qui
+permet d’installer facilement un serveur dédié. Les services offerts
+sont pré-configurés, l’ensemble est cohérent. Vous devez télécharger sur
+ce site l’image ISO qui vous permettra de graver un DVD ou un CD
+d’installation. Ce DVD/CD est multi module, le choix du module à
+installer est proposé au démarage (boot).
+
+Les modules sont disponibles en deux versions 
+
+EoleNg 2.2 
+-   Disponible depuis le 16 Janvier 2009.
+-   basée sur la version 8.04 Ubuntu
+-   Arrêt du support mises à jour : Juin 2013
+
+
+EoleNg 2.3
+-   Disponible depuis le 8 Juin 2011.
+-   basée sur la version 10.04 Ubuntu
+-   Arrêt du support mises à jour : Juin 2015
+
+
+## Scribe : Un serveur pédagogique complet.
+
+Scribe est un contrôleur de domaine dotée de fonctions évoluées. Il
+optimise la gestion de votre parc de stations clientes. Il dispose d'un
+annuaire qui référence, élèves, parents, personnels enseignant et
+administratifs, il propose un service de messagerie et héberge vos
+applications web au sein d'un portail Web 2.0.
+
+Scribe est un contrôleur de domaine.
+
+-   gestion des connexions réseau des utilisateurs ;
+-   partage de fichiers et de répertoires ;
+-   support des ACL ;
+-   partage d'imprimantes ;
+-   gestion des comptes utilisateurs et des accès ;
+-   exécution d'applications utilisateurs ;
+
+
+Scribe est un système de messagerie articulé autour d'un annuaire
+performant.
+
+-   l'annuaire est initialisé à partir d'importation de comptes (SCONET,
+    BE1D, AAF, CSV,...) ;
+-   l'annuaire peut servir de base d'authentification pour d'autres
+    services réseaux ;
+-   la messagerie gère deux domaines distincts (l'Internet et l'intranet
+    académique) ;
+-   utilisation au choix d'une interface web multilingue ou d'un client
+    de messagerie standards.
+-   un service de listes de diffusion ;
+-   une sécurité anti­spam, un anti­virus, une gestion de quotas (taille
+    des boites aux lettres)
+
+
+Scribe offre des services web
+=\>[
+](http://eole.orion.education.fr/projects/envole/wiki/Descriptif)[Envole](http://eole.orion.education.fr/projects/envole/wiki/Descriptif)[
+2.0](http://eole.orion.education.fr/projects/envole/wiki/Descriptif)
+
+-   un serveur web;
+-   un portail web;
+-   des applications pré-installés
+
+
+Scribe est un serveur d'authenfication unqiue (SSO)
+
+-   Eole SSO Utilise l'annuaire LDAP
+-   Les standards C.A.S 2 et OpenID sont supportés
+-   La féération d'identité est possible via le protocole SAML.
+
+
+Scribe dispose d'une gestion avancée des utilisateurs et des
+postes clients
+
+-   Distribution de devoir
+-   Controle d'acces à Internet et au services réseaux
+-   appliquer des restrictions ou pré­configurer des applications, en
+    fonction du login de l'utilisateur ou de ses groupes et du nom de la
+    machine sur laquelle il se connecte ;
+-   effectuer des actions distantes sur les stations (fermer la session,
+    éteindre ou redémarrer un ou plusieurs postes) ;
+-   surveiller la détection de virus par le serveur ;
+
+
+## Schéma d'un réseau d'établissement
+
+Sur l'académie de Paris, les réseaux d'établissement sont organisés par
+la DSI, service informatique du Rectorat qui assure en plus
+l'administration et la maintenance des serveurs Amon, Scribe et Horus. Voir figure \ref{2149feac}.
+
+![\label{2149feac}](scribe_html_2149feac.png)
+
+Les établissements assurent par eux-même les tâches de gestion courante
+du réseau et des machines avec les droits qui leur sont laissé en
+utilisant au travers des interfcaes de gestion de ces serveurs.
+
+
+## Déroulement de la formation
+
+Durant cette formation, nous allons simuler un réseau d'établissement
+grâce à des machines virtuelles. Cela nous permettra de contrôle
+complètement tous les éléments, d'effectuer tous les tests sans risque
+pour les machines réelles et le réseau qui nous entourent.
+
+Sur la figure suivante, on simule plusieurs machines sur une seule
+appelée machine hôte. Un poste windows virtuel est un ordinateur
+virtuel sur leque a été installé un système d'exploitation comme on le
+fait sur une machine réelle.
+
+![\label{413f4ff1}](scribe_html_413f4ff1.png)
+
+La situation décrite sur la figure \ref{413f4ff1} est équivalente à celle de la figure \ref{78733841}.
+
+![\label{78733841}](scribe_html_78733841.png)
+
+Notre travail maintenant est de créer la machine virtuelle qui va
+accueillir le sytème d'exploitation Linux sur lequel fonctionne.
+
+Après avoir demandé la création d'une nouvelle machine dans VirtualBox,
+puis donné un nom (disons scribe) et choisi le type de système
+d'exploitaion (ici Linux-Ubuntu), passez toutes les étapes en acceptant
+les choix par défaut (sauf pour la mémoire vive que nous passerons de
+512Mo à 256Mo).
+
+Une fois ces opérations terminées,
+
+-   cocher la case <<Activer PAE/NX>> dans l’onglet «Processeur» de la
+    section <<Système>> de votre machine virtuelle.
+-   choisir le mode d’accès par pont pour la carte réseau 1. Elle
+    prendra ainsi une adresse sur le réseau sur lequel se trouve la
+    machine hôte.
+-   L'image iso du dvd eole, téléchargée sur le site Eole
+    <http://eoleng.ac-dijon.fr/pub/iso/> doit être monté comme un cd(ou dvd)
+    virtuel, pour cela cliquez sur l'icône cd-rom dans l'onglet
+    <<Stockage>>, comme sur l'image ci-dessous puis naviguez dans
+    l'arborescence pour indiquer le fichier .iso.
+
+![Virtualbox](scribe_html_m69a9bc5b.png)\
+
+On peut alors mettre en marche la machine virtuelle.
+
+# 2. Mise en place du serveur
+
+## Installation![image](scribe_html_m1451a7db.png)
+
+Après avoir vérifié au niveau du BIOS
+que la machine démarre prioritairement
+sur le CD, le menu ci-contre apparaît.
+
+Une bonne idée consiste à vérifier si le disque (le CD) a des défauts
+afin d’éviter de perdre du temps avec une installation qui échouerait
+sans doute.
+
+Une fois ceci fait, lançons l’installation de Scribe.
+
+La procédure est automatique et vous n’avez qu’à observer les étapes
+
+![image](scribe_html_4b5e166b.png)
+
+Après redémarrage, le gestionnaire de démarrage GRUB vous propose
+plusiers entrées. Nous choisissons celle par défaut
+
+![image](scribe_html_m6522c87a.png)
+
+Vous pouvez maintenant vous identifier avec le login «root».
+
+-   Pour scribe 2.2, le mot de passe est ``eole``,
+-   Pour scribe 2.3, le mot de passe est ``$eole&123456$``.
+
+
+Avant de nous lancer dans la configuration de notre contôleur de domaine
+scribe, notons ici quelques informations réseau dont nous aurons besoin
+pour configurer notre serveur :
+
+
+L'adresse IP fixe que nous allons lui attribuer : _ _ _ . _ _ _ .
+_ _ _ . _ _ _
+
+Le masque de sous-réseau : _ _ _ . _ _ _ . _ _ _ . _ _ _
+
+L'adresse de broadcast : _ _ _ . _ _ _ . _ _ _ . _ _ _
+
+L'adresse IP du ou des serveur(s) DNS : _ _ _ . _ _ _ . _ _ _ .
+_ _ _
+
+_ _ _ . _ _ _ . _ _ _ . _ _ _
+
+Le nom que nous donnerons à la machine :
+
+Le nom du domaine auquel les clients vont s'authentifier :
+
+Le mot de passe root : ``dog!cat$mouse``
+
+Le mot de passe eole ou scribe : ``fox!bird$fly``
+
+Le mot de passe admin : ``plop``
+
+root : utiisateur linux ; a tous les droits sur le serveur
+
+scribe : utilisateur linux ; peut faire certains tests via une interface
+graphique
+
+admin : utilisateur samba ; gestionnaire des machines une fois celles-ci
+connectées au domaine , c'est l'administrateur réseau).
+
+Mise à jour :
+
+``Maj-Auto -i``
+
+
+Saisissez la commande gen\_config qui va lancer le générateur de
+configuration
+
+``root@scribeng:\~\# gen\_config``
+
+La série d’écrans est à renseigner en étant très attentif.
+
+

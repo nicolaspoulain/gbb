@@ -2,9 +2,18 @@
 \contentsline {section}{\numberline {1}Les modules EOLE}{1}{section.1}
 \contentsline {subsection}{\numberline {1.1}Scribe : Un serveur p\IeC {\'e}dagogique complet.}{2}{subsection.1.1}
 \contentsline {subsection}{\numberline {1.2}Sch\IeC {\'e}ma d'un r\IeC {\'e}seau d'\IeC {\'e}tablissement}{2}{subsection.1.2}
-\contentsline {subsection}{\numberline {1.3}D\IeC {\'e}roulement de la formation}{3}{subsection.1.3}
+\contentsline {subsection}{\numberline {1.3}D\IeC {\'e}roulement de la formation}{2}{subsection.1.3}
 \contentsline {section}{\numberline {2}Mise en place du serveur}{4}{section.2}
 \contentsline {subsection}{\numberline {2.1}Installation}{4}{subsection.2.1}
-\contentsline {subsubsection}{\numberline {2.1.1}Configuration scribe 2.2}{6}{subsubsection.2.1.1}
-\contentsline {subsubsection}{\numberline {2.1.2}Configuration scribe 2.3}{8}{subsubsection.2.1.2}
-\contentsline {subsubsection}{\numberline {2.1.3}Instanciation}{8}{subsubsection.2.1.3}
+\contentsline {subsubsection}{\numberline {2.1.1}Configuration scribe 2.2}{7}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}Configuration scribe 2.3}{7}{subsubsection.2.1.2}
+\contentsline {subsubsection}{\numberline {2.1.3}Instanciation}{7}{subsubsection.2.1.3}
+\contentsline {subsubsection}{\numberline {2.1.4}Pourquoi n'utiliser instance qu'une seule fois ?}{13}{subsubsection.2.1.4}
+\contentsline {subsection}{\numberline {2.2}Int\IeC {\'e}gration des clients au domaine}{13}{subsection.2.2}
+\contentsline {section}{\numberline {3}L'E.A.D. (Eole ADmininistration)}{14}{section.3}
+\contentsline {subsection}{\numberline {3.1}Pr\IeC {\'e}sentation}{14}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Exercices sur la gestion des utilisateurs}{15}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Exercices sur la gestion des groupes}{16}{subsection.3.3}
+\contentsline {section}{\numberline {4}4. ESU (Environnements S\IeC {\'e}curis\IeC {\'e}s des Utilisateurs)}{16}{section.4}
+\contentsline {subsection}{\numberline {4.1}Pr\IeC {\'e}sentation}{16}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}R\IeC {\`e}gles de priorit\IeC {\'e} dans l'application des r\IeC {\`e}gles ESU}{17}{subsection.4.2}

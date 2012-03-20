@@ -2,6 +2,7 @@
 %Nicolas Poulain
 
 %!postproc(md):  \\\[(.*?)\\\]   $$\1$$
+%!postproc(md):  "^  \*"     "    *"
 % txt2tags-svn -t md dominos.t2t && pandoc --toc --number-sections --listings --smart --include-in-header=include.tex -s dominos.md -o dominos.tex && pdflatex dominos.tex && evince dominos.pdf
 
 =Règles du jeu de dominos=
@@ -79,7 +80,10 @@ Ces fonctions permettent d'initialiser la partie, d'enchaîner les tours de jeux
 ==Les fonctions concernant les stratégies==
 
 La stratégie des deux joueurs est déterminée dans la fonction effectuant les tours de jeu. Elle peut être différente pour chacun des deux joueurs, d'où son intérêt. Il y a trois catégories de stratégie :
-- celles créées pour faire gagner le joueur (jouant les dominos placés en premier dans l'ordre lexicographique ; soit ceux qui valent le plus de points ; soit en jouant ceux dont les deux valeurs sont les plus présentes dans la main du joueur, ainsi il garde le plus de possibilités pour les tours à venir) ;
+- celles créées pour faire gagner le joueur
+  - jouer le domino placé en premier dans l'ordre lexicographique ;
+  - jouer le domino qui vaut le plus de points ;
+  - jouer le domino dont les deux valeurs sont les plus présentes dans la main (ainsi il garde le plus de possibilités pour les tours à venir) ;
 - celle où le joueur choisit ses dominos à placer totalement au hasard ;
 - une dernière stratégie consistant à tenter de le faire perdre en jouant les dominos valant le moins de points.
 

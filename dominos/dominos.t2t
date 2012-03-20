@@ -10,40 +10,36 @@ Le jeu de dominos est un jeu de société d'origine chinoise,
 utilisant 28 pièces (dans le cas d'un jeu "double-six"), les
 dominos. On peut adopter une des règles suivantes :
 
-**Règle 1**
-  - Étaler les dominos sur la table, points cachés.
-    Distribuer 10 dominos à chaque joueur.
-  - Celui qui a le double le plus fort commence et pose celui-ci,
-    son voisin pose à l'une des extrémités (les bouts) un domino dont l'une des
-    parties a le même nombre de points.
-  - Chaque joueur joue à son tour et l'on constitue ainsi une chaîne
-    dont les parties voisines ont le même nombre de points.
+**Règle**
+  - Distribuer au hasard 10 des 28 dominos à chaque joueur.
+  - Celui qui a le domino le plus fort (ordre lexicographique) commence et pose celui-ci sur la table
+  - Chaque joueur pose tour à tour à l'une des extrémites du jeu sur la table
+    un domino de sorte que les parties voisines ont le même nombre de points,
+    constituant ainsi une chaîne.
   - Le joueur qui ne peut pas jouer passe son tour, et on continue à
     jouer jusqu'à ce qu'un des joueurs se soit débarrassé de tous ses dominos,
     ou que le jeu soit complètement bloqué.
-  - À la fin du jeu, celui qui totalise le moins de points (la somme des points de l’ensemble des dominos) est le gagnant.
+  - À la fin du jeu, celui qui totalise le moins de points (la somme des points de l'ensemble des dominos) est le gagnant.
     On a donc tout intérêt à se débarrasser en premier des dominos valant beaucoup de points.
 
 
-**Règle 2**
-  - Étaler les dominos sur la table, points cachés.
-    Distribuer le même nombre de dominos à chaque joueur,
-    en laissant un talon de quelques pièces.
-  - Le premier joueur pose son plus fort domino, son voisin pose à l'une
-    des extrémités un domino dont l'une des parties a le même nombre de points.
-  - Chaque joueur joue à son tour et l'on constitue ainsi une chaîne dont
-    les parties voisines ont le même nombre de points.
+**Variante**
   - Lorsqu'un joueur n'a pas de domino qui convienne, il pioche en prenant
     une pièce du talon et passe son tour, c'est le suivant qui joue.
   - Le vainqueur est celui qui a placé le premier tous ses dominos.
 
 
-\includegraphics[scale=0.7]{dominosuite.png}
+[dominosuite.png]
+
+==Le projet==
+
+Le but de ce projet est de comparer différentes stratégies de jeu en opposant deux joueurs virtuels et en leur faisant jouer un grand nombre de parties. Lesdonnées statistiques recueillies sur le nombre de victoires nous conduiront déterminer la meilleure méthode pour gagner à ce jeu.
+
 
 =Modélisation=
 
-représenté par un vecteur colonne
-$\left(\begin{array}{c}x \\  y \end{array}\right)$ ou par un nombre $10x+y$
+Un domino peut être représenté par un vecteur colonne
+$\left(\begin{array}{c}x \\  y \end{array}\right)$ ou par un nombre $10x+y$.
 Ainsi le jeu d'un joueur peut être représenté par la matrice (le tableau)
 
 $J=\left(
@@ -53,48 +49,39 @@ $J=\left(
 \end{array}
 \right)$ ou $J=(61,54,50,33,31,30,11)$.
 
-La partie la plus intéressante du programme est l'élaboration de
-la stratégie de l'ordinateur.
-
 ==Premières fonctions==
 
-On commencera par écrire les fonctions:
+Ce sont des fonctions qui ne servent pas directement au déroulement de la partie de dominos mais qui permettent sa mise en place ou qui sont indispensables en tant qu’outils pour les fonctions avancées.
 
-+ Écrire la fonction ```creation_jeu``` capable de donner
++ Écrire la fonction ``creation_jeu`` capable de donner
  l'ensemble des dominos de la boîte de jeu.
 \[\left(\begin{array}{cccccccccccccccccccccccccccc} 6 & 6 & 6 & 6 & 6 & 6 & 6 & 5 & 5 & 5 & 5 & 5 & 5 & 4 & 4 & 4 & 4 & 4 & 3 & 3 & 3 & 3 & 2 & 2 & 2 & 1 & 1 & 0 \\ 6 & 5 & 4 & 3 & 2 & 1 & 0 & 5 & 4 & 3 & 2 & 1 & 0 & 4 & 3 & 2 & 1 & 0 & 3 & 2 & 1 & 0 & 2 & 1 & 0 & 1 & 0 & 0 \\ \end{array}\right)\]
-+ Écrire une fonction ```distribue``` qui tire au hasard (et sans remise) une main
++ Écrire une fonction ``distribue`` qui tire au hasard (et sans remise) une main
  contenant un nombre donné de dominos.
-+ Écrire une fonction ```est_avant``` qui admet comme paramètres d'entrée deux dominos
- et qui renvoie ```True``` ou ```False``` selon que les deux dominos sont ou pas classés
- dans l’ordre décroissant.
- Par exemple ```est_avant([6,2],[5,0])``` renverrait ```True```.
-+ Écrire une fonction ```tri_decr``` qui trie un ensemble de dominos par ordre
++ Écrire une fonction ``est_avant`` qui admet comme paramètres d'entrée deux dominos
+ et qui renvoie ``True`` ou ``False`` selon que les deux dominos sont ou pas classés
+ dans l'ordre décroissant.
+ Par exemple ``est_avant([6,2],[5,0])`` renverrait ``True``.
++ Écrire une fonction ``tri_decr`` qui trie un ensemble de dominos par ordre
  décroissant.
-+ Écrire une fonction ```doubles``` qui renvoie en sortie l’ensemble des doubles
- d’une main ainsi que leur indice dans la main.
- Dans l'exemple du début, la fonction ```doubles``` renverrait en sortie
- $\left(\begin{array}{cc}
- 3 & 1 \\
- 3 & 1 \\
- 4 & 7 \\
- \end{array}\right)$
- car le double 3 apparaît en 4-ème position dans la main et le double as en 7-ème.
-+ Écrire une fonction ```histogramme``` qui calcule le nombre de fois où apparaît
- chacune des valeurs 0,1\dots dans un jeu.
- Dans notre exemple $H=[2,4,0,4,1,2,1]$.
-+ Écrire une fonction ```max_presence``` qui renseigne sur le (ou les) nombre qui   
- apparaît le plus souvent dans un jeu.
- Dans notre exemple ```maxpresence``` renverrait $[1,3]$.
-+ ```possibilites``` qui à partir d'une main donnée et des deux "bouts" se trouvant sur
- le tapis, donne les choix possibles du joueur.
- Dans notre exemple , ```possibilites(J,5,0)``` donnerait
- $\left(
- \begin{array}{ccc}
- 5 & 5 & 3  \\
- 4 & 0 &  0  \\
- 2 & 3 &  6  \\
-\end{array}\right)$
+
+
+==Les fonctions concernant le déroulement de la partie==
+
+Ces fonctions permettent d’initialiser la partie, d’enchaîner les tours de jeux, et de terminer la partie. Elles utilisent les fonctions citées précédemment à travers d’autres fonctions plus complexes. Les deux principales fonctions sont celle permettant de désigner le joueur qui posera le premier domino, et celle qui, grâce à une boucle, fait jouer les joueurs chacun leur tour.
+
++ Écrire une fonction ``possibilites`` qui à partir de la chaîne de dominos se trouvant déjà sur la table et de la main d'un joueur, renvoie les choix possibles de dominos pour ce joueur.
+ Par exemple , pour une table  constituée de la chaîne de dominos [3,4],[4,4], et pour une main constituée des dominos {[2,3],[1,5],[4,6]}, la fonction reverrait les nombres 0 et 2 qui sont les positions des deux dominos pouvant être placés sur la table.
++ Écrire une fonction ``is_player1_first`` qui indique si le joueur numéro 1 est ou pas celui qui commence la partie selon qu'il possède le domino le plus fort.
+
+
+==Les fonctions concernant les stratégies==
+
+La stratégie des deux joueurs est déterminée dans la fonction effectuant les tours de jeu. Elle peut être différente pour chacun des deux joueurs, d’où son intérêt. Il y a trois catégories de stratégie :
+- une où le joueur choisit ses dominos à placer totalement au hasard ;
+- celles créées pour faire gagner le joueur (jouant les dominos placés en premier dans l’ordre lexicographique ; soit ceux qui valent le plus de points ; soit en jouant ceux dont les deux valeurs sont les plus présentes dans la main du joueur, ainsi il garde le plus de possibilités pour les tours à venir) ;
+- une dernière stratégie consistant à tenter de le faire perdre en jouant les dominos valant le moins de points.
+
 
 
 ==Programme Python==

@@ -44,7 +44,7 @@ def tri_decr(player):
   return player
 
 def is_player1_first(pl1,pl2):
-  """Le joueur A a-t-il une meilleure main que le joueur B ?"""
+  """Le joueur 1 a-t-il une meilleure main que le joueur 2 ?"""
   if est_avant(pl1[0],pl2[0]):
    return True
   return False
@@ -62,18 +62,6 @@ def possibilites(table,pl):
     if pl[i][0]==x or pl[i][1]==x or pl[i][0]==y or pl[i][1]==y:
       possbl = possbl + [ i ] 
   return possbl
-
-def un_tour_de_jeu(table,player,passe):
-  """Tente de placer sur un des deux bouts de la table un
-  domino de la maon du player. Si ce n'est pas spossible,
-  on incremente passed_tours.
-  """
-  possbl = possibilites(table,player)
-  if len(possbl)==0:
-    return table,player,passe + 1
-  table = positionne(player[ possbl[0] ], table)
-  player.pop(possbl[0])
-  return table,player,0
 
 def positionne(domino,table):
   """Positionne le domino correctement sur la table"""
@@ -94,41 +82,49 @@ if __name__ == "__main__":
   jeu = creation_jeu()
   player1 = tri_decr(distribue(jeu))
   player2 = tri_decr(distribue(jeu))
-  print "Joueur 1 : ",player1
-  print "Joueur 2 : ",player2
+  print "La main du Joueur 1 : ",player1
+  print "La main du Joueur 2 : ",player2
   print ""
   # initialisation de la partie
   if is_player1_first(player1,player2):
-    print "Joueur1 commence"
     table = [ player1[0] ]
+    print "Joueur 1 joue : ", table
     player1.pop(0)
     a_qui_le_tour = 2
   else:
-    print "Joueur2 commence"
     table = [ player2[0] ]
+    print "Joueur 2 joue : ", table
     player2.pop(0)
     a_qui_le_tour = 1
-  print "Table : ", table
   
   # c'est parti
-  passed_tours = 0
-  while passed_tours<2 and len(player1)>0 and len(player2)>0:
-    p = passed_tours
+  cpt_passe = 0
+  while cpt_passe<2 and len(player1)>0 and len(player2)>0:
     if a_qui_le_tour==1:
-      table,player1,passed_tours = un_tour_de_jeu(table,player1,passed_tours)
+      possbl = possibilites(table,player1)
+      if len(possbl)==0:
+        print "Joueur 1 passe."
+        cpt_passe = cpt_passe + 1
+      else:
+        table = positionne(player1[ possbl[0] ], table)
+        player1.pop(possbl[0])
+        cpt_passe = 0
+        print "Joueur 1 joue : ", table
       a_qui_le_tour = 2
-      if p!=passed_tours:
-        print "Joueur 1 passe"
     else:
-      table,player2,passed_tours = un_tour_de_jeu(table,player2,passed_tours)
+      possbl = possibilites(table,player2)
+      if len(possbl)==0:
+        print "Joueur 2 passe."
+        cpt_passe = cpt_passe + 1
+      else:
+        table = positionne(player2[ possbl[0] ], table)
+        player2.pop(possbl[0])
+        cpt_passe = 0
+        print "Joueur 2 joue : ", table
       a_qui_le_tour = 1
-      if p!=passed_tours:
-        print "Joueur 2 passe"
-    if p==passed_tours:
-      print "Table : ", table
   
   # Fin de partie
-  print "Joueur 1 : ",player1
-  print "Joueur 2 : ",player2
+  print "La main du Joueur 1 : ",player1
+  print "La main du Joueur 2 : ",player2
   
 

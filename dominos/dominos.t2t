@@ -51,7 +51,7 @@ $J=\left(
 
 ==Premières fonctions==
 
-Ce sont des fonctions qui ne servent pas directement au déroulement de la partie de dominos mais qui permettent sa mise en place ou qui sont indispensables en tant qu’outils pour les fonctions avancées.
+Ce sont des fonctions qui ne servent pas directement au déroulement de la partie de dominos mais qui permettent sa mise en place ou qui sont indispensables en tant qu'outils pour les fonctions avancées.
 
 + Écrire la fonction ``creation_jeu`` capable de donner
  l'ensemble des dominos de la boîte de jeu.
@@ -68,18 +68,19 @@ Ce sont des fonctions qui ne servent pas directement au déroulement de la parti
 
 ==Les fonctions concernant le déroulement de la partie==
 
-Ces fonctions permettent d’initialiser la partie, d’enchaîner les tours de jeux, et de terminer la partie. Elles utilisent les fonctions citées précédemment à travers d’autres fonctions plus complexes. Les deux principales fonctions sont celle permettant de désigner le joueur qui posera le premier domino, et celle qui, grâce à une boucle, fait jouer les joueurs chacun leur tour.
+Ces fonctions permettent d'initialiser la partie, d'enchaîner les tours de jeux, et de terminer la partie. Elles utilisent les fonctions citées précédemment à travers d'autres fonctions plus complexes. Les deux principales fonctions sont celle permettant de désigner le joueur qui posera le premier domino, et celle qui, grâce à une boucle, fait jouer les joueurs chacun leur tour.
 
++ Écrire une fonction ``is_player1_first`` qui indique si le joueur numéro 1 est ou pas celui qui commence la partie selon qu'il possède le domino le plus fort.
 + Écrire une fonction ``possibilites`` qui à partir de la chaîne de dominos se trouvant déjà sur la table et de la main d'un joueur, renvoie les choix possibles de dominos pour ce joueur.
  Par exemple , pour une table  constituée de la chaîne de dominos [3,4],[4,4], et pour une main constituée des dominos {[2,3],[1,5],[4,6]}, la fonction reverrait les nombres 0 et 2 qui sont les positions des deux dominos pouvant être placés sur la table.
-+ Écrire une fonction ``is_player1_first`` qui indique si le joueur numéro 1 est ou pas celui qui commence la partie selon qu'il possède le domino le plus fort.
++ Écrire une fonction ``positionne`` qui à partir d'une table et d'un domino qui peut être placé sur cette table (à l'un des deux bouts) renvoie la nouvelle table (avec le domino correctement placé).
 
 
 ==Les fonctions concernant les stratégies==
 
-La stratégie des deux joueurs est déterminée dans la fonction effectuant les tours de jeu. Elle peut être différente pour chacun des deux joueurs, d’où son intérêt. Il y a trois catégories de stratégie :
-- une où le joueur choisit ses dominos à placer totalement au hasard ;
-- celles créées pour faire gagner le joueur (jouant les dominos placés en premier dans l’ordre lexicographique ; soit ceux qui valent le plus de points ; soit en jouant ceux dont les deux valeurs sont les plus présentes dans la main du joueur, ainsi il garde le plus de possibilités pour les tours à venir) ;
+La stratégie des deux joueurs est déterminée dans la fonction effectuant les tours de jeu. Elle peut être différente pour chacun des deux joueurs, d'où son intérêt. Il y a trois catégories de stratégie :
+- celles créées pour faire gagner le joueur (jouant les dominos placés en premier dans l'ordre lexicographique ; soit ceux qui valent le plus de points ; soit en jouant ceux dont les deux valeurs sont les plus présentes dans la main du joueur, ainsi il garde le plus de possibilités pour les tours à venir) ;
+- celle où le joueur choisit ses dominos à placer totalement au hasard ;
 - une dernière stratégie consistant à tenter de le faire perdre en jouant les dominos valant le moins de points.
 
 

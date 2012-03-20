@@ -81,6 +81,17 @@ def strategie_premier(table,player,possbl):
   player.pop(possbl[0])
   return table,player
 
+def strategie_plus_de_points(table,player,possbl):
+  """Place sur la table le domino qui vaut le plus de points"""
+  max = 0
+  for i in range(len(possbl)):
+    val = player[possbl[0]][0]+player[possbl[0]][1]
+    if val > max:
+      ind = possbl[0]
+  table = positionne(player[ possbl[ind] ], table)
+  player.pop(possbl[0])
+  return table,player
+
 def strategie_hasard(table,player,possbl):
   """Place sur la table un domino au hasard"""
   ind = random.randint(0,len(possbl)-1)  

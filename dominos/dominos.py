@@ -75,6 +75,19 @@ def positionne(domino,table):
     table = table + [ [ domino[1],domino[0] ] ]
   return table 
 
+def strategie_premier(table,player,possbl):
+  """Place sur la table le premier domino dans l'ordre lexicographique"""
+  table = positionne(player[ possbl[0] ], table)
+  player.pop(possbl[0])
+  return table,player
+
+def strategie_hasard(table,player,possbl):
+  """Place sur la table un domino au hasard"""
+  ind = random.randint(0,len(possbl)-1)  
+  table = positionne(player[ possbl[ind] ], table)
+  player.pop(possbl[0])
+  return table,player
+
 if __name__ == "__main__":
   import doctest
   doctest.testmod()
@@ -108,8 +121,7 @@ if __name__ == "__main__":
         print "Joueur 1 passe."
         cpt_passe = cpt_passe + 1
       else:
-        table = positionne(player1[ possbl[0] ], table)
-        player1.pop(possbl[0])
+        table,player1 = strategie_premier(table,player1,possbl)
         cpt_passe = 0
         print "Joueur 1 joue : ", table
       a_qui_le_tour = 2
@@ -119,8 +131,7 @@ if __name__ == "__main__":
         print "Joueur 2 passe."
         cpt_passe = cpt_passe + 1
       else:
-        table = positionne(player2[ possbl[0] ], table)
-        player2.pop(possbl[0])
+        table,player2 = strategie_hasard(table,player2,possbl)
         cpt_passe = 0
         print "Joueur 2 joue : ", table
       a_qui_le_tour = 1

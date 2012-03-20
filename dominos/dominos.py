@@ -84,10 +84,11 @@ def strategie_premier(table,player,possbl):
 def strategie_plus_de_points(table,player,possbl):
   """Place sur la table le domino qui vaut le plus de points"""
   max = 0
+  ind = 0
   for i in range(len(possbl)):
-    val = player[possbl[0]][0]+player[possbl[0]][1]
+    val = player[possbl[i]][0]+player[possbl[i]][1]
     if val > max:
-      ind = possbl[0]
+      ind = i
   table = positionne(player[ possbl[ind] ], table)
   player.pop(possbl[0])
   return table,player
@@ -142,7 +143,7 @@ if __name__ == "__main__":
         print "Joueur 2 passe."
         cpt_passe = cpt_passe + 1
       else:
-        table,player2 = strategie_hasard(table,player2,possbl)
+        table,player2 = strategie_plus_de_points(table,player2,possbl)
         cpt_passe = 0
         print "Joueur 2 joue : ", table
       a_qui_le_tour = 1

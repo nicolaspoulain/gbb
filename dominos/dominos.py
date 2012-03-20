@@ -85,7 +85,7 @@ if __name__ == "__main__":
   print "La main du Joueur 1 : ",player1
   print "La main du Joueur 2 : ",player2
   print ""
-  # initialisation de la partie
+  # Initialisation de la partie
   if is_player1_first(player1,player2):
     table = [ player1[0] ]
     print "Joueur 1 joue : ", table
@@ -97,7 +97,9 @@ if __name__ == "__main__":
     player2.pop(0)
     a_qui_le_tour = 1
   
-  # c'est parti
+  # Les tours de jeu :
+  # ils vont durer tant que les deux joueurs possedent des dominos
+  # et qu'ils n'ont pas consecutivement passe leur tour. 
   cpt_passe = 0
   while cpt_passe<2 and len(player1)>0 and len(player2)>0:
     if a_qui_le_tour==1:
@@ -123,7 +125,7 @@ if __name__ == "__main__":
         print "Joueur 2 joue : ", table
       a_qui_le_tour = 1
   
-  # Fin de partie
+  # Fin de partie : on affiche ce qu'il reste a chacun.
   print "La main du Joueur 1 : ",player1
   print "La main du Joueur 2 : ",player2
   

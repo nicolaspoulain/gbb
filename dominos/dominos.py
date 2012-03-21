@@ -94,18 +94,19 @@ def strategie_plus_de_points(table,player,possbl):
   return table,player
 
 def strategie_plus_present(table,player,possbl):
-  """Place sur la table le domino dont les deux valeurs sont les plus presentes dans la main"""
+  """Place sur la table le domino dont la moyenne de presence des deux valeurs 
+  est la plus elevee"""
   # Construit le tableau des effectifs des valeurs presentes dans la main
   effectifs = [0, 0, 0, 0, 0, 0, 0]
   for i in range(len(player)):
     effectifs[ player[i][0] ] = effectifs[ player[i][0] ] + 1
     effectifs[ player[i][1] ] = effectifs[ player[i][1] ] + 1
   # Repere l'indice du meilleur domino
-  max = 0
+  max_moyenne = 0
   for i in range(len(possbl)):
-    val0 = effectifs [ player[possbl[i]][0] ]
-    val1 = effectifs [ player[possbl[i]][1] ]
-    if val0 >= max or val1>=max:
+    moyenne = effectifs [ player[possbl[i]][0] ] + effectifs [ player[possbl[i]][1] ]
+    if moyenne >= max_moyenne:
+      max_moyenne = moyenne
       ind = i
   # place le domino sur la table
   table = positionne(player[ possbl[ind] ], table)
@@ -138,10 +139,11 @@ if __name__ == "__main__":
   doctest.testmod()
 
   resultats_tournoi = [0, 0, 0]
-  for i in range(10000):
+  for i in range(100):
     jeu = creation_jeu()
     player1 = tri_decr(distribue(jeu))
     player2 = tri_decr(distribue(jeu))
+    print "--------Nouvelle partie---------"
     print "La main du Joueur 1 : ",player1
     print "La main du Joueur 2 : ",player2
     print ""
@@ -168,7 +170,7 @@ if __name__ == "__main__":
           print "Joueur 1 passe."
           cpt_passe = cpt_passe + 1
         else:
-          table,player1 = strategie_hasard(table,player1,possbl)
+          table,player1 = strategie_plus_present(table,player1,possbl)
           cpt_passe = 0
           print "Joueur 1 joue : ", table
         a_qui_le_tour = 2
@@ -178,7 +180,7 @@ if __name__ == "__main__":
           print "Joueur 2 passe."
           cpt_passe = cpt_passe + 1
         else:
-          table,player2 = strategie_plus_de_points(table,player2,possbl)
+          table,player2 = strategie_premier(table,player2,possbl)
           cpt_passe = 0
           print "Joueur 2 joue : ", table
         a_qui_le_tour = 1
@@ -186,7 +188,11 @@ if __name__ == "__main__":
     # Fin de partie : on affiche ce qu'il reste a chacun.
     print "La main du Joueur 1 : ",player1
     print "La main du Joueur 2 : ",player2
-    winner = who_wins(player1,player2)    
+    winner = who_wins(player1,player2)
+    if winner == 0:
+      print "Partie nulle."
+    else:
+      print "le joueur",winner,"gagne."
     resultats_tournoi[winner] = resultats_tournoi[winner] + 1
       
   print resultats_tournoi

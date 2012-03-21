@@ -119,56 +119,74 @@ def strategie_hasard(table,player,possbl):
   player.pop(possbl[0])
   return table,player
 
+def who_wins(player1,player2):
+  somme_points_p1 = 0
+  for i in range(len(player1)):
+    somme_points_p1 = somme_points_p1 + player1[i][0] + player1[i][0]
+  somme_points_p2 = 0
+  for i in range(len(player2)):
+    somme_points_p2 = somme_points_p2 + player2[i][0] + player2[i][0]
+  if somme_points_p1 < somme_points_p2:
+    return 1
+  elif somme_points_p1 > somme_points_p2:
+    return 2
+  else:
+    return 0
+
 if __name__ == "__main__":
   import doctest
   doctest.testmod()
-  
-  jeu = creation_jeu()
-  player1 = tri_decr(distribue(jeu))
-  player2 = tri_decr(distribue(jeu))
-  print "La main du Joueur 1 : ",player1
-  print "La main du Joueur 2 : ",player2
-  print ""
-  # Initialisation de la partie
-  if is_player1_first(player1,player2):
-    table = [ player1[0] ]
-    print "Joueur 1 joue : ", table
-    player1.pop(0)
-    a_qui_le_tour = 2
-  else:
-    table = [ player2[0] ]
-    print "Joueur 2 joue : ", table
-    player2.pop(0)
-    a_qui_le_tour = 1
-  
-  # Les tours de jeu :
-  # ils vont durer tant que les deux joueurs possedent des dominos
-  # et qu'ils n'ont pas consecutivement passe leur tour. 
-  cpt_passe = 0
-  while cpt_passe<2 and len(player1)>0 and len(player2)>0:
-    if a_qui_le_tour==1:
-      possbl = possibilites(table,player1)
-      if len(possbl)==0:
-        print "Joueur 1 passe."
-        cpt_passe = cpt_passe + 1
-      else:
-        table,player1 = strategie_plus_present(table,player1,possbl)
-        cpt_passe = 0
-        print "Joueur 1 joue : ", table
+
+  resultats_tournoi = [0, 0, 0]
+  for i in range(10000):
+    jeu = creation_jeu()
+    player1 = tri_decr(distribue(jeu))
+    player2 = tri_decr(distribue(jeu))
+    print "La main du Joueur 1 : ",player1
+    print "La main du Joueur 2 : ",player2
+    print ""
+    # Initialisation de la partie
+    if is_player1_first(player1,player2):
+      table = [ player1[0] ]
+      print "Joueur 1 joue : ", table
+      player1.pop(0)
       a_qui_le_tour = 2
     else:
-      possbl = possibilites(table,player2)
-      if len(possbl)==0:
-        print "Joueur 2 passe."
-        cpt_passe = cpt_passe + 1
-      else:
-        table,player2 = strategie_plus_de_points(table,player2,possbl)
-        cpt_passe = 0
-        print "Joueur 2 joue : ", table
+      table = [ player2[0] ]
+      print "Joueur 2 joue : ", table
+      player2.pop(0)
       a_qui_le_tour = 1
   
-  # Fin de partie : on affiche ce qu'il reste a chacun.
-  print "La main du Joueur 1 : ",player1
-  print "La main du Joueur 2 : ",player2
+    # Les tours de jeu :
+    # ils vont durer tant que les deux joueurs possedent des dominos
+    # et qu'ils n'ont pas consecutivement passe leur tour. 
+    cpt_passe = 0
+    while cpt_passe<2 and len(player1)>0 and len(player2)>0:
+      if a_qui_le_tour==1:
+        possbl = possibilites(table,player1)
+        if len(possbl)==0:
+          print "Joueur 1 passe."
+          cpt_passe = cpt_passe + 1
+        else:
+          table,player1 = strategie_hasard(table,player1,possbl)
+          cpt_passe = 0
+          print "Joueur 1 joue : ", table
+        a_qui_le_tour = 2
+      else:
+        possbl = possibilites(table,player2)
+        if len(possbl)==0:
+          print "Joueur 2 passe."
+          cpt_passe = cpt_passe + 1
+        else:
+          table,player2 = strategie_plus_de_points(table,player2,possbl)
+          cpt_passe = 0
+          print "Joueur 2 joue : ", table
+        a_qui_le_tour = 1
   
-
+    # Fin de partie : on affiche ce qu'il reste a chacun.
+    print "La main du Joueur 1 : ",player1
+    print "La main du Joueur 2 : ",player2
+    winner = who_wins(player1,player2)    
+    resultats_tournoi[winner] = resultats_tournoi[winner] + 1
+      
+  print resultats_tournoi

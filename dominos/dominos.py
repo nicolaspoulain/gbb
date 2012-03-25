@@ -90,7 +90,7 @@ def strategie_plus_de_points(table,player,possbl):
       ind = i
   # place le domino sur la table
   table = positionne(player[ possbl[ind] ], table)
-  player.pop(possbl[0])
+  player.pop(possbl[ind])
   return table,player
 
 def strategie_plus_present(table,player,possbl):
@@ -110,14 +110,14 @@ def strategie_plus_present(table,player,possbl):
       ind = i
   # place le domino sur la table
   table = positionne(player[ possbl[ind] ], table)
-  player.pop(possbl[0])
+  player.pop(possbl[ind])
   return table,player
 
 def strategie_hasard(table,player,possbl):
   """Place sur la table un domino au hasard"""
   ind = random.randint(0,len(possbl)-1)  
   table = positionne(player[ possbl[ind] ], table)
-  player.pop(possbl[0])
+  player.pop(possbl[ind])
   return table,player
 
 def who_wins(player1,player2):
@@ -139,7 +139,7 @@ if __name__ == "__main__":
   doctest.testmod()
 
   resultats_tournoi = [0, 0, 0]
-  for i in range(100):
+  for i in range(2):
     jeu = creation_jeu()
     player1 = tri_decr(distribue(jeu))
     player2 = tri_decr(distribue(jeu))
@@ -180,7 +180,7 @@ if __name__ == "__main__":
           print "Joueur 2 passe."
           cpt_passe = cpt_passe + 1
         else:
-          table,player2 = strategie_premier(table,player2,possbl)
+          table,player2 = strategie_plus_de_points(table,player2,possbl)
           cpt_passe = 0
           print "Joueur 2 joue : ", table
         a_qui_le_tour = 1

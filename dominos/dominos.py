@@ -74,20 +74,28 @@ def positionne(domino,table):
     table = table + [ [ domino[1],domino[0] ] ]
   return table 
 
-def strategie_premier(table,player,possbl):
-  """Place sur la table le premier domino dans l'ordre lexicographique"""
-  table = positionne(player[ possbl[0] ], table)
-  player.pop(possbl[0])
+def strategie_pire(table,player,possbl):
+  """Place sur la table le dernier domino dans l'ordre lexicographique"""
+  table = positionne(player[ possbl[len(possbl)-1] ], table)
+  player.pop(possbl[len(possbl)-1])
+  return table,player
+
+def strategie_hasard(table,player,possbl):
+  """Place sur la table un domino au hasard"""
+  ind = random.randint(0,len(possbl)-1)  
+  table = positionne(player[ possbl[ind] ], table)
+  player.pop(possbl[ind])
   return table,player
 
 def strategie_plus_de_points(table,player,possbl):
   """Place sur la table le domino qui vaut le plus de points"""
   # Repere l'indice du meillleur domino
-  max = 0
+  max = -1
   for i in range(len(possbl)):
     val = player[possbl[i]][0]+player[possbl[i]][1]
-    if val >= max:
+    if val > max:
       ind = i
+      max = val
   # place le domino sur la table
   table = positionne(player[ possbl[ind] ], table)
   player.pop(possbl[ind])
@@ -102,20 +110,13 @@ def strategie_plus_present(table,player,possbl):
     effectifs[ player[i][0] ] = effectifs[ player[i][0] ] + 1
     effectifs[ player[i][1] ] = effectifs[ player[i][1] ] + 1
   # Repere l'indice du meilleur domino
-  max_moyenne = 0
+  max_moyenne = -1
   for i in range(len(possbl)):
     moyenne = effectifs [ player[possbl[i]][0] ] + effectifs [ player[possbl[i]][1] ]
-    if moyenne >= max_moyenne:
+    if moyenne > max_moyenne:
       max_moyenne = moyenne
       ind = i
   # place le domino sur la table
-  table = positionne(player[ possbl[ind] ], table)
-  player.pop(possbl[ind])
-  return table,player
-
-def strategie_hasard(table,player,possbl):
-  """Place sur la table un domino au hasard"""
-  ind = random.randint(0,len(possbl)-1)  
   table = positionne(player[ possbl[ind] ], table)
   player.pop(possbl[ind])
   return table,player
@@ -135,11 +136,9 @@ def who_wins(player1,player2):
     return 0
 
 if __name__ == "__main__":
-  import doctest
-  doctest.testmod()
 
   resultats_tournoi = [0, 0, 0]
-  for i in range(2):
+  for i in range(10000):
     jeu = creation_jeu()
     player1 = tri_decr(distribue(jeu))
     player2 = tri_decr(distribue(jeu))
@@ -180,7 +179,7 @@ if __name__ == "__main__":
           print "Joueur 2 passe."
           cpt_passe = cpt_passe + 1
         else:
-          table,player2 = strategie_plus_de_points(table,player2,possbl)
+          table,player2 = strategie_hasard(table,player2,possbl)
           cpt_passe = 0
           print "Joueur 2 joue : ", table
         a_qui_le_tour = 1

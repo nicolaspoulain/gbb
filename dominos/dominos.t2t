@@ -2,8 +2,8 @@
 %Nicolas Poulain
 
 %!postproc(md):  \\\[(.*?)\\\]   $$\1$$
-%!preproc(tex): '^%tex% ' ''
 %!preproc(md): '^%md% ' ''
+%!preproc(tex): '^%tex% ' ''
 % txt2tags-svn -t md dominos.t2t && pandoc --toc --number-sections --listings --smart --highlight-style=pygments --include-in-header=include.tex -s dominos.md -o dominos.tex && pdflatex dominos.tex && evince dominos.pdf
 
 =Règles du jeu de dominos=
@@ -103,7 +103,6 @@ La liste suivante donne pour chaque tournoi de 100000 parties, le nombre de nuls
 
 Ainsi on constate que comme on s'y attendait la stratégie ```pire``` est la moins efficace et que la stratégie ```hasard``` se place deuxième.
 Ce qui était moins évident a priori, c'est que la stratégie élaborée ```plus_present``` consistant à tenter de conserver le plus de possibilités est finalement nettement moins intéressante que ```plus_de_points``` qui propose de se débarasser au plus vite des dominos les plus gros.
-
 
 %tex% \begin{landscape}\begin{footnotesize}\begin{verbatim}
 %md% \begin{landscape}\begin{footnotesize}\begin{verbatim}

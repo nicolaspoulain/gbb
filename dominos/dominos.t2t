@@ -2,7 +2,9 @@
 %Nicolas Poulain
 
 %!postproc(md):  \\\[(.*?)\\\]   $$\1$$
-% txt2tags-svn -t md dominos.t2t && pandoc --toc --number-sections --listings --smart --include-in-header=include.tex -s dominos.md -o dominos.tex && pdflatex dominos.tex && evince dominos.pdf
+%!preproc(tex): '^%tex% ' ''
+%!preproc(md): '^%md% ' ''
+% txt2tags-svn -t md dominos.t2t && pandoc --toc --number-sections --listings --smart --highlight-style=pygments --include-in-header=include.tex -s dominos.md -o dominos.tex && pdflatex dominos.tex && evince dominos.pdf
 
 =Règles du jeu de dominos=
 
@@ -23,10 +25,10 @@ dominos. On peut adopter une des règles suivantes :
   On a donc tout intérêt à se débarrasser en premier des dominos valant beaucoup de points.
 
 
-**Variante**
-- Lorsqu'un joueur n'a pas de domino qui convienne, il pioche en prenant
-  une pièce du talon et passe son tour, c'est le suivant qui joue.
-- Le vainqueur est celui qui a placé le premier tous ses dominos.
+%**Variante**
+%- Lorsqu'un joueur n'a pas de domino qui convienne, il pioche en prenant
+%  une pièce du talon et passe son tour, c'est le suivant qui joue.
+%- Le vainqueur est celui qui a placé le premier tous ses dominos.
 
 
 [dominosuite.png]
@@ -53,16 +55,16 @@ $J=\left(
 
 Ce sont des fonctions qui ne servent pas directement au déroulement de la partie de dominos mais qui permettent sa mise en place ou qui sont indispensables en tant qu'outils pour les fonctions avancées.
 
-+ Écrire la fonction ``creation_jeu`` capable de donner
++ Écrire la fonction ```creation_jeu``` capable de donner
  l'ensemble des dominos de la boîte de jeu.
 \[\left(\begin{array}{cccccccccccccccccccccccccccc} 6 & 6 & 6 & 6 & 6 & 6 & 6 & 5 & 5 & 5 & 5 & 5 & 5 & 4 & 4 & 4 & 4 & 4 & 3 & 3 & 3 & 3 & 2 & 2 & 2 & 1 & 1 & 0 \\ 6 & 5 & 4 & 3 & 2 & 1 & 0 & 5 & 4 & 3 & 2 & 1 & 0 & 4 & 3 & 2 & 1 & 0 & 3 & 2 & 1 & 0 & 2 & 1 & 0 & 1 & 0 & 0 \\ \end{array}\right)\]
-+ Écrire une fonction ``distribue`` qui tire au hasard (et sans remise) une main
++ Écrire une fonction ```distribue``` qui tire au hasard (et sans remise) une main
  contenant un nombre donné de dominos.
-+ Écrire une fonction ``est_avant`` qui admet comme paramètres d'entrée deux dominos
- et qui renvoie ``True`` ou ``False`` selon que les deux dominos sont ou pas classés
++ Écrire une fonction ```est_avant``` qui admet comme paramètres d'entrée deux dominos
+ et qui renvoie ```True``` ou ```False``` selon que les deux dominos sont ou pas classés
  dans l'ordre décroissant.
- Par exemple ``est_avant([6,2],[5,0])`` renverrait ``True``.
-+ Écrire une fonction ``tri_decr`` qui trie un ensemble de dominos par ordre
+ Par exemple ```est_avant([6,2],[5,0])``` renverrait ```True```.
++ Écrire une fonction ```tri_decr``` qui trie un ensemble de dominos par ordre
  décroissant.
 
 
@@ -70,10 +72,10 @@ Ce sont des fonctions qui ne servent pas directement au déroulement de la parti
 
 Ces fonctions permettent d'initialiser la partie, d'enchaîner les tours de jeux, et de terminer la partie. Elles utilisent les fonctions citées précédemment à travers d'autres fonctions plus complexes. Les deux principales fonctions sont celle permettant de désigner le joueur qui posera le premier domino, et celle qui, grâce à une boucle, fait jouer les joueurs chacun leur tour.
 
-+ Écrire une fonction ``is_player1_first`` qui indique si le joueur numéro 1 est ou pas celui qui commence la partie selon qu'il possède le domino le plus fort.
-+ Écrire une fonction ``possibilites`` qui à partir de la chaîne de dominos se trouvant déjà sur la table et de la main d'un joueur, renvoie les choix possibles de dominos pour ce joueur.
++ Écrire une fonction ```is_player1_first``` qui indique si le joueur numéro 1 est ou pas celui qui commence la partie selon qu'il possède le domino le plus fort.
++ Écrire une fonction ```possibilites``` qui à partir de la chaîne de dominos se trouvant déjà sur la table et de la main d'un joueur, renvoie les choix possibles de dominos pour ce joueur.
  Par exemple , pour une table  constituée de la chaîne de dominos [3,4],[4,4], et pour une main constituée des dominos {[2,3],[1,5],[4,6]}, la fonction reverrait les nombres 0 et 2 qui sont les positions des deux dominos pouvant être placés sur la table.
-+ Écrire une fonction ``positionne`` qui à partir d'une table et d'un domino qui peut être placé sur cette table (à l'un des deux bouts) renvoie la nouvelle table (avec le domino correctement placé).
++ Écrire une fonction ```positionne``` qui à partir d'une table et d'un domino qui peut être placé sur cette table (à l'un des deux bouts) renvoie la nouvelle table (avec le domino correctement placé).
 
 
 ==Les fonctions concernant les stratégies==
@@ -81,10 +83,10 @@ Ces fonctions permettent d'initialiser la partie, d'enchaîner les tours de jeux
 La stratégie d'un joueur est déterminée par le choix du domino à jouer lorsque plusieurs possibilités s'offrent.
 
 Programmer les quatre stratégies suivantes :
-+ ``strategie_pire`` : joue le domino placé en dernier dans l'ordre lexicographique ;
-+ ``strategie_hasard`` :  joue un domino au hasard ;
-+ ``strategie_plus_de_points`` : joue le domino qui vaut le plus de points ;
-+ ``strategie_plus_present`` : joue le domino dont les valeurs sont les plus présentes dans la main (ainsi il garde plus de possibilités pour les tours à venir) ;
++ ```strategie_pire``` : joue le domino placé en dernier dans l'ordre lexicographique ;
++ ```strategie_hasard``` :  joue un domino au hasard ;
++ ```strategie_plus_de_points``` : joue le domino qui vaut le plus de points ;
++ ```strategie_plus_present``` : joue le domino dont les valeurs sont les plus présentes dans la main (ainsi il garde plus de possibilités pour les tours à venir) ;
 
 
 ==Resultats==
@@ -92,18 +94,19 @@ Programmer les quatre stratégies suivantes :
 En lançant un très grand nombre de parties entre deux stratégies à chaque fois, on espère obtenir une bonne estimation statistique pour comparer la qualité des stratégies.
 
 La liste suivante donne pour chaque tournoi de 100000 parties, le nombre de nuls, et le nombre de victoires de chaque côté.
-- ``hasard`` vs ``pire`` : ``[5826, 55470, 38704]``
-- ``plus_present`` vs ``pire`` : ``[6411, 61752, 31837]``
-- ``plus_present`` vs ``hasard`` ``[8398, 51217, 40385]``
-- ``plus_de_points`` vs ``pire`` : ``[5384, 62743, 31873]``
-- ``plus_de_points`` vs ``hasard`` : ``[8051, 56270, 35679]``
-- ``plus_de_points`` vs ``plus_present`` : ``[9196, 51666, 39138]``
+- ```hasard``` vs ```pire``` : ```[5826, 55470, 38704]```
+- ```plus_present``` vs ```pire``` : ```[6411, 61752, 31837]```
+- ```plus_present``` vs ```hasard``` ```[8398, 51217, 40385]```
+- ```plus_de_points``` vs ```pire``` : ```[5384, 62743, 31873]```
+- ```plus_de_points``` vs ```hasard``` : ```[8051, 56270, 35679]```
+- ```plus_de_points``` vs ```plus_present``` : ```[9196, 51666, 39138]```
 
-Ainsi on constate que comme on s'y attendait la stratégie ``pire`` est la moins efficace et que la stratégie ``hasard`` se place deuxième.
-Ce qui étati moins évident a priori, c'est que la stratégie élaborés ``plus_present`` consistant à tenter de conserver le plus de possibilités est finalement moins intéressante que ``plus_de_points`` qui propose de se débarasser au plus vite des dominos les plus gros.
+Ainsi on constate que comme on s'y attendait la stratégie ```pire``` est la moins efficace et que la stratégie ```hasard``` se place deuxième.
+Ce qui était moins évident a priori, c'est que la stratégie élaborée ```plus_present``` consistant à tenter de conserver le plus de possibilités est finalement nettement moins intéressante que ```plus_de_points``` qui propose de se débarasser au plus vite des dominos les plus gros.
 
-\begin{landscape}
-\begin{lstlisting}
+
+%tex% \begin{landscape}\begin{footnotesize}\begin{verbatim}
+%md% \begin{landscape}\begin{footnotesize}\begin{verbatim}
 ```
 --------Nouvelle partie---------
 La main du Joueur 1 :  [[6, 6], [6, 2], [5, 4], [5, 3], [4, 2], [4, 1], [4, 0], [3, 2], [2, 0], [1, 1]]
@@ -150,16 +153,15 @@ La main du Joueur 1 :  [[5, 2], [5, 0]]
 La main du Joueur 2 :  [[6, 1], [5, 5], [4, 0]]
 le joueur 1 gagne.
 ```
-\end{lstlisting}
-\end{landscape}
+%tex% \end{verbatim}\end{footnotesize}\end{landscape}
+%md% \end{verbatim}\end{footnotesize}\end{landscape}
 
 
 ==Programme Python==
 
-~~~~
+%md% ```python
 %!include: ``dominos.py``
-~~~~
-
+%md% `````
 
 Le code est disponible sur <http://code.google.com/p/npoulain>.
 

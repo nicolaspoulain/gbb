@@ -8,6 +8,7 @@
 
 =Règles du jeu de dominos=
 
+
 Le jeu de dominos est un jeu de société d'origine chinoise,
 utilisant 28 pièces (dans le cas d'un jeu "double-six"), les
 dominos. On peut adopter une des règles suivantes :
@@ -94,12 +95,20 @@ Programmer les quatre stratégies suivantes :
 En lançant un très grand nombre de parties entre deux stratégies à chaque fois, on espère obtenir une bonne estimation statistique pour comparer la qualité des stratégies.
 
 La liste suivante donne pour chaque tournoi de 100000 parties, le nombre de nuls, et le nombre de victoires de chaque côté.
-- ```hasard``` vs ```pire``` : ```[5826, 55470, 38704]```
-- ```plus_present``` vs ```pire``` : ```[6411, 61752, 31837]```
-- ```plus_present``` vs ```hasard``` ```[8398, 51217, 40385]```
-- ```plus_de_points``` vs ```pire``` : ```[5384, 62743, 31873]```
-- ```plus_de_points``` vs ```hasard``` : ```[8051, 56270, 35679]```
-- ```plus_de_points``` vs ```plus_present``` : ```[9196, 51666, 39138]```
+
+
+
+%md% '''
+%md% 
+%md%          Stratégie contre Stratégie          Victoires Nuls Défaites
+%md% ------------------ ------------------------ ---------- ---- --------
+%md%         ``hasard`` ``pire``                      55470 5826 38704
+%md%   ``plus_present`` ``pire``                      61752 6411 31837
+%md%   ``plus_present`` ``hasard``                    51217 8398 40385
+%md% ``plus_de_points`` ``pire``                      62743 5384 31873
+%md% ``plus_de_points`` ``hasard``                    56270 8051 35679
+%md% ``plus_de_points`` ``plus_present``              51666 9196 39138
+%md% '''
 
 Ainsi on constate que comme on s'y attendait la stratégie ```pire``` est la moins efficace et que la stratégie ```hasard``` se place deuxième.
 Ce qui était moins évident a priori, c'est que la stratégie élaborée ```plus_present``` consistant à tenter de conserver le plus de possibilités est finalement nettement moins intéressante que ```plus_de_points``` qui propose de se débarasser au plus vite des dominos les plus gros.

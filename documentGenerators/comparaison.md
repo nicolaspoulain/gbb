@@ -95,8 +95,8 @@ avantage :
 Il existe une alternative qui est à la fois simple, interopérable et efficace :
 les langages de balisage légers.
 
-Langages de balisage légers
-===========================
+Les langages de balisage légers et les wikis
+============================================
 
 Un langage de balisage léger est un langage utilisant une
 syntaxe simple, conçue pour qu'un fichier en ce langage soit aisé à saisir avec
@@ -123,31 +123,98 @@ Avantages :
 * les balises étant constituées de cractères non alphabétiques, on peut utiliser
   un correcteur d'othographe.
 
-L'export vers d'autres formats
-==============================
+Il existe de nombreux langages de balisage légers : Creole, Markdown, Asciidoc,
+etc. Chacun a ses avantages, mais tous son simples.
 
-On vient de voir qu'il exite des logiciels capables de 
+Dans la section suivante, nous allons voir qu'il est possible faire de la
+bureautique avec ces langages et nous verrons lequel choisir en fonction de
+l'usage qu'on souhaite en faire.
 
-différents formats, destinations usages
+Les langages de balisage légers et la bureautique
+=================================================
 
-diffusion web, impression, lecture sur tablette ou liseuse d'e-book, vidéo-projection
+On vient de voir qu'au sein des wikis, les langages de balisage légers sont
+transformés en HTML. 
+
+C'est maintenant que les choses
+deviennent intéressantes : il existe des logiciels permettant d'exporter et
+de mettre en forme vers différents formats pour différents usages : la diffusion
+web, bien sûr mais aussi l'export pour un traitement de texte, l'impression, la
+lecture sur tablette ou liseuse d'e-book ou encore la vidéo-projection.
+
+Ces logiciels de conversion sont nombreux, en voici quatre avec leurs principaux
+formats d'import et d'export.
+
+-----------------------------------------------------------
+Logiciel  Import    Export   Export       Export   Export
+                        web      Bureautique  TeX      LBL
+-------   -----     ------   ----------   -----    ---------
+Txt2tags  T2t       HTML,    DocBook,     LaTeX    Creole,
+                    XHTML,   Lout,                 AsciiDoc,
+                    SGML,    MagicPoint,           PmWiki,
+                             PageMaker             MoinMoin,
+                                                   AsciiDoc,
+                                                   DokuWiki
+
+MMD       Markdown  HTML,    OpenDocument LaTeX
+                    XHTML
+
+Pandoc    Markdown, HTML,    OpenDocument,LaTeX,   Markdown,
+          LaTeX,    XHTML,   ODT, DOCX,   ConTeXt, RST,
+          HTML,     HTML5,   DocBook      Beamer   AsciiDoc,
+          Textile,  EPUB,                          Textile,
+          RST       Slidy,S5,                      MediaWiki
+                    DZSlides
+
+AsciiDoc  AsciiDoc  HTML,    Docbook      LaTeX
+                    XHTML
+------------------------------------------------------------
+
+---------------------------------------------------
+Fonctionnalités                Txt2tags MMD  Pandoc Asciidoc
+-------------                  ------   ---- ------ -----
+en-tête (titre, auteur, date)  x        x    x      x
+
+sections (numérotées ou non)   x        x    x      x
+
+paragraphes                    x        x    x      x
+
+listes à puces,                x        x    x      x
+numérotées et de définition 
+
+texte en gras, italique,       x        x    x      x
+souligné, barré 
+
+couleurs et tailles de texte                        x
+
+police à espacement constant   x        x    x      x
+
+coloration syntaxique de                     x      x
+code source
+
+gestion des liens              x        x    x      x
+(internet, courriel, etc.)
+
+Références internes                     x    x      x
+
+images                         x        x    x      x 
+
+tableaux                       x        x    x      x
+(gestion de bordure et 
+d’alignement)                      
+
+tableaux (fusion de cellules)                       x
+
+Légendes (images et tableaux)           x    x      x
+
+Citations                               x    x      x
+
+Notes de bas de page                    x    x      x
+
+formules mathématiques         x        x    x      x
+ (LaTeX)  
+-------------------------------------------------
 
 
 
-C’est en 1995 que l’on trouva la solution de ce problème, avec la création du premier langage Wiki, dont le but principal était de permettre l’édition facile de pages web par tout un chacun, et dont l’utilisateur actuel le plus célèbre est l’encyclopédie libre Wikipédia. S’il y a presque autant de syntaxes différentes que de logiciels Wiki, elles ont toutes la caractéristique d’utiliser des caractères textuels simples et intuitifs pour donner les indications de formatage du texte.
-
-Toujours le même exemple, une nouvelle section en MediaWiki :
-
-= Nouvelle section Wiki =
-
-et une en Setext :
-
-Nouvelle section Setext
-=======================
-
-Mais pourquoi limiter ces langages de balisage léger à la seule génération de HTML ? Pourquoi ne pas utiliser la même syntaxe pour différentes cibles (appelées backends, targets ou writers selon les logiciels), de manière à obtenir aussi bien une page web en HTML, qu’un document en LaTeX pour l’impression, ou qu’une page de man pour un logiciel ? Ce sont les logiciels qui poursuivent ce but qui m’intéressent, ils constituent pour moi l’avenir de la bureautique informatique, et j’ai été amené à les comparer pour en choisir un dans lequel m’investir comme développeur.
-
-Pandoc est un logiciel de conversion de documents permettant, à partir d’un texte écrit dans un format très simple (Markdown), de faire une page HTML, un document PDF ou encore un texte au format MediaWiki par exemple.
-
-L’auteur décrit son logiciel comme le couteau suisse de la création des documents. Ce logiciel permet de convertir des textes simples dans de nombreux formats, mais aussi de convertir différents formats entre eux, avec une qualité en constante amélioration. Plus besoin de logiciels lourds pour l’édition de vos documents : écrivez vos documents dans un simple éditeur de texte, et convertissez ensuite votre fichier dans le format de votre choix. Ce logiciel est idéal pour les documents structurés avec tableaux et images.
 

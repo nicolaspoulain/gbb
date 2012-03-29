@@ -17,7 +17,7 @@ ressemblera le résultat final.
 Les défauts majeurs de ces logiciels sont nombreux :
 
 1. Le rédacteur d'un document se concentre presque autant autant sur le fond que
-   sur la forme. Outre le temps passé, les conséquences sur le rendu sont
+   sur la forme. Outre le temps perdu, les conséquences sur le rendu sont
    nombreuses
 	* Les mises en forme les plus hétéroclites sont autorisées au dépens de
 	  la lisibilité ;
@@ -75,9 +75,9 @@ balises est inextriquable. On le génère avec un logiciel WYSIWYG...
 		</ul>
 	~~~~
 
-Comme on le voit, la syntaxe est accessible mais au goût de nombreux
-utilisateurs il y a trop de commandes de mise en forme qui nuisent à la
-lisibilité du texte lors de la saisie.
+Comme on le voit, la syntaxe est accessible mais elle nuit à la lisibilité du
+texte et au goût de nombreux utilisateurs il y a trop de commandes de mise en
+forme.
 C'est dommage car ces deux formats ouverts et universels ont chacun leur
 avantage :
 
@@ -104,6 +104,8 @@ Les wikis on grandement contribué à populariser ce type de langage. Le princip
 est de saisir des balises accessibles aux non inités, un moteur se chargeant de
 la conversion en HTML avant la publication.
 
+Re-voici notre exemple, cette fois-ci au format MarkDown :
+
 ```markdown
 Le titre du paragraphe
 ======================
@@ -119,18 +121,13 @@ Avantages :
 * les balises sont visuelles et le texte reste lisible ;
 * le nombre de balises et de règles est très limité donc
 	* la syntaxe est facile à mémoriser ;
-	* il est relativement simple de programmer un logiciel capable
-	  d'interpréter un de ces langages 
+	* il est relativement simple de programmer un interpréteur.
 * les balises étant constituées de cractères non alphabétiques, on peut utiliser
   un correcteur d'othographe.
 
 
 Il existe de nombreux langages de balisage légers : Creole, Markdown, Asciidoc,
-etc. Chacun a ses avantages, mais tous sont simples.
-
-Dans la section suivante, nous allons voir qu'il est possible faire de la
-bureautique avec ces langages et nous verrons lequel choisir en fonction de
-l'usage qu'on souhaite en faire.
+txt2tags, etc. Chacun a ses avantages, mais tous sont simples.
 
 Les langages de balisage légers et la bureautique
 =================================================
@@ -166,6 +163,7 @@ Txt2tags  T2t       HTML,    DocBook,     LaTeX    Creole,
                              PageMaker             MoinMoin,
                                                    AsciiDoc,
                                                    DokuWiki
+
 MMD       Markdown  HTML     OpenDocument LaTeX
 
 Pandoc    Markdown, HTML,    OpenDocument,LaTeX,   Markdown,

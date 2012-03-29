@@ -1,24 +1,19 @@
-\documentclass[]{article}
+\documentclass[12pt]{article}
+\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm,a4paper]{geometry}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\ifxetex
-  \usepackage{fontspec,xltxtra,xunicode}
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
-\else
-  \ifluatex
-    \usepackage{fontspec}
-    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-    \newcommand{\euro}{€}
-  \else
-    \usepackage[utf8]{inputenc}
-    \usepackage{eurosym}
-  \fi
-\fi
+\usepackage[utf8x]{inputenc}
+\usepackage{eurosym}
 \usepackage{color}
+
+% redefinir la taillle de l'environnement verbatim
+\makeatletter
+\def\verbatim{\footnotesize\@verbatim \frenchspacing\@vobeyspaces \@xverbatim}
+\makeatother
+
 \usepackage{fancyvrb}
 \DefineShortVerb[commandchars=\\\{\}]{\|}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{fontsize=\footnotesize,commandchars=\\\{\}}
 % Add ',fontsize=\small' for more characters per line
 \newenvironment{Shaded}{}{}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
@@ -53,35 +48,34 @@
 \else\Gin@nat@width\fi}
 \makeatother
 \let\Oldincludegraphics\includegraphics
-\renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=\maxwidth]{#1}}
-\ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
-              xetex,
-              colorlinks=true,
-              linkcolor=blue]{hyperref}
-\else
-  \usepackage[unicode=true,
-              colorlinks=true,
-              linkcolor=blue]{hyperref}
-\fi
+\renewcommand{\includegraphics}[1]{\fbox{\Oldincludegraphics[width=\maxwidth]{#1}}}
+\usepackage[unicode=true,
+            colorlinks=true,
+            linkcolor=blue]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\lhead{Langages de balisage légers et logiciels de conversion de documents}
+\chead{}
+%\rhead{\itshape{\nouppercase{\leftmark}}}
+\rhead{\footnotesize\textsc{\nouppercase{N. Poulain}}}
+\lfoot{}
+\cfoot{}
+\rfoot{\thepage}
 \hypersetup{breaklinks=true, pdfborder={0 0 0}}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
-\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm,a4paper]{geometry}
 \usepackage[frenchb]{babel}
-%\usepackage{lscape}
-%\usepackage{color}
-%\definecolor{vert}{rgb}{0,0.5,0}
-%\definecolor{bleu}{rgb}{0,0,0.5}
-%\lstset{language=Python,basicstyle=\ttfamily\footnotesize,commentstyle=\color{vert},keywordstyle=\color{bleu}}
+
+\VerbatimFootnotes % allows verbatim text in footnotes
 
 \title{Langages de balisage légers et logiciels de conversion de documents}
-\author{Nicolas Poulain}
+\author{N. Poulain}
 
 \begin{document}
 \maketitle
+
 
 \section{Présentation}
 
@@ -99,7 +93,7 @@ Les défauts majeurs de ces logiciels sont nombreux :
 \begin{enumerate}[1.]
 \item
   Le rédacteur d'un document se concentre presque autant autant sur le
-  fond que sur la forme. Outre le temps passé, les conséquences sur le
+  fond que sur la forme. Outre le temps perdu, les conséquences sur le
   rendu sont nombreuses
   \begin{itemize}
   \item
@@ -170,10 +164,10 @@ mot en gras puis une liste non numérotée, on saisira respecivement :
     </ul>
 \end{verbatim}
 \end{itemize}
-Comme on le voit, la syntaxe est accessible mais au goût de nombreux
-utilisateurs il y a trop de commandes de mise en forme qui nuisent à la
-lisibilité du texte lors de la saisie. C'est dommage car ces deux
-formats ouverts et universels ont chacun leur avantage :
+Comme on le voit, la syntaxe est accessible mais elle nuit à la
+lisibilité du texte et au goût de nombreux utilisateurs il y a trop de
+commandes de mise en forme. C'est dommage car ces deux formats ouverts
+et universels ont chacun leur avantage :
 
 \begin{itemize}
 \item
@@ -202,6 +196,8 @@ Les wikis on grandement contribué à populariser ce type de langage. Le
 principe est de saisir des balises accessibles aux non inités, un moteur
 se chargeant de la conversion en HTML avant la publication.
 
+Re-voici notre exemple, cette fois-ci au format MarkDown :
+
 \begin{verbatim}
 Le titre du paragraphe
 ======================
@@ -222,36 +218,41 @@ Avantages :
   \item
     la syntaxe est facile à mémoriser ;
   \item
-    il est relativement simple de programmer un logiciel capable
-    d'interpréter un de ces langages
+    il est relativement simple de programmer un interpréteur.
   \end{itemize}
 \item
   les balises étant constituées de cractères non alphabétiques, on peut
   utiliser un correcteur d'othographe.
 \end{itemize}
 Il existe de nombreux langages de balisage légers : Creole, Markdown,
-Asciidoc, etc. Chacun a ses avantages, mais tous sont simples.
-
-Dans la section suivante, nous allons voir qu'il est possible faire de
-la bureautique avec ces langages et nous verrons lequel choisir en
-fonction de l'usage qu'on souhaite en faire.
+Asciidoc, txt2tags, etc. Chacun a ses avantages, mais tous sont simples.
 
 \section{Les langages de balisage légers et la bureautique}
 
 On vient de voir qu'au sein des wikis, les langages de balisage légers
-sont transformés en HTML.
+sont transformés en HTML. C'est maintenant que les choses deviennent
+intéressantes : il existe des logiciels permettant d'exporter et de
+mettre en forme vers différents formats pour différents usages : la
+diffusion web, bien sûr mais aussi l'export pour un traitement de texte,
+l'impression, la lecture sur tablette ou liseuse d'e-book ou encore la
+vidéo-projection.
 
-C'est maintenant que les choses deviennent intéressantes : il existe des
-logiciels permettant d'exporter et de mettre en forme vers différents
-formats pour différents usages : la diffusion web, bien sûr mais aussi
-l'export pour un traitement de texte, l'impression, la lecture sur
-tablette ou liseuse d'e-book ou encore la vidéo-projection.
+Ces logiciels de conversion sont nombreux, nous choisissons ici de
+parler de quatre d'entre eux :
 
-Ces logiciels de conversion sont nombreux, en voici trois avec leurs
-principaux formats d'import et d'export.
-
+\begin{itemize}
+\item
+  Txt2tags : \url{http://txt2tags.org/}
+\item
+  MultiMarkDown : \url{http://fletcherpenney.net/multimarkdown/}
+\item
+  Pandoc : \url{http://johnmacfarlane.net/pandoc/}
+\item
+  AsciiDoc : \url{http://www.methods.co.nz/asciidoc/}
+\end{itemize}
 \ctable[pos = H, center, botcap]{llllll}
 {% notes
+\tnote[a]{LBL pour Langages de Balisage Légers}
 }
 {% rows
 \FL
@@ -266,7 +267,7 @@ Export Bureautique
 } & \parbox[b]{0.13\columnwidth}{\raggedright
 Export TeX
 } & \parbox[b]{0.13\columnwidth}{\raggedright
-Export LBL
+Export LBL\tmark[a]
 }
 \ML
 \parbox[t]{0.14\columnwidth}{\raggedright
@@ -281,6 +282,19 @@ DocBook, Lout, MagicPoint, PageMaker
 LaTeX
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 Creole, AsciiDoc, PmWiki, MoinMoin, AsciiDoc, DokuWiki
+}
+\\\noalign{\medskip}
+\parbox[t]{0.14\columnwidth}{\raggedright
+MMD
+} & \parbox[t]{0.14\columnwidth}{\raggedright
+Markdown
+} & \parbox[t]{0.13\columnwidth}{\raggedright
+HTML
+} & \parbox[t]{0.18\columnwidth}{\raggedright
+OpenDocument
+} & \parbox[t]{0.13\columnwidth}{\raggedright
+LaTeX
+} & \parbox[t]{0.13\columnwidth}{\raggedright
 }
 \\\noalign{\medskip}
 \parbox[t]{0.14\columnwidth}{\raggedright
@@ -312,7 +326,7 @@ LaTeX
 \LL
 }
 
-\ctable[pos = H, center, botcap]{llll}
+\ctable[pos = H, center, botcap]{lllll}
 {% notes
 }
 {% rows
@@ -322,14 +336,18 @@ Fonctionnalités
 } & \parbox[b]{0.13\columnwidth}{\raggedright
 Txt2tags
 } & \parbox[b]{0.10\columnwidth}{\raggedright
+MMD
+} & \parbox[b]{0.10\columnwidth}{\raggedright
 Pandoc
 } & \parbox[b]{0.10\columnwidth}{\raggedright
 Asciidoc
 }
 \ML
 \parbox[t]{0.43\columnwidth}{\raggedright
-en-tête (titre, auteur, date)
+Sections (numérotées ou non)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -338,8 +356,10 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-sections (numérotées ou non)
+Paragraphes
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -348,8 +368,10 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-paragraphes
+Listes à puces, numérotées et de définition
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -358,8 +380,10 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-listes à puces, numérotées et de définition
+Texte en gras, italique, souligné, barré
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -368,8 +392,19 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-texte en gras, italique, souligné, barré
+Couleurs et tailles de texte
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
+}
+\\\noalign{\medskip}
+\parbox[t]{0.43\columnwidth}{\raggedright
+Police à espacement constant
+} & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -378,17 +413,9 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-couleurs et tailles de texte
+Coloration syntaxique de code source
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
-} & \parbox[t]{0.10\columnwidth}{\raggedright
-x
-}
-\\\noalign{\medskip}
-\parbox[t]{0.43\columnwidth}{\raggedright
-police à espacement constant
-} & \parbox[t]{0.13\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -396,17 +423,10 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-coloration syntaxique de code source
+Gestion des liens (internet, courriel, etc.)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
-x
-}
-\\\noalign{\medskip}
-\parbox[t]{0.43\columnwidth}{\raggedright
-gestion des liens (internet, courriel, etc.)
-} & \parbox[t]{0.13\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -421,21 +441,15 @@ Références internes
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
-}
-\\\noalign{\medskip}
-\parbox[t]{0.43\columnwidth}{\raggedright
-images
-} & \parbox[t]{0.13\columnwidth}{\raggedright
-x
-} & \parbox[t]{0.10\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-tableaux (gestion de bordure et d'alignement)
+Insertion d'images
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -444,8 +458,22 @@ x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-tableaux (fusion de cellules)
+Tableaux (gestion de bordure et d'alignement)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
+}
+\\\noalign{\medskip}
+\parbox[t]{0.43\columnwidth}{\raggedright
+Tableaux (fusion de cellules)
+} & \parbox[t]{0.13\columnwidth}{\raggedright
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -454,6 +482,8 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 Légendes (images et tableaux)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -467,6 +497,8 @@ Citations
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
@@ -476,11 +508,15 @@ Notes de bas de page
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
 }
 \\\noalign{\medskip}
 \parbox[t]{0.43\columnwidth}{\raggedright
-formules mathématiques (LaTeX)
+Formules mathématiques (LaTeX)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
+} & \parbox[t]{0.10\columnwidth}{\raggedright
+x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -489,8 +525,8 @@ x
 \LL
 }
 
-Comme on le voit, ces outils ne sont pas conçus pour permettre de
-changer de police, obtenir des effets de couleur, etc.
+Que manque-t-il dans le tableau précédent ? A-t-on vraiment besoin de
+changer de police, appliquer des effets de couleur, etc.
 
 \begin{figure}[htbp]
 \centering
@@ -500,13 +536,13 @@ changer de police, obtenir des effets de couleur, etc.
 
 \section{Comment s'y prendre concrètement}
 
-Maintenant que l'environnement est décrit, étudions des exemples.
+Maintenant que l'environnement est décrit, étudions deux exemples.
 
 \subsection{Un document essentiellement textuel}
 
 Comme le document est simple, nous utilisons ici le lociciel txt2tags
 dont la syntaxe est entièrement décrite sur la page
-http://txt2tags.org/markup.html
+\url{http://txt2tags.org/markup.html}
 
 Voici le document à rédiger.
 
@@ -571,7 +607,7 @@ Pour obtenir une version html, la commande suivante fonctionne
 \begin{verbatim}
 $ txt2tags -t html newton.t2t
 \end{verbatim}
-Conclusion : le logiciel txt2tags avec sa syntaxe simpliste permet de
+Conclusion : le logiciel txt2tags avec sa syntaxe basique permet de
 produire des documents courants de façon très simple.
 
 \subsection{Un document scientifique}
@@ -579,7 +615,7 @@ produire des documents courants de façon très simple.
 La syntaxe txt2tags vue plus haut est simpliste\footnote{Statut assumé
   par l'auteur qui souhaite rester dans la ligne de l'acronyme KISS
   (\emph{Keep It Simple, Stupid}). Voir
-  http://fr.wikipedia.org/wiki/Keep\_it\_Simple,\_Stupid}, cependant
+  \url{http://fr.wikipedia.org/wiki/Keep_it_Simple,_Stupid}}, cependant
 l'export vers le langage de balisage léger nommé Markdown est possible.
 
 Le langage Markdown utilisé par logiciel Pandoc possède des
@@ -635,10 +671,56 @@ commande suivante va produire le fichier \texttt{python.pdf}.
 \NormalTok{$ pandoc --highlight-style=pygments -s python.md -o python.pdf}
 \end{Highlighting}
 \end{Shaded}
-Pour obtenir une version html, la commande suivante fonctionne
+Pour obtenir une version html, ou docx pour Microsoft Word, les
+commandes suivantes fonctionnent.
 
 \begin{verbatim}
 $ pandoc --highlight-style=pygments -s python.md -o python.html
+$ pandoc -s python.md -o python.docx
 \end{verbatim}
+\section{Conclusion}
+
+On a vu qu'il est simple et efficace de travailler avec les langages de
+balise légers. Le choix entre la syntaxe txt2tags, Markdown ou asciidoc
+se fera selon les besoins et les goûts.
+
+Dans l'ordre croissant des possibilités offertes (et donc du nombre de
+balises à mémoriser) on trouve
+
+\begin{enumerate}[1.]
+\item
+  Txt2tags
+\item
+  Pandoc ou MultiMarkDown
+\item
+  AsciiDoc
+\end{enumerate}
+Cependant chaque logiciel présente des fonctionnalités qui peuvent faire
+pencher la balance :
+
+\begin{description}
+\item[Txt2tags]
+supporte un ingénieux mécanisme de macros de remplacement
+(préprocesseur, postprocesseur, expressions régulières héritées de
+python, balises personnalisées) permettant d'étendre très simplement ses
+possibilités.
+
+\item[Pandoc]
+est capable de convertir les documents Latex et HTML en syntaxe MarkDown
+ce qui est extrèmement intéressant quand on possède des documents de
+différents qu'on souhaite uniformiser. De plus le nombre de formats de
+sortie est incomparable.
+
+\item[Multimarkdown]
+propose dans la syntaxe MarkDown un meilleur support des tableaux,
+notamment sur les fusions de cellules.
+
+\item[AsciiDoc]
+propose de nombreux styles prédéfinis et des mises en formes (trop?)
+variées. Sa syntaxe concernant les tableaux est la plus complète puisque
+tous les alignements et fusions sont possibles. Voir
+\url{http://powerman.name/doc/asciidoc#_tables}
+
+\end{description}
 
 \end{document}

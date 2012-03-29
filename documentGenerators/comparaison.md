@@ -1,5 +1,5 @@
 %Langages de balisage légers et logiciels de conversion de documents
-%Nicolas Poulain
+%N. Poulain
 
 Présentation
 ============
@@ -37,6 +37,8 @@ Les défauts majeurs de ces logiciels sont nombreux :
 1. La pérénnité des documents n'est pas certaine puisque la compatibilité
    ascendante ne fonctionne pas toujours et qu'un document écrit il y a quelques
    années risque d'être perdu, faute du logiciel capable de le lire.
+
+
 
 À l'opposé de la composition dans un logiciel de traitement de texte, on
 peut écrire des documents dans des langages de balisage. Il en existe de
@@ -133,9 +135,7 @@ Les langages de balisage légers et la bureautique
 =================================================
 
 On vient de voir qu'au sein des wikis, les langages de balisage légers sont
-transformés en HTML. 
-
-C'est maintenant que les choses
+transformés en HTML. C'est maintenant que les choses
 deviennent intéressantes : il existe des logiciels permettant d'exporter et
 de mettre en forme vers différents formats pour différents usages : la diffusion
 web, bien sûr mais aussi l'export pour un traitement de texte, l'impression, la
@@ -149,13 +149,9 @@ quatre d'entre eux :
 * Pandoc : <http://johnmacfarlane.net/pandoc/>
 * AsciiDoc : <http://www.methods.co.nz/asciidoc/> 
 
-en voici quatre avec leurs principaux
-formats d'import et d'export.
-
-
 ------------------------------------------------------------
 Logiciel  Import    Export   Export       Export   Export
-                    web      Bureautique  TeX      LBL
+                    web      Bureautique  TeX      LBL[^LBL]
 -------   -----     ------   ----------   -----    ---------
 Txt2tags  T2t       HTML,    DocBook,     LaTeX    Creole,
                     XHTML,   Lout,                 AsciiDoc,
@@ -177,40 +173,42 @@ AsciiDoc  AsciiDoc  HTML,    Docbook      LaTeX
                     XHTML
 ------------------------------------------------------------
 
+[^LBL]:LBL pour Langages de Balisage Légers
+
+
+
 -------------------------------------------------------
 Fonctionnalités                Txt2tags MMD    Pandoc Asciidoc
 -------------                  ------   ------ ------ -----
-en-tête (titre, auteur, date)  x        x      x      x
+Sections (numérotées ou non)   x        x      x      x
 
-sections (numérotées ou non)   x        x      x      x
+Paragraphes                    x        x      x      x
 
-paragraphes                    x        x      x      x
-
-listes à puces,                x        x      x      x
+Listes à puces,                x        x      x      x
 numérotées et de définition 
 
-texte en gras, italique,       x        x      x      x
+Texte en gras, italique,       x        x      x      x
 souligné, barré 
 
-couleurs et tailles de texte                          x
+Couleurs et tailles de texte                          x
 
-police à espacement constant   x        x      x      x
+Police à espacement constant   x        x      x      x
 
-coloration syntaxique de                       x      x
+Coloration syntaxique de                       x      x
 code source
 
-gestion des liens              x        x      x      x
+Gestion des liens              x        x      x      x
 (internet, courriel, etc.)
 
 Références internes                     x      x      x
 
-images                         x        x      x      x 
+Insertion d'images             x        x      x      x 
 
-tableaux                       x        x      x      x
+Tableaux                       x        x      x      x
 (gestion de bordure et 
 d’alignement)                      
 
-tableaux (fusion de cellules)           x             x
+Tableaux (fusion de cellules)           x             x
 
 Légendes (images et tableaux)           x      x      x
 
@@ -218,19 +216,19 @@ Citations                               x      x      x
 
 Notes de bas de page                    x      x      x
 
-formules mathématiques                  x      x      x
- (LaTeX)  
+Formules mathématiques                  x      x      x
+(LaTeX)  
 -------------------------------------------------------
 
-Comme on le voit, ces outils ne sont pas conçus pour permettre de changer de
-police, obtenir des effets de couleur, etc. 
+Que manque-t-il dans le tableau précédent ? A-t-on vraiment besoin de changer
+de police, appliquer des effets de couleur, etc. 
 
 ![A-t-on vraiment besoin de ceci ?](degrade.png)
 
 Comment s'y prendre concrètement
 ================================
 
-Maintenant que l'environnement est décrit, étudions des exemples.
+Maintenant que l'environnement est décrit, étudions deux exemples.
 
 Un document essentiellement textuel
 -----------------------------------
@@ -301,7 +299,7 @@ Pour obtenir une version html, la commande suivante fonctionne
 $ txt2tags -t html newton.t2t
 ```
 
-Conclusion : le logiciel txt2tags avec sa syntaxe simpliste permet de produire
+Conclusion : le logiciel txt2tags avec sa syntaxe basique permet de produire
 des documents courants de façon très simple. 
 
 Un document scientifique

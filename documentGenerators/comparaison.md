@@ -1,6 +1,8 @@
 %Langages de balisage légers et logiciels de conversion de documents
 %N. Poulain
 
+<!--pandoc-1.9.1.2 --template=NicoTemplate.tex --variable --toc --number-sections --smart --highlight-style=pygments -s comparaison.md -o comparaison.tex && pdflatex comparaison.tex && evince comparaison.pdf -->
+
 Présentation
 ============
 

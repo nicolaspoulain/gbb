@@ -1,10 +1,6 @@
 %Langages de balisage légers et logiciels de conversion de documents
 %Nicolas Poulain
 
-<!-- 
-pandoc-1.9.1.2 --toc --number-sections --smart --highlight-style=pygments --include-in-header=include.tex -s comparaison.md -o comparaison.tex && pdflatex comparaison.tex && evince comparaison.pdf 
--->
-
 Présentation
 ============
 
@@ -148,8 +144,17 @@ de mettre en forme vers différents formats pour différents usages : la diffusi
 web, bien sûr mais aussi l'export pour un traitement de texte, l'impression, la
 lecture sur tablette ou liseuse d'e-book ou encore la vidéo-projection.
 
-Ces logiciels de conversion sont nombreux, en voici trois avec leurs principaux
+Ces logiciels de conversion sont nombreux, nous choisissons ici de parler de
+quatre d'entre eux :
+
+* Txt2tags : <http://txt2tags.org/>
+* MultiMarkDown :  <http://fletcherpenney.net/multimarkdown/>
+* Pandoc : <http://johnmacfarlane.net/pandoc/>
+* AsciiDoc : <http://www.methods.co.nz/asciidoc/> 
+
+en voici quatre avec leurs principaux
 formats d'import et d'export.
+
 
 ------------------------------------------------------------
 Logiciel  Import    Export   Export       Export   Export
@@ -161,6 +166,7 @@ Txt2tags  T2t       HTML,    DocBook,     LaTeX    Creole,
                              PageMaker             MoinMoin,
                                                    AsciiDoc,
                                                    DokuWiki
+MMD       Markdown  HTML     OpenDocument LaTeX
 
 Pandoc    Markdown, HTML,    OpenDocument,LaTeX,   Markdown,
           LaTeX,    XHTML,   ODT, DOCX,   ConTeXt, RST,
@@ -174,47 +180,47 @@ AsciiDoc  AsciiDoc  HTML,    Docbook      LaTeX
 ------------------------------------------------------------
 
 -------------------------------------------------------
-Fonctionnalités                Txt2tags Pandoc Asciidoc
--------------                  ------   ------ -----
-en-tête (titre, auteur, date)  x        x      x
+Fonctionnalités                Txt2tags MMD    Pandoc Asciidoc
+-------------                  ------   ------ ------ -----
+en-tête (titre, auteur, date)  x        x      x      x
 
-sections (numérotées ou non)   x        x      x
+sections (numérotées ou non)   x        x      x      x
 
-paragraphes                    x        x      x
+paragraphes                    x        x      x      x
 
-listes à puces,                x        x      x
+listes à puces,                x        x      x      x
 numérotées et de définition 
 
-texte en gras, italique,       x        x      x
+texte en gras, italique,       x        x      x      x
 souligné, barré 
 
-couleurs et tailles de texte                   x
+couleurs et tailles de texte                          x
 
-police à espacement constant   x        x      x
+police à espacement constant   x        x      x      x
 
-coloration syntaxique de                x      x
+coloration syntaxique de                       x      x
 code source
 
-gestion des liens              x        x      x
+gestion des liens              x        x      x      x
 (internet, courriel, etc.)
 
-Références internes                     x      x
+Références internes                     x      x      x
 
-images                         x        x      x 
+images                         x        x      x      x 
 
-tableaux                       x        x      x
+tableaux                       x        x      x      x
 (gestion de bordure et 
 d’alignement)                      
 
-tableaux (fusion de cellules)                  x
+tableaux (fusion de cellules)           x             x
 
-Légendes (images et tableaux)           x      x
+Légendes (images et tableaux)           x      x      x
 
-Citations                               x      x
+Citations                               x      x      x
 
-Notes de bas de page                    x      x
+Notes de bas de page                    x      x      x
 
-formules mathématiques                  x      x
+formules mathématiques                  x      x      x
  (LaTeX)  
 -------------------------------------------------------
 
@@ -232,7 +238,7 @@ Un document essentiellement textuel
 -----------------------------------
 
 Comme le document est simple, nous utilisons ici le lociciel txt2tags dont la
-syntaxe est entièrement décrite sur la page http://txt2tags.org/markup.html
+syntaxe est entièrement décrite sur la page <http://txt2tags.org/markup.html>
 
 Voici le document à rédiger.
 
@@ -308,7 +314,7 @@ vers le langage de balisage léger nommé Markdown est possible.
 
 [^simpliste]: Statut assumé par l'auteur qui souhaite rester dans la ligne de
 l'acronyme KISS (*Keep It Simple, Stupid*). Voir
-http://fr.wikipedia.org/wiki/Keep_it_Simple,_Stupid
+<http://fr.wikipedia.org/wiki/Keep_it_Simple,_Stupid>
 
 Le langage Markdown utilisé par logiciel Pandoc possède des
 fonctionnalités supplémentaires comme nous le montre l'exemple suivant.
@@ -356,17 +362,50 @@ Disons que le texte a été enregistré dans un fichier ``python.md``, alors la
 commande suivante va produire le fichier ``python.pdf``.
 
 
-```
-$ pandoc --highlight-style=pygments -s python.md -o python.tex
-$ pdflatex python.tex
-```
+~~~~Bash
+$ pandoc --highlight-style=pygments -s python.md -o python.pdf
+~~~~
 
-Pour obtenir une version html, la commande suivante fonctionne 
+Pour obtenir une version html, ou docx pour Microsoft Word, les commandes
+suivantes fonctionnent.
 
 ```
 $ pandoc --highlight-style=pygments -s python.md -o python.html
+$ pandoc -s python.md -o python.docx
 ```
 
+Conclusion
+==========
 
+On a vu qu'il est simple et efficace de travailler avec les langages de balise
+légers. Le choix entre la syntaxe txt2tags, Markdown ou asciidoc se fera selon
+les besoins et les goûts.
+
+Dans l'ordre croissant des possibilités offertes (et donc du nombre de balises à
+mémoriser) on trouve
+1. Txt2tags
+1. Pandoc ou MultiMarkDown
+1. AsciiDoc
+
+Cependant chque logiciel présente des fonctionnalités qui peuvent faire pencher
+la balance :
+
+Txt2tags supporte un ingénieux mécanisme de macros de
+remplacement (préprocesseur, postprocesseur, expressions régulières héritées de
+python, balises personnalisées) permettant d'étendre très simplement 
+ses possibilités.
+
+Pandoc est capable de convertir les documents Latex et HTML en syntaxe MarkDown
+ce qui est extrèmement intéressant quand on possède des documents de différents
+qu'on souhaite uniformiser.
+De plus le nombre de formats de sortie est incomparable.
+
+Multimarkdown a propose dans la syntaxe MarkDown un meilleur support des
+tableaux, notamment sur les fusions de cellules.
+
+AsciiDoc propose de nombreux styles prédéfinis et des mises en formes (trop?)
+variées. Sa syntaxe concernant les tableaux est la plus complète puisque tous
+les alignements et fusions sont possibles. Voir
+<http://powerman.name/doc/asciidoc#_tables>
 
 

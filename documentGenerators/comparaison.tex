@@ -24,6 +24,16 @@
 \usepackage{enumerate}
 \usepackage{ctable}
 \usepackage{float} % provides the H option for float placement
+\usepackage{graphicx}
+% We will generate all images so they have a width \maxwidth. This means
+% that they will get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+\else\Gin@nat@width\fi}
+\makeatother
+\let\Oldincludegraphics\includegraphics
+\renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=\maxwidth]{#1}}
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
               unicode=false, % unicode breaks when used with xetex
@@ -121,27 +131,25 @@ mot en gras puis une liste non numérotée, on saisira respecivement :
   en LaTeX
 
 \begin{verbatim}
-\section{Le titre du paragraphe}
+    \section{Le titre du paragraphe}
 
-Voici un mot en \textbf{gras} puis une liste :
+    Voici un mot en \textbf{gras} puis une liste :
 
-\begin{enumerate}
- \item  c'est simple ;
- \item  c'est efficace.
-\end{enumerate}
+    \begin{enumerate}
+     \item  c'est simple ;
+     \item  c'est efficace.
+    \end{enumerate}
 \end{verbatim}
 \item
   en HTML
 
 \begin{verbatim}
-<h1>Le titre du paragraphe</h1>
-
-<p>Voici un mot en <strong>gras</strong> puis une liste :</p>
-
-<ul>
- <li> c'est simple ;</li>
- <li> c'est efficace.</li>
-</ul>
+    <h1>Le titre du paragraphe</h1>
+    <p>Voici un mot en <strong>gras</strong> puis une liste :</p>
+    <ul>
+     <li> c'est simple ;</li>
+     <li> c'est efficace.</li>
+    </ul>
 \end{verbatim}
 \end{itemize}
 Comme on le voit, la syntaxe est accessible mais au goût de nombreux
@@ -191,13 +199,20 @@ Avantages :
 \item
   les balises sont visuelles et le texte reste lisible ;
 \item
-  le nombre de balises et de règles à mémoriser est peu important ;
+  le nombre de balises et de règles est très limité donc
+  \begin{itemize}
+  \item
+    la syntaxe est facile à mémoriser ;
+  \item
+    il est relativement simple de programmer un logiciel capable
+    d'interpréter un de ces langages
+  \end{itemize}
 \item
   les balises étant constituées de cractères non alphabétiques, on peut
   utiliser un correcteur d'othographe.
 \end{itemize}
 Il existe de nombreux langages de balisage légers : Creole, Markdown,
-Asciidoc, etc. Chacun a ses avantages, mais tous son simples.
+Asciidoc, etc. Chacun a ses avantages, mais tous sont simples.
 
 Dans la section suivante, nous allons voir qu'il est possible faire de
 la bureautique avec ces langages et nous verrons lequel choisir en
@@ -214,7 +229,7 @@ formats pour différents usages : la diffusion web, bien sûr mais aussi
 l'export pour un traitement de texte, l'impression, la lecture sur
 tablette ou liseuse d'e-book ou encore la vidéo-projection.
 
-Ces logiciels de conversion sont nombreux, en voici quatre avec leurs
+Ces logiciels de conversion sont nombreux, en voici trois avec leurs
 principaux formats d'import et d'export.
 
 \ctable[pos = H, center, botcap]{llllll}
@@ -229,9 +244,9 @@ Import
 } & \parbox[b]{0.13\columnwidth}{\raggedright
 Export web
 } & \parbox[b]{0.18\columnwidth}{\raggedright
-Export Bureautiq
+Export Bureautique
 } & \parbox[b]{0.13\columnwidth}{\raggedright
-Export ue TeX
+Export TeX
 } & \parbox[b]{0.13\columnwidth}{\raggedright
 Export LBL
 }
@@ -251,19 +266,6 @@ Creole, AsciiDoc, PmWiki, MoinMoin, AsciiDoc, DokuWiki
 }
 \\\noalign{\medskip}
 \parbox[t]{0.14\columnwidth}{\raggedright
-MMD
-} & \parbox[t]{0.14\columnwidth}{\raggedright
-Markdown
-} & \parbox[t]{0.13\columnwidth}{\raggedright
-HTML, XHTML
-} & \parbox[t]{0.18\columnwidth}{\raggedright
-OpenDocument
-} & \parbox[t]{0.13\columnwidth}{\raggedright
-LaTeX
-} & \parbox[t]{0.13\columnwidth}{\raggedright
-}
-\\\noalign{\medskip}
-\parbox[t]{0.14\columnwidth}{\raggedright
 Pandoc
 } & \parbox[t]{0.14\columnwidth}{\raggedright
 Markdown, LaTeX, HTML, Textile, RST
@@ -280,7 +282,7 @@ Markdown, RST, AsciiDoc, Textile, MediaWiki
 \parbox[t]{0.14\columnwidth}{\raggedright
 AsciiDoc
 } & \parbox[t]{0.14\columnwidth}{\raggedright
-asciidoc
+AsciiDoc
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 HTML, XHTML
 } & \parbox[t]{0.18\columnwidth}{\raggedright
@@ -292,7 +294,7 @@ LaTeX
 \LL
 }
 
-\ctable[pos = H, center, botcap]{lllll}
+\ctable[pos = H, center, botcap]{llll}
 {% notes
 }
 {% rows
@@ -301,8 +303,6 @@ LaTeX
 Fonctionnalités
 } & \parbox[b]{0.13\columnwidth}{\raggedright
 Txt2tags
-} & \parbox[b]{0.07\columnwidth}{\raggedright
-MMD
 } & \parbox[b]{0.10\columnwidth}{\raggedright
 Pandoc
 } & \parbox[b]{0.10\columnwidth}{\raggedright
@@ -312,8 +312,6 @@ Asciidoc
 \parbox[t]{0.43\columnwidth}{\raggedright
 en-tête (titre, auteur, date)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -325,8 +323,6 @@ x
 sections (numérotées ou non)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -336,8 +332,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 paragraphes
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -349,8 +343,6 @@ x
 listes à puces, numérotées et de définition
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -361,8 +353,6 @@ x
 texte en gras, italique, souligné, barré
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -372,7 +362,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 couleurs et tailles de texte
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -381,8 +370,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 police à espacement constant
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -393,7 +380,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 coloration syntaxique de code source
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -404,8 +390,6 @@ x
 gestion des liens (internet, courriel, etc.)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -415,8 +399,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 Références internes
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -426,8 +408,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 images
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -439,8 +419,6 @@ x
 tableaux (gestion de bordure et d'alignement)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
 x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -450,7 +428,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 tableaux (fusion de cellules)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
@@ -459,8 +436,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 Légendes (images et tableaux)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -470,8 +445,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 Citations
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -481,8 +454,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 Notes de bas de page
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -492,9 +463,6 @@ x
 \parbox[t]{0.43\columnwidth}{\raggedright
 formules mathématiques (LaTeX)
 } & \parbox[t]{0.13\columnwidth}{\raggedright
-x
-} & \parbox[t]{0.07\columnwidth}{\raggedright
-x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
 x
 } & \parbox[t]{0.10\columnwidth}{\raggedright
@@ -502,5 +470,156 @@ x
 }
 \LL
 }
+
+Comme on le voit, ces outils ne sont pas conçus pour permettre de
+changer de police, obtenir des effets de couleur, etc.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{degrade.png}
+\caption{A-t-on vraiment besoin de ceci ?}
+\end{figure}
+
+\section{Comment s'y prendre concrètement}
+
+Maintenant que l'environnement est décrit, étudions des exemples.
+
+\subsection{Un document essentiellement textuel}
+
+Comme le document est simple, nous utilisons ici le lociciel txt2tags
+dont la syntaxe est entièrement décrite sur la page
+http://txt2tags.org/markup.html
+
+Voici le document à rédiger.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{newton.pdf}
+\caption{Un document produit par txt2tags}
+\end{figure}
+
+\begin{verbatim}
+    Fiche sur Isaac Newton 
+    D'après wikipédia
+    Lundi 32 Janvier 2029
+
+    = Isaac Newton =
+
+    **Sir Isaac Newton** (4 janvier 1643 - 31 mars 1727) est un philosophe,
+    mathématicien, physicien, alchimiste, astronome et théologien anglais.
+
+       | [IsaacNewton.jpg]
+
+    == Biographie ==
+
+    === Jeunesse ===
+
+    L'Angleterre n'ayant alors pas encore adopté le 
+    [calendrier grégorien http://fr.wikipedia.org/wiki/Calendrier_gr%C3%A9gorien],
+    la date de naissance d’Isaac Newton est enregistrée en date du 25 décembre 1642,
+    au manoir de Woolsthorpe près de Grantham, dans le Lincolnshire (Angleterre),
+    de parents paysans. 
+    À cinq ans, il fréquente l’école primaire de Skillington, puis à
+    douze ans celle de Grantham.
+
+    === Newton à Cambridge ===
+
+    À dix-huit ans, il entre alors au Trinity College de Cambridge (il y restera
+    sept ans), où il se fait remarquer par son maître, Isaac Barrow. Il a également
+    comme professeur Henry More qui l'influencera dans sa conception de l'espace
+    absolu.
+
+    == Théories scientifiques ==
+
+    Quant à la méthode, Newton n'accepte que les relations mathématiques découvertes
+    par l'observation rigoureuse des phénomènes. D'où sa fameuse formule :
+         Je ne feins pas d'hypothèses //(Hypotheses non fingo)//.
+\end{verbatim}
+Comme on le voit, les tailles des titres sont automatiques, la gestion
+des paragraphes ainsi que celle des césures est laissée au logiciel. Le
+lien hypertexte a été traduit de même que les changements de style
+(gras, italique) ainsi que la citation indentée. Les trois premières
+lignes constituent la page de garde (non reproduite ici) du document.
+
+Comment ce document mis en forme a-t-il été produit : Disons que le
+texte a été enregistré dans un fichier \texttt{newton.t2t}, alors la
+commande suivante va produire le fichier \texttt{newton.pdf}.
+
+\begin{verbatim}
+$ txt2tags -t tex newton.t2t && pdflatex newton.tex
+\end{verbatim}
+Pour obtenir une version html, la commande suivante fonctionne
+
+\begin{verbatim}
+$ txt2tags -t html newton.t2t
+\end{verbatim}
+Conclusion : le logiciel txt2tags avec sa syntaxe simpliste permet de
+produire des documents courants de façon très simple.
+
+\subsection{Un document scientifique}
+
+La syntaxe txt2tags vue plus haut est simpliste\footnote{Statut assumé
+  par l'auteur qui souhaite rester dans la ligne de l'acronyme KISS
+  (\emph{Keep It Simple, Stupid}). Voir
+  http://fr.wikipedia.org/wiki/Keep\_it\_Simple,\_Stupid}, cependant
+l'export vers le langage de balisage léger nommé Markdown est possible.
+
+Le langage Markdown utilisé par logiciel Pandoc possède des
+fonctionnalités supplémentaires comme nous le montre l'exemple suivant.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{python.pdf}
+\caption{Un document produit par Pandoc}
+\end{figure}
+
+\begin{verbatim}
+
+    Python
+    ======
+
+    Python est un langage de programmation multi-paradigme[^1]. Il favorise la
+    programmation impérative structurée, et orientée objet. Il est doté d'un typage
+    dynamique fort, d'une gestion automatique de la mémoire par ramasse-miettes et
+    d'un système de gestion d'exceptions ; il est ainsi similaire à 
+
+    * Perl
+    * Ruby
+    * Scheme
+    * Smalltalk
+    * Tcl
+
+    [^1]:Un paradigme de programmation est un style fondamental de programmation
+    informatique qui traite de la manière dont les solutions aux problèmes doivent
+    être formulées dans un langage de programmation
+
+    Implémentation de la fonction factorielle :
+    $$ x! = \prod_{n=1}^x n $$
+
+    ```Python
+     # Fonction factorielle en Python
+     def factorielle(x):
+         if x < 2:
+         return 1
+         else:
+         return x * factorielle(x-1)
+    ```
+\end{verbatim}
+Observez l'inserion de la formule mathématique (syntaxe LaTeX) ainsi que
+la coloration syntaxique du code source selon le nom du langage choisi.
+
+Comment ce document mis en forme a-t-il été produit ? Disons que le
+texte a été enregistré dans un fichier \texttt{python.md}, alors la
+commande suivante va produire le fichier \texttt{python.pdf}.
+
+\begin{verbatim}
+$ pandoc --highlight-style=pygments -s python.md -o python.tex
+$ pdflatex python.tex
+\end{verbatim}
+Pour obtenir une version html, la commande suivante fonctionne
+
+\begin{verbatim}
+$ pandoc --highlight-style=pygments -s python.md -o python.html
+\end{verbatim}
 
 \end{document}

@@ -53,29 +53,27 @@ balises est inextriquable. On le génère avec un logiciel WYSIWYG...
 
 * en LaTeX 
 
-	```
-	\section{Le titre du paragraphe}
+	~~~~
+		\section{Le titre du paragraphe}
 	 
-	Voici un mot en \textbf{gras} puis une liste :
+		Voici un mot en \textbf{gras} puis une liste :
 	 
-	\begin{enumerate}
-	 \item  c'est simple ;
-	 \item  c'est efficace.
-	\end{enumerate}
-	```
+		\begin{enumerate}
+		 \item  c'est simple ;
+		 \item  c'est efficace.
+		\end{enumerate}
+	~~~~
 
 * en HTML
 
-	```
-	<h1>Le titre du paragraphe</h1>
-	 
-	<p>Voici un mot en <strong>gras</strong> puis une liste :</p>
-	 
-	<ul>
-	 <li> c'est simple ;</li>
-	 <li> c'est efficace.</li>
-	</ul>
-	```
+	~~~~
+		<h1>Le titre du paragraphe</h1>
+		<p>Voici un mot en <strong>gras</strong> puis une liste :</p>
+		<ul>
+		 <li> c'est simple ;</li>
+		 <li> c'est efficace.</li>
+		</ul>
+	~~~~
 
 Comme on le voit, la syntaxe est accessible mais au goût de nombreux
 utilisateurs il y a trop de commandes de mise en forme qui nuisent à la
@@ -119,12 +117,16 @@ Voici un mot en **gras** puis une liste :
 Avantages :
 
 * les balises sont visuelles et le texte reste lisible ;
-* le nombre de balises et de règles à mémoriser est peu important ;
+* le nombre de balises et de règles est très limité donc
+	* la syntaxe est facile à mémoriser ;
+	* il est relativement simple de programmer un logiciel capable
+	  d'interpréter un de ces langages 
 * les balises étant constituées de cractères non alphabétiques, on peut utiliser
   un correcteur d'othographe.
 
+
 Il existe de nombreux langages de balisage légers : Creole, Markdown, Asciidoc,
-etc. Chacun a ses avantages, mais tous son simples.
+etc. Chacun a ses avantages, mais tous sont simples.
 
 Dans la section suivante, nous allons voir qu'il est possible faire de la
 bureautique avec ces langages et nous verrons lequel choisir en fonction de
@@ -142,12 +144,12 @@ de mettre en forme vers différents formats pour différents usages : la diffusi
 web, bien sûr mais aussi l'export pour un traitement de texte, l'impression, la
 lecture sur tablette ou liseuse d'e-book ou encore la vidéo-projection.
 
-Ces logiciels de conversion sont nombreux, en voici quatre avec leurs principaux
+Ces logiciels de conversion sont nombreux, en voici trois avec leurs principaux
 formats d'import et d'export.
 
------------------------------------------------------------
+------------------------------------------------------------
 Logiciel  Import    Export   Export       Export   Export
-                        web      Bureautique  TeX      LBL
+                    web      Bureautique  TeX      LBL
 -------   -----     ------   ----------   -----    ---------
 Txt2tags  T2t       HTML,    DocBook,     LaTeX    Creole,
                     XHTML,   Lout,                 AsciiDoc,
@@ -155,9 +157,6 @@ Txt2tags  T2t       HTML,    DocBook,     LaTeX    Creole,
                              PageMaker             MoinMoin,
                                                    AsciiDoc,
                                                    DokuWiki
-
-MMD       Markdown  HTML,    OpenDocument LaTeX
-                    XHTML
 
 Pandoc    Markdown, HTML,    OpenDocument,LaTeX,   Markdown,
           LaTeX,    XHTML,   ODT, DOCX,   ConTeXt, RST,
@@ -170,50 +169,199 @@ AsciiDoc  AsciiDoc  HTML,    Docbook      LaTeX
                     XHTML
 ------------------------------------------------------------
 
----------------------------------------------------
-Fonctionnalités                Txt2tags MMD  Pandoc Asciidoc
--------------                  ------   ---- ------ -----
-en-tête (titre, auteur, date)  x        x    x      x
+-------------------------------------------------------
+Fonctionnalités                Txt2tags Pandoc Asciidoc
+-------------                  ------   ------ -----
+en-tête (titre, auteur, date)  x        x      x
 
-sections (numérotées ou non)   x        x    x      x
+sections (numérotées ou non)   x        x      x
 
-paragraphes                    x        x    x      x
+paragraphes                    x        x      x
 
-listes à puces,                x        x    x      x
+listes à puces,                x        x      x
 numérotées et de définition 
 
-texte en gras, italique,       x        x    x      x
+texte en gras, italique,       x        x      x
 souligné, barré 
 
-couleurs et tailles de texte                        x
+couleurs et tailles de texte                   x
 
-police à espacement constant   x        x    x      x
+police à espacement constant   x        x      x
 
-coloration syntaxique de                     x      x
+coloration syntaxique de                x      x
 code source
 
-gestion des liens              x        x    x      x
+gestion des liens              x        x      x
 (internet, courriel, etc.)
 
-Références internes                     x    x      x
+Références internes                     x      x
 
-images                         x        x    x      x 
+images                         x        x      x 
 
-tableaux                       x        x    x      x
+tableaux                       x        x      x
 (gestion de bordure et 
 d’alignement)                      
 
-tableaux (fusion de cellules)                       x
+tableaux (fusion de cellules)                  x
 
-Légendes (images et tableaux)           x    x      x
+Légendes (images et tableaux)           x      x
 
-Citations                               x    x      x
+Citations                               x      x
 
-Notes de bas de page                    x    x      x
+Notes de bas de page                    x      x
 
-formules mathématiques         x        x    x      x
+formules mathématiques                  x      x
  (LaTeX)  
--------------------------------------------------
+-------------------------------------------------------
+
+Comme on le voit, ces outils ne sont pas conçus pour permettre de changer de
+police, obtenir des effets de couleur, etc. 
+
+![A-t-on vraiment besoin de ceci ?](degrade.png)
+
+Comment s'y prendre concrètement
+================================
+
+Maintenant que l'environnement est décrit, étudions des exemples.
+
+Un document essentiellement textuel
+-----------------------------------
+
+Comme le document est simple, nous utilisons ici le lociciel txt2tags dont la
+syntaxe est entièrement décrite sur la page http://txt2tags.org/markup.html
+
+Voici le document à rédiger.
+
+![Un document produit par txt2tags](newton.pdf)
+
+```
+	Fiche sur Isaac Newton 
+	D'après wikipédia
+	Lundi 32 Janvier 2029
+
+	= Isaac Newton =
+
+	**Sir Isaac Newton** (4 janvier 1643 - 31 mars 1727) est un philosophe,
+	mathématicien, physicien, alchimiste, astronome et théologien anglais.
+
+	   | [IsaacNewton.jpg]
+
+	== Biographie ==
+
+	=== Jeunesse ===
+
+	L'Angleterre n'ayant alors pas encore adopté le 
+	[calendrier grégorien http://fr.wikipedia.org/wiki/Calendrier_gr%C3%A9gorien],
+	la date de naissance d’Isaac Newton est enregistrée en date du 25 décembre 1642,
+	au manoir de Woolsthorpe près de Grantham, dans le Lincolnshire (Angleterre),
+	de parents paysans. 
+	À cinq ans, il fréquente l’école primaire de Skillington, puis à
+	douze ans celle de Grantham.
+
+	=== Newton à Cambridge ===
+
+	À dix-huit ans, il entre alors au Trinity College de Cambridge (il y restera
+	sept ans), où il se fait remarquer par son maître, Isaac Barrow. Il a également
+	comme professeur Henry More qui l'influencera dans sa conception de l'espace
+	absolu.
+
+	== Théories scientifiques ==
+
+	Quant à la méthode, Newton n'accepte que les relations mathématiques découvertes
+	par l'observation rigoureuse des phénomènes. D'où sa fameuse formule :
+		 Je ne feins pas d'hypothèses //(Hypotheses non fingo)//.
+```
+
+Comme on le voit, les tailles des titres sont automatiques, la gestion des
+paragraphes ainsi que celle des césures est laissée au logiciel. Le lien
+hypertexte a été traduit de même que les changements de style (gras, italique)
+ainsi que la citation indentée.
+Les trois premières lignes constituent la page de garde (non reproduite ici) du
+document.
+
+Comment ce document mis en forme a-t-il été produit :
+Disons que le texte a été enregistré dans un fichier ``newton.t2t``, alors la
+commande suivante va produire le fichier ``newton.pdf``.
+
+```
+$ txt2tags -t tex newton.t2t && pdflatex newton.tex
+```
+
+Pour obtenir une version html, la commande suivante fonctionne 
+
+```
+$ txt2tags -t html newton.t2t
+```
+
+Conclusion : le logiciel txt2tags avec sa syntaxe simpliste permet de produire
+des documents courants de façon très simple. 
+
+Un document scientifique
+------------------------
+
+La syntaxe txt2tags vue plus haut est simpliste[^simpliste], cependant l'export
+vers le langage de balisage léger nommé Markdown est possible.
+
+[^simpliste]: Statut assumé par l'auteur qui souhaite rester dans la ligne de
+l'acronyme KISS (*Keep It Simple, Stupid*). Voir
+http://fr.wikipedia.org/wiki/Keep_it_Simple,_Stupid
+
+Le langage Markdown utilisé par logiciel Pandoc possède des
+fonctionnalités supplémentaires comme nous le montre l'exemple suivant.
+
+![Un document produit par Pandoc](python.pdf)
+
+~~~~
+
+	Python
+	======
+
+	Python est un langage de programmation multi-paradigme[^1]. Il favorise la
+	programmation impérative structurée, et orientée objet. Il est doté d'un typage
+	dynamique fort, d'une gestion automatique de la mémoire par ramasse-miettes et
+	d'un système de gestion d'exceptions ; il est ainsi similaire à 
+
+	* Perl
+	* Ruby
+	* Scheme
+	* Smalltalk
+	* Tcl
+
+	[^1]:Un paradigme de programmation est un style fondamental de programmation
+	informatique qui traite de la manière dont les solutions aux problèmes doivent
+	être formulées dans un langage de programmation
+
+	Implémentation de la fonction factorielle :
+	$$ x! = \prod_{n=1}^x n $$
+
+	```Python
+	 # Fonction factorielle en Python
+	 def factorielle(x):
+	     if x < 2:
+		 return 1
+	     else:
+         return x * factorielle(x-1)
+	```
+~~~~
+
+Observez l'inserion de la formule mathématique (syntaxe LaTeX) ainsi que la
+coloration syntaxique du code source selon le nom du langage choisi.
+
+Comment ce document mis en forme a-t-il été produit ?
+Disons que le texte a été enregistré dans un fichier ``python.md``, alors la
+commande suivante va produire le fichier ``python.pdf``.
+
+
+```
+$ pandoc --highlight-style=pygments -s python.md -o python.tex
+$ pdflatex python.tex
+```
+
+Pour obtenir une version html, la commande suivante fonctionne 
+
+```
+$ pandoc --highlight-style=pygments -s python.md -o python.html
+```
 
 
 

@@ -1,6 +1,10 @@
 %Langages de balisage légers et logiciels de conversion de documents
 %Nicolas Poulain
 
+<!-- 
+pandoc-1.9.1.2 --toc --number-sections --smart --highlight-style=pygments --include-in-header=include.tex -s comparaison.md -o comparaison.tex && pdflatex comparaison.tex && evince comparaison.pdf 
+-->
+
 Présentation
 ============
 

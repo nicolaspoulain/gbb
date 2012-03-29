@@ -1,3 +1,5 @@
+<!-- pandoc-1.9.1.2 --smart --highlight-style=pygments -s python.md -o python.tex && pdflatex python.tex && evince python.pdf -->
+
 #Python#
 
 Python est un langage de programmation multi-paradigme[^1]. Il favorise la
@@ -26,5 +28,4 @@ $$ x! = \prod_{n=1}^x n $$
 [^1]:Un paradigme de programmation est un style fondamental de programmation
 informatique qui traite de la manière dont les solutions aux problèmes doivent
 être formulées dans un langage de programmation
-
 

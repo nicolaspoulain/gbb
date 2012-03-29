@@ -7,6 +7,9 @@ Nicolas Poulain
 %!postproc(tex): \\maketitle  %\maketitle
 %!postproc(tex): \\includegraphics \includegraphics[scale=0.3]
 
+% txt2tags-svn -t tex newton.t2t && pdflatex newton.tex && evince newton.pdf
+
+
 = Isaac Newton =
 
 **Sir Isaac Newton** (4 janvier 1643 - 31 mars 1727) est un philosophe,
@@ -38,3 +41,4 @@ absolu.
 Quant à la méthode, Newton n'accepte que les relations mathématiques découvertes
 par l'observation rigoureuse des phénomènes. D'où sa fameuse formule :
 	 Je ne feins pas d'hypothèses //(Hypotheses non fingo)//.
+

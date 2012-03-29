@@ -383,29 +383,34 @@ les besoins et les goûts.
 
 Dans l'ordre croissant des possibilités offertes (et donc du nombre de balises à
 mémoriser) on trouve
+
 1. Txt2tags
 1. Pandoc ou MultiMarkDown
 1. AsciiDoc
 
-Cependant chque logiciel présente des fonctionnalités qui peuvent faire pencher
+Cependant chaque logiciel présente des fonctionnalités qui peuvent faire pencher
 la balance :
 
-Txt2tags supporte un ingénieux mécanisme de macros de
-remplacement (préprocesseur, postprocesseur, expressions régulières héritées de
-python, balises personnalisées) permettant d'étendre très simplement 
-ses possibilités.
+Txt2tags 
+:   supporte un ingénieux mécanisme de macros de
+    remplacement (préprocesseur, postprocesseur, expressions régulières héritées de
+    python, balises personnalisées) permettant d'étendre très simplement 
+    ses possibilités.
 
-Pandoc est capable de convertir les documents Latex et HTML en syntaxe MarkDown
-ce qui est extrèmement intéressant quand on possède des documents de différents
-qu'on souhaite uniformiser.
-De plus le nombre de formats de sortie est incomparable.
+Pandoc
+:   est capable de convertir les documents Latex et HTML en syntaxe MarkDown
+    ce qui est extrèmement intéressant quand on possède des documents de différents
+    qu'on souhaite uniformiser.
+    De plus le nombre de formats de sortie est incomparable.
 
-Multimarkdown a propose dans la syntaxe MarkDown un meilleur support des
-tableaux, notamment sur les fusions de cellules.
+Multimarkdown
+:   propose dans la syntaxe MarkDown un meilleur support des
+    tableaux, notamment sur les fusions de cellules.
 
-AsciiDoc propose de nombreux styles prédéfinis et des mises en formes (trop?)
-variées. Sa syntaxe concernant les tableaux est la plus complète puisque tous
-les alignements et fusions sont possibles. Voir
-<http://powerman.name/doc/asciidoc#_tables>
+AsciiDoc
+:   propose de nombreux styles prédéfinis et des mises en formes (trop?)
+    variées. Sa syntaxe concernant les tableaux est la plus complète puisque tous
+    les alignements et fusions sont possibles. Voir
+    <http://powerman.name/doc/asciidoc#_tables>
 
 

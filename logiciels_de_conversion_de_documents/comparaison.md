@@ -226,7 +226,7 @@ Formules mathématiques                  x      x      x
 Que manque-t-il dans le tableau précédent ? A-t-on vraiment besoin de changer
 de police, appliquer des effets de couleur, etc. 
 
-![A-t-on vraiment besoin de ceci ?](degrade.png)
+![A-t-on vraiment besoin de ceci ?](comparaison_degrade.png)
 
 Comment s'y prendre concrètement
 ================================

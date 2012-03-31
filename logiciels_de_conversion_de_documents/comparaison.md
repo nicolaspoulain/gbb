@@ -49,35 +49,36 @@ texte brut et doivent être interprétés par un logiciel afin d'être consulté
 
 En ce qui concerne HTML et LaTeX, où pratiquement toutes les mises en formes
 sont possibles, le problème vient de la difficulté à écrire les balises[^2].
-Pour écrire un titre suivi d'une phrase contenant un mot en gras puis une liste
-non numérotée, on saisira respecivement :
+
+Voici un exemple : un titre suivi d'une phrase contenant un mot en gras puis une liste
+non numérotée.
 
 [^2]: Dans le cas du format DocBook, c'est même humainement presque impossible de l'écrire à la main tant l'enchevêtrement des
 balises est inextriquable. On le génère avec un logiciel WYSIWYG...
 
-* en LaTeX 
+Notre exemple au format LaTeX :
 
-	~~~~
-		\section{Le titre du paragraphe}
-	 
-		Voici un mot en \textbf{gras} puis une liste :
-	 
-		\begin{enumerate}
-		 \item  c'est simple ;
-		 \item  c'est efficace.
-		\end{enumerate}
-	~~~~
+~~~~
+	\section{Le titre du paragraphe}
+ 
+	Voici un mot en \textbf{gras} puis une liste :
+ 
+	\begin{enumerate}
+	 \item  c'est simple ;
+	 \item  c'est efficace.
+	\end{enumerate}
+~~~~
 
-* en HTML
+Le même exemple au format HTML :
 
-	~~~~
-		<h1>Le titre du paragraphe</h1>
-		<p>Voici un mot en <strong>gras</strong> puis une liste :</p>
-		<ul>
-		 <li> c'est simple ;</li>
-		 <li> c'est efficace.</li>
-		</ul>
-	~~~~
+~~~~
+	<h1>Le titre du paragraphe</h1>
+	<p>Voici un mot en <strong>gras</strong> puis une liste :</p>
+	<ul>
+	 <li> c'est simple ;</li>
+	 <li> c'est efficace.</li>
+	</ul>
+~~~~
 
 Comme on le voit, la syntaxe est accessible mais elle nuit à la lisibilité du
 texte et au goût de nombreux utilisateurs il y a trop de commandes de mise en
@@ -86,13 +87,13 @@ C'est dommage car ces deux formats ouverts et universels ont chacun leur
 avantage :
 
 * HTML peut être lu sur n'importe quelle plateforme ou terminal du monde
-  entier car ses spécifications, gérées le W3C[^1], sont respectées par les
+  entier car ses spécifications, gérées le W3C[^w3c], sont respectées par les
   navigateurs web.
 * le logiciel LaTeX produit des documents de qualité unanimement
   reconnue. Il prend en charge la mise en page, l'utilisateur n'ayant qu'à se
   concentrer sur le fond et sa structure.
 
-[^1]:Organisme international à but non lucratif
+[^w3c]:Organisme international à but non lucratif
 
 Il existe une alternative qui est à la fois simple, interopérable et efficace :
 les langages de balisage légers.
@@ -111,13 +112,13 @@ la conversion en HTML avant la publication.
 Re-voici notre exemple, cette fois-ci au format MarkDown :
 
 ```markdown
-Le titre du paragraphe
-======================
+	Le titre du paragraphe
+	======================
 
-Voici un mot en **gras** puis une liste :
+	Voici un mot en **gras** puis une liste :
 
-* c'est simple ;
-* c'est efficace.
+	* c'est simple ;
+	* c'est efficace.
 ```
 
 Avantages :
@@ -151,6 +152,8 @@ quatre d'entre eux :
 * Pandoc : <http://johnmacfarlane.net/pandoc/>
 * AsciiDoc : <http://www.methods.co.nz/asciidoc/> 
 
+Le présent document, par exemple a été tranformé au format pdf par Pandoc.
+
 ------------------------------------------------------------
 Logiciel  Import    Export   Export       Export   Export
                     web      Bureautique  TeX      LBL[^LBL]
@@ -176,8 +179,6 @@ AsciiDoc  AsciiDoc  HTML,    Docbook      LaTeX
 ------------------------------------------------------------
 
 [^LBL]:LBL pour Langages de Balisage Légers
-
-
 
 -------------------------------------------------------
 Fonctionnalités                Txt2tags MMD    Pandoc Asciidoc

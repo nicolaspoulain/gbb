@@ -1,19 +1,24 @@
-\documentclass[12pt]{article}
-\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm,a4paper]{geometry}
+\documentclass[]{article}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage[utf8x]{inputenc}
-\usepackage{eurosym}
+\ifxetex
+  \usepackage{fontspec,xltxtra,xunicode}
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\else
+  \ifluatex
+    \usepackage{fontspec}
+    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+    \newcommand{\euro}{€}
+  \else
+    \usepackage[utf8]{inputenc}
+    \usepackage{eurosym}
+  \fi
+\fi
 \usepackage{color}
-
-% redefinir la taillle de l'environnement verbatim
-\makeatletter
-\def\verbatim{\footnotesize\@verbatim \frenchspacing\@vobeyspaces \@xverbatim}
-\makeatother
-
 \usepackage{fancyvrb}
 \DefineShortVerb[commandchars=\\\{\}]{\|}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{fontsize=\footnotesize,commandchars=\\\{\}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 % Add ',fontsize=\small' for more characters per line
 \newenvironment{Shaded}{}{}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
@@ -39,6 +44,7 @@
 \usepackage{enumerate}
 \usepackage{ctable}
 \usepackage{float} % provides the H option for float placement
+\usepackage{url}
 \usepackage{graphicx}
 % We will generate all images so they have a width \maxwidth. This means
 % that they will get their normal width if they fit onto the page, but
@@ -48,34 +54,28 @@
 \else\Gin@nat@width\fi}
 \makeatother
 \let\Oldincludegraphics\includegraphics
-\renewcommand{\includegraphics}[1]{\fbox{\Oldincludegraphics[width=\maxwidth]{#1}}}
-\usepackage[unicode=true,
-            colorlinks=true,
-            linkcolor=blue]{hyperref}
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\pagenumbering{arabic}
-\lhead{Langages de balisage légers et logiciels de conversion de documents}
-\chead{}
-%\rhead{\itshape{\nouppercase{\leftmark}}}
-\rhead{\footnotesize\textsc{\nouppercase{N. Poulain}}}
-\lfoot{}
-\cfoot{}
-\rfoot{\thepage}
+\renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=\maxwidth]{#1}}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex,
+              colorlinks=true,
+              linkcolor=blue]{hyperref}
+\else
+  \usepackage[unicode=true,
+              colorlinks=true,
+              linkcolor=blue]{hyperref}
+\fi
 \hypersetup{breaklinks=true, pdfborder={0 0 0}}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
-\usepackage[frenchb]{babel}
-
-\VerbatimFootnotes % allows verbatim text in footnotes
 
 \title{Langages de balisage légers et logiciels de conversion de documents}
 \author{N. Poulain}
 
 \begin{document}
 \maketitle
-
 
 \section{Présentation}
 
@@ -135,12 +135,12 @@ formes sont possibles, le problème vient de la difficulté à écrire les
 balises\footnote{Dans le cas du format DocBook, c'est même humainement
   presque impossible de l'écrire à la main tant l'enchevêtrement des
   balises est inextriquable. On le génère avec un logiciel
-  WYSIWYG\ldots{}}. Pour écrire un titre suivi d'une phrase contenant un
-mot en gras puis une liste non numérotée, on saisira respecivement :
+  WYSIWYG\ldots{}}.
 
-\begin{itemize}
-\item
-  en LaTeX
+Voici un exemple : un titre suivi d'une phrase contenant un mot en gras
+puis une liste non numérotée.
+
+Notre exemple au format LaTeX :
 
 \begin{verbatim}
     \section{Le titre du paragraphe}
@@ -152,8 +152,7 @@ mot en gras puis une liste non numérotée, on saisira respecivement :
      \item  c'est efficace.
     \end{enumerate}
 \end{verbatim}
-\item
-  en HTML
+Le même exemple au format HTML :
 
 \begin{verbatim}
     <h1>Le titre du paragraphe</h1>
@@ -163,7 +162,6 @@ mot en gras puis une liste non numérotée, on saisira respecivement :
      <li> c'est efficace.</li>
     </ul>
 \end{verbatim}
-\end{itemize}
 Comme on le voit, la syntaxe est accessible mais elle nuit à la
 lisibilité du texte et au goût de nombreux utilisateurs il y a trop de
 commandes de mise en forme. C'est dommage car ces deux formats ouverts
@@ -172,11 +170,8 @@ et universels ont chacun leur avantage :
 \begin{itemize}
 \item
   HTML peut être lu sur n'importe quelle plateforme ou terminal du monde
-  entier car ses spécifications, gérées le W3C\footnote{Un WYSIWYG pour
-    \emph{What you see is what you get} est une interface utilisateur
-    qui permet de composer visuellement le résultat voulu. C'est une
-    interface intuitive : l'utilisateur voit directement à l'écran à
-    quoi ressemblera le résultat final.}, sont respectées par les
+  entier car ses spécifications, gérées le W3C\footnote{Organisme
+    international à but non lucratif}, sont respectées par les
   navigateurs web.
 \item
   le logiciel LaTeX produit des documents de qualité unanimement
@@ -199,13 +194,13 @@ se chargeant de la conversion en HTML avant la publication.
 Re-voici notre exemple, cette fois-ci au format MarkDown :
 
 \begin{verbatim}
-Le titre du paragraphe
-======================
+    Le titre du paragraphe
+    ======================
 
-Voici un mot en **gras** puis une liste :
+    Voici un mot en **gras** puis une liste :
 
-* c'est simple ;
-* c'est efficace.
+    * c'est simple ;
+    * c'est efficace.
 \end{verbatim}
 Avantages :
 
@@ -250,6 +245,9 @@ parler de quatre d'entre eux :
 \item
   AsciiDoc : \url{http://www.methods.co.nz/asciidoc/}
 \end{itemize}
+Le présent document, par exemple a été tranformé au format pdf par
+Pandoc.
+
 \ctable[pos = H, center, botcap]{llllll}
 {% notes
 \tnote[a]{LBL pour Langages de Balisage Légers}

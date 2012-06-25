@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Un module de gestion de stages GAIA
+ * des tables supplementaires sont ajoutees a la base de donnees Drupal :
+ * - g_gaia : contient une fusion des tables gdisp et gmodu en incluant des renseignements issus 
+ *   d'autres tables gaia.
+ * - g_module : contient des rensiegnements complementaires sur les stages comme par exemple les
+ *   sessions de formation, le journal de bord de la mise en place du stage etc.
+ * - g_session : la table des sessions liant un module a un formateur pour une dtae precise.
+ * - g_formateur : la table des formateurs assurant les stages.
+ */
+
+/**
+ * Implements hook_menu
+ */
+
+function gaiabb_menu() 
+{
+  $items = array();
+
+  // Etant donnés une année (09,10,11,12,...), un co_degré (1 ou 2) et un co_tres (1,2 ou 3)
+  // affichage de la liste des responsables des stages
+  //   exemple : sta_par_resp/12/2/1
+  // affichage de la liste des stages pour un co_resp donné
+  //   exemple : sta_par_resp/12/2/1/1495
+
+  $items['sta_par_resp'] = array(
+        'title' => '',
+        'page callback' => 'sta_par_resp',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Etant donné un co_degré (1 ou 2)
+  // Affiche la page de gestion du module co_modu
+  //   exemple : gest_module/2/26142
+
+  $items['gest_module'] = array(
+        'title' => '',
+        'page callback' => 'gest_module',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Pages pour autocomplete AJAX
+  $items['autocomp/etablissement'] = array(
+    'page callback' => '_gaiabb_autocompetab',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+  $items['autocomp/formateur'] = array(
+    'page callback' => '_gaiabb_autocompform',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+  return $items;
+}
+
+module_load_include('inc', 'gaiabb', 'page_sta_par_resp');
+module_load_include('inc', 'gaiabb', 'page_gest_module');

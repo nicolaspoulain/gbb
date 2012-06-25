@@ -1,0 +1,6 @@
+name = Gaia BB
+description = "Un module de gestion des stages GAIA"
+package = GAIA
+version = 0.3
+core = 7.x
+files[] = gaiabb.module

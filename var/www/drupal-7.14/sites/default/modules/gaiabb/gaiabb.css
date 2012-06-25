@@ -1,0 +1,122 @@
+td.fil {
+  background: none repeat scroll 0 0 #AA99FF;
+  color : #FFF;
+}
+td.paf {
+  background: none repeat scroll 0 0 #afc6d7;
+}
+td.Ferme {
+  text-decoration: line-through;
+}
+.foo {
+  display: inline-block;
+}
+fieldset {
+  top: 12px; /* Offsets the negative margin of legends */
+  -khtml-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+fieldset.details {
+  background: none repeat scroll 0 0 #FFF;
+  padding : 0px;
+}
+fieldset.organisation {
+  background: none repeat scroll 0 0 #FFF;
+ width : 66%;
+  float: left;
+}
+fieldset.attachements {
+  background: none repeat scroll 0 0 #FFF;
+ width : 30%;
+}
+fieldset.sessions {
+  background: none repeat scroll 0 0 #F1F3F4;
+  clear: both;
+}
+fieldset.editsession {
+  background: none repeat scroll 0 0 #F1F3F4;
+  clear: both;
+}
+fieldset.convoc {
+  background: none repeat scroll 0 0 #F5F5DC;
+  clear: both;
+}
+.inline {
+  display:inline-block;
+}
+.flottant {
+  float:left;
+  margin-right:11px;
+}
+
+input.form-submit,
+a.button {
+  background: #f4f4f url(../images/buttons.png) 0 0 repeat-x;
+  border: 1px solid #e4e4e4;
+  border-bottom: 1px solid #b4b4b4;
+  border-left-color: #d2d2d2;
+  border-right-color: #d2d2d2;
+  color: #3a3a3a;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: normal;
+  text-align: center;
+  margin-bottom: 1em;
+  margin-right: 0.6em; /* LTR */
+  padding: 4px 17px;
+  -khtml-border-radius: 10px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+input.nope{
+  padding: 0px;
+  border: 0px;
+  margin-bottom: 0em;
+}
+input {
+ font-size : 100%;
+ border : 1px solid #e8e8e8;
+  -khtml-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+ background : inherit;
+}
+
+.nb_sa {
+  position: relative;
+  left: -14px;
+  bottom: -5px;
+}
+.nb_pj {
+  position: relative;
+  left: -9px;
+  bottom: -5px;
+}
+.invisible {
+  font-size : 0.01em;
+}
+ul.nope {
+  list-style-type: none;
+  list-style-image: none;
+  margin: 0.1em 0 0.1em;
+  padding: 0 0 0 0.1em;
+}
+.grisclair {
+    color : #CCC;
+}
+.session_alert
+  {
+  background:url(images/session_alert.png) no-repeat scroll right center;
+  border:none;
+  height:16px;
+  width:16px;
+  }
+
+#autocomplete {
+  background : #FFF;
+}

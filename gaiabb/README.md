@@ -7,6 +7,30 @@ file=README && java -jar ../../asciiArt/plantuml.jar $file.md && pandoc-1.9.1.2 
 -->
 
 
+Git
+===
+
+Ajout d'un nouveau fichier
+--------------------------
+
+Après ajout du nouveau fichier `FILE` dans le module gaiabb, on crée un lien
+matériel vers dropbox puis on l'ajoute dans git.
+
+`$ cd ~/Dropbox/gaiabb`
+`$ ln /var/www/drupal-7.14/sites/default/modules/gaiabb/FILE FILE`
+`$ git add FILE`
+
+
+Commmiter des changements
+-------------------------
+
+le but est de créer un commit puis de 
+tranférer vers http://code.google.com/p/npoulain/source/browse/
+
+`$ git commit -a -m "Ajout du fichier FILE"` && git push google master`
+
+
+
 Le module GaiaBB
 ================
 Il est placé dans le dossier `sites/default/modules/`

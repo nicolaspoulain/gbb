@@ -1,12 +1,19 @@
 <?php
+/**
+ * @file
+ *
+ * Composition de la page de gestion de module
+ *
+ */
+
 
 /**
  * Fonction d'appel aux differents elements composant la page
  * affichant une liste de responsables et les stages qui leur
  * associes
  */
-function sta_par_resp($args = 'NaN') 
-{
+function sta_par_resp($args = 'NaN') {
+
   // Charge la feuille des style et les fichiers javascript pour le module
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
@@ -16,25 +23,25 @@ function sta_par_resp($args = 'NaN')
 
   // Construction de la page
   $build = array();
-  $build['form_people'] = render(drupal_get_form('form_people',$args));
-  $build['filter_form'] = render(drupal_get_form('filter_form',$args));
+  $build['form_people'] = render(drupal_get_form('form_people', $args));
+  $build['filter_form'] = render(drupal_get_form('filter_form', $args));
   $build['liste_stages'] = liste_stages($args);
 
-  return implode('',$build);
+  return implode('', $build);
 }
 
 /**
  * Formulaire de choix d'un conseiller
  */
-function form_people($form, &$form_state,$args) 
-{
+function form_people($form, &$form_state, $args) {
+
   global $user;
   $query = db_select('gbb_gdire', 'j');
-  $query  ->rightjoin('gbb_gdisp','s','j.co_disp=s.co_disp AND j.co_degre=s.co_degre');
-  $query  ->join('gbb_gresp','r','j.co_resp=r.co_resp AND j.co_degre=r.co_degre');
+  $query  ->rightjoin('gbb_gdisp', 's', 'j.co_disp=s.co_disp AND j.co_degre=s.co_degre');
+  $query  ->join('gbb_gresp', 'r', 'j.co_resp=r.co_resp AND j.co_degre=r.co_degre');
   $query  ->condition('j.co_degre', arg(2), '=')
           ->condition('j.co_tres' , arg(3), '=')
-          ->condition('s.id_disp' , db_like(arg(1)).'%', 'LIKE')
+          ->condition('s.id_disp' , db_like(arg(1)) . '%', 'LIKE')
           ->fields('j', array('co_resp'))
           ->fields('r', array('nomu'));
   $result = $query->execute();
@@ -109,13 +116,13 @@ function form_people($form, &$form_state,$args)
   return $form;
 }
 
-function form_people_submit($form, &$form_state) 
-{
+function form_people_submit($form, &$form_state) {
+
   $url = url('sta_par_resp/' . $form_state['values']['year']
-                                       .'/' . $form_state['values']['codegre']
-                                       .'/' . $form_state['values']['cotres']
-                                       .'/' . $form_state['values']['people'],
-                            array('query' => array('voir_ferme'=>$form_state['values']['voir_ferme']),'absolute' => TRUE));
+                                       . '/' . $form_state['values']['codegre']
+                                       . '/' . $form_state['values']['cotres']
+                                       . '/' . $form_state['values']['people'],
+                            array('query' => array('voir_ferme' => $form_state['values']['voir_ferme']), 'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
@@ -123,8 +130,7 @@ function form_people_submit($form, &$form_state)
 /**
  * Formulaire de filtrage javascript du tableau
  */
-function filter_form($form, &$form_state,$args) 
-{
+function filter_form($form, &$form_state, $args) {
 
   $form['f']['filter'] = array(
     '#type' => 'textfield',
@@ -140,8 +146,7 @@ function filter_form($form, &$form_state,$args)
  * Liste l'ensemble des stages pour un conseiller donne en argument
  * TODO : FAIRE LES DEUX REQUETES EN UNE SEULE AVEC UN GROUP BY POUR OPTIMISER 
  */
-function liste_stages($args) 
-{
+function liste_stages($args) {
 
   global $user;
   $query = db_select('field_data_field_id_resp', 'u')
@@ -174,18 +179,16 @@ function liste_stages($args)
         AND j.co_resp =  :coresp
         AND id_disp LIKE :year
         ';
-  if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) 
-  {
+  if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
     $query .= 'AND co_anmo = \'\'';
   }
 
-  if ( isset($_GET['adm']) && $_GET['adm'] == 1) 
-  {
+  if ( isset($_GET['adm']) && $_GET['adm'] == 1) {
     $query .= 'AND mp.date_premiere_session BETWEEN CURDATE() AND ADDDATE(CURDATE(),365)';
   }
 
   $result = db_query($query, 
-                     array(':year'    => arg(1).'%',
+                     array(':year'    => arg(1) . '%',
                            ':codegre' => arg(2),
                            ':coresp'  => $co_resp)
             );
@@ -210,21 +213,21 @@ function liste_stages($args)
         'alt' => 'session_alert',
         'title' => t('Alerte sur session'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $session_alert = ($r->nb_sa >0)? theme('image', $variables). '<span class="nb_sa">'.$r->nb_sa.'</span>' : '';
+      $session_alert = ($r->nb_sa >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_sa . '</span>' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
         'alt' => 'session_alert',
         'title' => t('session en route'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables). '<span class="nb_sa">'.$r->nb_nea.'</span>' : '';
+      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
         'alt' => 'session_alert',
         'title' => t('En attente'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $en_attente = ($r->nb_ea >0)? theme('image', $variables). '<span class="nb_sa">'.$r->nb_ea.'</span>' : '';
+      $en_attente = ($r->nb_ea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/module_alert.png',
@@ -245,21 +248,22 @@ function liste_stages($args)
         'alt' => 'convoc_sent',
         'title' => t('Fichier(s) attaché(s)'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $attachement = ($r->nb_pj > 0)? theme('image', $variables). '<span class="nb_pj">'.$r->nb_pj.'</span>' : '';
+      $attachement = ($r->nb_pj > 0)? theme('image', $variables) . '<span class="nb_pj">' . $r->nb_pj . '</span>' : '';
 
       $rows[] = array( 
                   array('data' => 
-                                  $attachement.
-                                  $session_alert.
-                                  $NOT_en_attente.
-                                  $en_attente.
+                                  $attachement .
+                                  $session_alert .
+                                  $NOT_en_attente .
+                                  $en_attente .
                                   $module_alert,
                        ),
                   array('data' =>
-                                 '<span class="invisible">'.$paf_ou_fil.'*'.'</span> '.
-                                 '<span class="'.$libd_class.' '.$d_ouvert_ou_ferme.'">'.$r->id_disp.' '.t($r->libd).'</span> '.
-                                 l($r->co_modu,'gest_module/' . arg(2) .'/'. $r->co_modu, $options_comodu).' '.
-                                 '<span class="'.$m_ouvert_ou_ferme.'">'.t($r->libm).'</span> ',
+                                 '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
+                                 '<span class="' . $libd_class . ' ' .
+                                 $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> ' .
+                                 l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
+                                 '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
                        ),
                   array('data' => "lnk",
                        ),
@@ -268,6 +272,6 @@ function liste_stages($args)
     }
 
 
-  $attributes = array('id' => 'table-id', 'class' =>'food_planner');
-  return theme('table', array('rows'=> $rows, 'attributes'=> $attributes));
+  $attributes = array('id' => 'table-id', 'class' => 'food_planner');
+  return theme('table', array('rows' => $rows, 'attributes' => $attributes));
 }

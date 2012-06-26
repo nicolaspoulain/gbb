@@ -733,23 +733,23 @@ function form_convoc($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
-  $query  ->rightjoin('gbb_gmodu','m','m.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
+  $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query  ->condition('m.co_modu', arg(2), '=')
           ->condition('m.co_degre', arg(1), '=')
-          ->fields('mp', array('convoc_info_off','convoc_info_on'));
+          ->fields('mp', array('convoc_info_off', 'convoc_info_on'));
   $r = $query->execute()->fetchObject();
 
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Convocation'),
-    '#attributes' => array('class'=>array('collapsible','convoc')),
+    '#attributes' => array('class' => array('collapsible', 'convoc')),
   );
 
   $html = $r->convoc_info_off;
   $txt = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
   $form['f']['convoc_info_off'] = array(
     '#type' => 'textarea',
-    '#title' => t('Info à ne pas porter sur la convocation '),
+    '#title' => t('Info à ne pas porter sur la convocation'),
     '#default_value' => $txt,
     '#cols' => 50,
     '#prefix' => '<div class="inline">',
@@ -757,7 +757,7 @@ function form_convoc($form, &$form_state) {
     '#ajax' => array
     (
       'callback' => 'form_convoc_submit',
-      'progress' => array('type'=> 'throbber','message'=>'Enregistrement...'),
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
 
@@ -765,7 +765,7 @@ function form_convoc($form, &$form_state) {
   $txt = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
   $form['f']['convoc_info_on'] = array(
     '#type' => 'textarea',
-    '#title' => t('Info à porter sur la convocation '),
+    '#title' => t('Info à porter sur la convocation'),
     '#default_value' => $txt,
     '#cols' => 50,
     '#prefix' => '<div class="inline">',
@@ -773,7 +773,7 @@ function form_convoc($form, &$form_state) {
     '#ajax' => array
     (
       'callback' => 'form_convoc_submit',
-      'progress' => array('type'=> 'throbber','message'=>'Enregistrement...'),
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
 
@@ -793,8 +793,8 @@ function form_convoc($form, &$form_state) {
 }
 
 
-function form_convoc_submit(&$form, &$form_state) 
-{
+function form_convoc_submit(&$form, &$form_state) {
+
   db_update('gbb_gmodu_plus')
     ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on'],
                    'convoc_info_off' => $form_state['values']['convoc_info_off'],
@@ -807,8 +807,8 @@ function form_convoc_submit(&$form, &$form_state)
 /**
  * Formulaire de modification d'une session particulière
  */
-function form_edit_session($form, $form_state,$args) 
-{
+function form_edit_session($form, $form_state, $args) {
+
   if (!isset($_GET['sess_id'])) return '';
   // On récupère les valeurs associées à la session pour peupler le formulaire
   $result = db_query("
@@ -822,11 +822,11 @@ function form_edit_session($form, $form_state,$args)
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Editer/Ajouter la session ').$r->sess_id.'<a name="edit_session_anchor"></a>' ,
-    '#attributes' => array('class'=>array('editsession')),
+    '#title' => t('Editer/Ajouter la session') . $r->sess_id . '<a name="edit_session_anchor"></a>' ,
+    '#attributes' => array('class' => array('editsession')),
   );
 
-  drupal_add_library('system','ui.datepicker');
+  drupal_add_library('system', 'ui.datepicker');
   drupal_add_js('jQuery(document).ready(function(){jQuery( ".pickadate" ).datepicker({
       dateFormat: "yy-mm-dd",
       autoSize: true,
@@ -911,7 +911,7 @@ function form_edit_session($form, $form_state,$args)
   $form['f']['lieu'] = array(
     '#type' => 'textfield',
     '#title' => t('Lieu'),
-    '#default_value' => $r->denom_comp.' ('.$r->sigle.')',
+    '#default_value' => $r->denom_comp . ' (' . $r->sigle . ')',
     '#size' => 40,
     '#autocomplete_path' => 'autocomp/etablissement',
     '#prefix' => '<br/><div class="inline">',
@@ -921,7 +921,7 @@ function form_edit_session($form, $form_state,$args)
   $form['f']['formateur'] = array(
     '#type' => 'textfield',
     '#title' => t('Formateur'),
-    '#default_value' => $r->prenom.' '.$r->nomu,
+    '#default_value' => $r->prenom . ' ' . $r->nomu,
     '#size' => 30,
     '#autocomplete_path' => 'autocomp/formateur',
     '#prefix' => '<div class="inline">',
@@ -949,8 +949,8 @@ function form_edit_session($form, $form_state,$args)
   return $form;
 }
 
-function form_edit_session_submit($form, &$form_state) 
-{
+function form_edit_session_submit($form, &$form_state) {
+
   $valeurs = array(':sess_id' => $form_state['values']['sess_id'],
                    ':co_modu' => $form_state['values']['co_modu'], 
                    ':groupe' => $form_state['values']['groupe'], 
@@ -1004,8 +1004,9 @@ function form_edit_session_submit($form, &$form_state)
     ->execute();
   */
 
-  $url = url('gest_module/' . $form_state['values']['co_degre'].
-                        '/' . $form_state['values']['co_modu'],array('query' => array('sess_id' => $form_state['values']['sess_id']),'absolute' => TRUE));
+  $url = url('gest_module/' . $form_state['values']['co_degre'] .
+                        '/' . $form_state['values']['co_modu'], 
+                        array('query' => array('sess_id' => $form_state['values']['sess_id']), 'absolute' => TRUE));
   drupal_set_message(t('Les modifications ont &eacute;t&eacute; prises en compte.'));
   $form_state['redirect'] = $url;
 }
@@ -1013,16 +1014,16 @@ function form_edit_session_submit($form, &$form_state)
 /**
  * Fonctions d'autoclompletion AJAX
  */
-function _gaiabb_autocompetab($string) 
-{
+function _gaiabb_autocompetab($string) {
+
   $matches = array();
   $result = db_select('gbb_netab', 'c')
-    ->fields('c', array('co_lieu','denom_comp','sigle'))
+    ->fields('c', array('co_lieu', 'denom_comp', 'sigle'))
     ->condition('denom_comp', '%' . db_like($string) . '%', 'LIKE')
-    ->range(0,10)
+    ->range(0, 10)
     ->execute();
   foreach ($result as $r) {
-    $etab = $r->denom_comp.' ('.$r->sigle.')';
+    $etab = $r->denom_comp . ' (' . $r->sigle . ')';
     $matches[$etab] = $etab;
   }
   $count = $result->rowCount();
@@ -1030,16 +1031,16 @@ function _gaiabb_autocompetab($string)
   drupal_json_output($matches);
 }
 
-function _gaiabb_autocompform($string) 
-{
+function _gaiabb_autocompform($string) {
+
   $matches = array();
   $result = db_select('gbb_gresp_dafor', 'c')
-    ->fields('c', array('co_resp','nomu','prenom'))
+    ->fields('c', array('co_resp', 'nomu', 'prenom'))
     ->condition('nomu', '%' . db_like($string) . '%', 'LIKE')
-    ->range(0,10)
+    ->range(0, 10)
     ->execute();
   foreach ($result as $r) {
-    $matches[$r->prenom.' '.$r->nomu] = $r->prenom.' '.$r->nomu;
+    $matches[$r->prenom . ' ' . $r->nomu] = $r->prenom . ' ' . $r->nomu;
   }
   $count = $result->rowCount();
   if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';

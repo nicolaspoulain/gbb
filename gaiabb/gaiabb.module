@@ -2,6 +2,7 @@
 
 /**
  * @file
+ *
  * Un module de gestion de stages GAIA
  * des tables supplementaires sont ajoutees a la base de donnees Drupal :
  * - g_gaia : contient une fusion des tables gdisp et gmodu en incluant des renseignements issus 
@@ -16,8 +17,7 @@
  * Implements hook_menu
  */
 
-function gaiabb_menu() 
-{
+function gaiabb_menu() {
   $items = array();
 
   // Etant donnés une année (09,10,11,12,...), un co_degré (1 ou 2) et un co_tres (1,2 ou 3)

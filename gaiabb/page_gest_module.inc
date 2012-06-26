@@ -1,10 +1,15 @@
 <?php
+/**
+ * @file
+ *
+ * Composition de la page de gestion de module
+ *
+ */
 
 /**
  * Fonction d'appel aux differents elements composant la page
  */
-function gest_module($args = 'NaN') 
-{
+function gest_module($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
   drupal_add_library('system', 'drupal.collapse');
@@ -14,20 +19,22 @@ function gest_module($args = 'NaN')
   $build['infos_gaia']   = infos_gaia($args);
   $build['infos_detail'] = theme('fieldset', array(
                              'element' => array(
-                               '#attributes' => array('class'=>array('details','collapsible','collapsed')),
+                               '#attributes' => array('class' => array('details', 'collapsible', 'collapsed')), 
                                '#children' => '',
                                '#title' => t('Détails ...'),
                                '#value' => infos_detail($args),
                                )
                              )
                            );
-  $build['organisation'] = render(drupal_get_form('form_organisation',$args));
-  $build['attachements'] = render(drupal_get_form('form_attachements',$args));
-/* EN COURS...
-*/
+  $build['organisation'] = render(drupal_get_form('form_organisation' , $args));
+  $build['attachements'] = render(drupal_get_form('form_attachements' , $args));
+
+/*
+ *EN COURS...
+ */
   $build['sessions'] = theme('fieldset', array(
                              'element' => array(
-                             '#attributes' => array('class'=>array('sessions','collapsible')),
+                             '#attributes' => array('class' => array('sessions', 'collapsible')),
                              '#children' => '',
                              '#title' => t('Détails ...'),
                              '#value' => sessions($args),
@@ -35,21 +42,19 @@ function gest_module($args = 'NaN')
                            )
                          );
   $build['sessions']     = "";  // a commenter pour obtenir le formualire AJAX ci-dessus
-  $build['sessions_old']     = render(drupal_get_form('form_sessions_old',$args));
-  $build['form_edit_session'] = render(drupal_get_form('form_edit_session',$args));
-  $build['convoc'] = render(drupal_get_form('form_convoc',$args));
+  $build['sessions_old']     = render(drupal_get_form('form_sessions_old', $args));
+  $build['form_edit_session'] = render(drupal_get_form('form_edit_session', $args));
+  $build['convoc'] = render(drupal_get_form('form_convoc', $args));
 
-  return implode('',$build);
+  return implode('', $build);
 }
 
 
 /**
  * Un tableau à deux lignes qui affiche le dispo et le module
  */
-function infos_gaia($args) 
-{
+function infos_gaia($args) {
 
-  #if (arg(1) == '' || arg(2)='' ) return "";
   $result = db_query('
        SELECT id_disp, co_modu, m.lib AS libm, ds.lib AS libd, co_camp, co_andi
        FROM {gbb_gmodu} AS m
@@ -63,13 +68,13 @@ function infos_gaia($args)
     $paf_ou_fil = ($r->co_camp == 'BS')? 'fil' : 'paf';
     $ouvert_ou_ferme = ($r->co_andi == 'Fe')? 'Ferme' : '';
     $rows[] = array( 
-                array('data' => $r->id_disp.' '.$r->libd,
-                      'class' => array($paf_ou_fil,$ouvert_ou_ferme),
+                array('data' => $r->id_disp . ' ' . $r->libd,
+                      'class' => array($paf_ou_fil, $ouvert_ou_ferme),
                       'colspan' => '2',
                 )
               );
     $rows[] = array( 
-                array('data' => $r->co_modu.' '.$r->libm,
+                array('data' => $r->co_modu . ' ' . $r->libm,
                       'class' => array($ouvert_ou_ferme),
                       'colspan' => '2',
                      )
@@ -77,15 +82,14 @@ function infos_gaia($args)
   }
 
   if (!isset($rows)) return $args;
-  return theme('table', array('rows'=> $rows));
+  return theme('table', array('rows' => $rows));
 }
 
 
 /**
  * Un tableau qui affiche les détails du module
  */
-function infos_detail($args) 
-{
+function infos_detail($args) {
 
   if ($args == 'NaN') return "";
   $liste = array();
@@ -128,7 +132,7 @@ function infos_detail($args)
               );
     $rows[] = array( 
                 array('data' => t("Durée")),
-                array('data' => $r->duree_prev."h"),
+                array('data' => $r->duree_prev . "h"),
               );
     $rows[] = array( 
                 array('data' => t("Modalité")),
@@ -139,27 +143,27 @@ function infos_detail($args)
                 array('data' => $r->lform),
               );
   if (!isset($rows)) return $args;
-  return theme('table', array('rows'=> $rows));
+  return theme('table', array('rows' => $rows));
 }
 
 
 /**
  * Formulaire d'organisation de la formation
  */
-function form_organisation($form, &$form_state) 
-{
+function form_organisation($form, &$form_state) {
+
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
-  $query  ->rightjoin('gbb_gmodu','m','m.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
+  $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query  ->condition('m.co_modu', arg(2), '=')
           ->condition('m.co_degre', arg(1), '=')
-          ->fields('mp', array('organisation','module_alert'));
+          ->fields('mp', array('organisation', 'module_alert'));
   $r = $query->execute()->fetchObject();
 
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Organisation'),
-    '#attributes' => array('class'=>array('organisation','collapsible')),
+    '#attributes' => array('class' => array('organisation', 'collapsible')),
   );
 
   $html = $r->organisation;
@@ -171,7 +175,7 @@ function form_organisation($form, &$form_state)
     '#ajax' => array
     (
       'callback' => 'form_organisation_submit',
-      'progress' => array('type'=> 'throbber','message'=>'Enregistrement...'),
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
   $image = array(
@@ -182,12 +186,12 @@ function form_organisation($form, &$form_state)
 
   $form['f']['module_alert'] = array(
     '#type' => 'checkbox',
-    '#title' => theme('image', $image).t('Alerte entre conseillers'),
+    '#title' => theme('image', $image) . t('Alerte entre conseillers'),
     '#default_value' => $r->module_alert,
     '#ajax' => array
     (
       'callback' => 'form_organisation_submit',
-      'progress' => array('type'=> 'throbber','message'=>'Enregistrement...'),
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
 
@@ -207,8 +211,7 @@ function form_organisation($form, &$form_state)
 }
 
 
-function form_organisation_submit(&$form, &$form_state) 
-{
+function form_organisation_submit(&$form, &$form_state) {
   db_update('gbb_gmodu_plus')
     ->fields(array('organisation' => $form_state['values']['organisation'],
                    'module_alert' => $form_state['values']['module_alert'],
@@ -221,12 +224,11 @@ function form_organisation_submit(&$form, &$form_state)
 /**
  * Formulaire des attachements
  */
-function form_attachements($form, &$form_state,$args) 
-{
+function form_attachements($form, &$form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Fichiers joints'),
-    '#attributes' => array('class'=>array('attachements','collapsible')),
+    '#attributes' => array('class' => array('attachements', 'collapsible')),
   );
 
   $files = db_query("
@@ -243,7 +245,7 @@ function form_attachements($form, &$form_state,$args)
   foreach ($files as $f) {
     $icon = theme_file_icon(array('file' => $f, 'icon_directory' =>  $icon_directory));
     $date = strftime('%d/%m/%Y à %X', $f->timestamp);
-    $file_list[$f->fid] = $icon.l($f->filename,file_create_url($f->uri),array('attributes'=> array('title' => $date)));
+    $file_list[$f->fid] = $icon . l($f->filename, file_create_url($f->uri), array('attributes' => array('title' => $date)));
   }
 
   if ( count($file_list)>0 ) {
@@ -285,29 +287,32 @@ function form_attachements($form, &$form_state,$args)
 /**
  * modifie le comportement du formulaire d'attachement
  */
-function form_attachment_process($element, &$form_state, $form) 
-{
+function form_attachment_process($element, &$form_state, $form) {
+
   $element = file_managed_file_process($element, $form_state, $form);
   $element['upload_button']['#access'] = FALSE;
   return $element;
 }
 
-function form_attachements_submit($form, &$form_state) 
-{
+function form_attachements_submit($form, &$form_state) {
 
   // TODO : actuellement on écrit dans public:// il faudrait écrire dans le dir ci_dessous :
-  $dir = drupal_get_path('module', 'gaiabb') . '/files';
+  //$dir = drupal_get_path('module', 'gaiabb') . '/files';
 
-  if( !file_prepare_directory( $dir ) ) {
-    drupal_set_message( t('WARNING: Server DIR is not accessible. Consult with site admin!', 'status') );
-  } elseif ( isset($form_state['values']['files'])) {
+  //if ( !file_prepare_directory($dir) ) {
+  //  drupal_set_message( t('WARNING: Server DIR is not accessible.'), 'status' );
+  //}
+  if ( isset($form_state['values']['files']) ) {
     $file = file_load($form_state['values']['files']);
     $file->status |= 'FILE_STATUS_TEMPORARY';
     $file = file_save($file);
-    drupal_set_message( t('Le fichier n°'). $form_state['values']['files'] .t(' a été archivé. En cas de problème ce numéro permet de le récupérer, contactez pour cela l\'administarteur.'),'warning' );
-  } elseif ( $form_state['values']['Myfile'] == '' ) {
-    drupal_set_message( t('Echec. Veillez à remplir les champs avant de valider une action.'),'warning' );
-  } else {
+    drupal_set_message( t('Le fichier n°@num a été archivé.', array('@num' => $form_state['values']['files']) ),
+                        'warning' );
+  } 
+  elseif ( $form_state['values']['Myfile'] == '' ) {
+    drupal_set_message( t('Echec. Veillez à remplir les champs avant de valider une action.'), 'warning' );
+  } 
+  else {
     // Load the file via file.fid.
     $file = file_load($form_state['values']['Myfile']);
     // Change status to permanent.
@@ -321,14 +326,14 @@ function form_attachements_submit($form, &$form_state)
       ->execute();
     drupal_set_message( t('Le nouveau fichier a été enregistré.') );
   }
-  $form_state['redirect'] = "gest_module/" . $form_state['values']['codegre'] .'/'. $form_state['values']['comodu'];
+  $form_state['redirect'] = "gest_module/" . $form_state['values']['codegre'] . '/' . $form_state['values']['comodu'];
 }
 
 
 /* EN COURS  
 */
-function sessions($args) 
-{
+function sessions($args) {
+
   $result = db_query('
        SELECT sess_id
        FROM {gbb_session} AS s
@@ -358,20 +363,20 @@ function sessions($args)
   );
 
   foreach ($result as $r) {
-    $form = drupal_get_form('form_session',$r->sess_id);
+    $form = drupal_get_form('form_session', $r->sess_id);
     $rows[] = array( 
-                array('data' =>$form, // render($form['date_session_modif']);,
+                array('data' => $form, // render($form['date_session_modif']);,
                       'class' => array('class'),
                 ),
               );
   }
 
   if (!isset($rows)) return $args;
-  return theme('table', array('rows'=> $rows,'header'=>$header));
+  return theme('table', array('rows' => $rows, 'header' => $header));
 }
 
-function form_session($form, $form_state,$args) 
-{
+function form_session($form, $form_state, $args) {
+
   $result = db_query("
         SELECT  
                date,
@@ -389,13 +394,13 @@ function form_session($form, $form_state,$args)
                nomu, 
                prenom
         FROM {gbb_session} AS s
-        JOIN {gbb_gmodu_plus} AS m ON m.co_modu = s.co_modu
+        LEFT JOIN {gbb_gmodu_plus} AS m ON m.co_modu = s.co_modu
                                   AND m.co_degre = s.co_degre
         LEFT JOIN {gbb_gresp_dafor} AS r ON r.co_resp = s.co_resp
                                    AND r.co_degre = s.co_degre
         LEFT JOIN {gbb_netab} AS e ON e.co_lieu = s.co_lieu
         WHERE s.sess_id  = :sessid
-        ", array(':sessid' => $args,)
+        ", array(':sessid' => $args, )
                  );
   foreach ($result as $r) { }
 
@@ -448,7 +453,7 @@ function form_session($form, $form_state,$args)
 
   $form['formateur'] = array(
     '#type' => 'textfield',
-    '#default_value' => $r->prenom.' '.$r->nomu,
+    '#default_value' => $r->prenom . ' ' . $r->nomu,
     '#size' => 20,
     '#autocomplete_path' => 'autocomp/formateur',
     '#prefix' => '<td>',
@@ -490,19 +495,19 @@ function form_session($form, $form_state,$args)
     '#src' => drupal_get_path('module', 'gaiabb') . '/images/tick.png',
     '#prefix' => '<td>',
     '#suffix' => '</td>',
-    '#attributes' => array('class'=>array('nope')),
+    '#attributes' => array('class' => array('nope')),
     '#ajax' => array
     (
       'callback' => 'form_session_modif_submit',
-      'progress' => array('type'=> 'throbber','message'=>''),
+      'progress' => array('type' => 'throbber', 'message' => ''),
     ),
   );
 
   return $form;
 }
 
-function form_session_modif_submit(&$form, &$form_state) 
-{
+function form_session_modif_submit(&$form, &$form_state) {
+
   $valeurs = array(':sess_id' => $form_state['values']['sess_id'],
                    ':date' => $form_state['values']['date'], 
                    ':session_alert' => $form_state['values']['session_alert'],
@@ -527,8 +532,7 @@ function form_session_modif_submit(&$form, &$form_state)
 
 
 
-function form_sessions_old($form, $form_state,$args) 
-{
+function form_sessions_old($form, $form_state, $args) {
 
   $flag_red = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
@@ -536,8 +540,8 @@ function form_sessions_old($form, $form_state,$args)
         'title' => t('Alerte sur session'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $header = array(
-    'icone' => '',
     'date' => t('Date'),
+    'icone' => '',
     'horaires' => t('Horaires'),
     'lieu' => t('Lieu'),
     'groupe' => t('Gr'),
@@ -602,39 +606,42 @@ function form_sessions_old($form, $form_state,$args)
         'title' => t('La convocation pour cette session a été imprimée.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $row = array();
-  setlocale (LC_TIME, 'fr_FR');
+  setlocale(LC_TIME, 'fr_FR');
   foreach ($result as $r) {
     $visibilite = ($r->en_attente)? 'grisclair' : '';
     if ($r->en_attente) {
       $icon = theme('image', $en_attente_icon);
-    } elseif ($r->session_alert) {
+    } 
+    elseif ($r->session_alert) {
       $icon = theme('image', $session_alert_icon);
-    } elseif ($r->convoc_printed) {
+    } 
+    elseif ($r->convoc_printed) {
       $icon = theme('image', $convoc_printed_icon);
-    } else {
+    } 
+    else {
       $icon = theme('image', $NOT_en_attente_icon);
     };
     $row[$r->sess_id] = array(
+                       'date' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date))),
                        'icone' => $icon,
-                       'date' => utf8_encode(strftime('%a %e %h %Y ',strtotime($r->date))),
                        'horaires' => $r->horaires,
-                       'lieu' => $r->denom_princ.' '.$r->denom_comp.' ('.$r->sigle.')',
+                       'lieu' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')',
                        'groupe' => $r->groupe,
-                       'formateur' => $r->prenom.' '.$r->nomu,
-                       'dureeprevue' => $r->dureeprevue."h",
-                       'dureeapayer' => $r->dureeapayer."h",
+                       'formateur' => $r->prenom . ' ' . $r->nomu,
+                       'dureeprevue' => $r->dureeprevue . "h",
+                       'dureeapayer' => $r->dureeapayer . "h",
                        'TypePaiement' => $r->typePaiement,
-                       '#attributes'  => array ('class' => array($visibilite)),
+                       '#attributes'  => array('class' => array($visibilite)),
                      );
     $date_session_modif = $r->date_session_modif;
   }
 
 
-  setlocale (LC_TIME, 'fr_FR');
+  setlocale(LC_TIME, 'fr_FR');
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Sessions - Dernière modifcation : '.utf8_encode(strftime('%A %e %B %Y %T',strtotime($date_session_modif) ))),
-    '#attributes' => array('class'=>array('sessions','collapsible')),
+    '#title' => t('Sessions - Dernière modifcation : ' . utf8_encode(strftime('%A %e %B %Y %T', strtotime($date_session_modif) ))),
+    '#attributes' => array('class' => array('sessions', 'collapsible')),
   );
   $form['f']['table'] = array
   (
@@ -643,7 +650,7 @@ function form_sessions_old($form, $form_state,$args)
     '#multiple' => FALSE,
     '#options' => $row,
     '#default_value' => (isset($_GET['sess_id']))? $_GET['sess_id'] : 0,
-    '#empty' => t('No users found'),
+    '#empty' => t('Aucune session. cliquez sur Ajouter pour en créer.'),
   );
   $form['f']['comodu'] = array(
     '#type' => 'hidden',
@@ -674,19 +681,19 @@ function form_sessions_old($form, $form_state,$args)
   return $form;
 }
 
-function form_sessions_supprimer_submit($form, &$form_state) 
-{
+function form_sessions_supprimer_submit($form, &$form_state) {
+
   db_delete('gbb_session')
       ->condition('sess_id', $form_state['values']['table'])
       ->execute();
   drupal_set_message(t('La session a été supprimée.'));
-  $url = url('gest_module/' . $form_state['values']['codegre'].
-                        '/' . $form_state['values']['comodu'],array('absolute' => TRUE));
+  $url = url('gest_module/' . $form_state['values']['codegre'] .
+                        '/' . $form_state['values']['comodu'], array('absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
-function form_sessions_ajouter_submit($form, &$form_state) 
-{
+function form_sessions_ajouter_submit($form, &$form_state) {
+
   db_insert('gbb_session')
     ->fields(array(
         'session_alert' => 0,
@@ -703,27 +710,27 @@ function form_sessions_ajouter_submit($form, &$form_state)
         ))
     ->execute();
   $sessid = db_query("SELECT MAX(sess_id) as sessid FROM {gbb_session}")->fetchField();
-  $url = url('gest_module/' . $form_state['values']['codegre'].
+  $url = url('gest_module/' . $form_state['values']['codegre'] .
                         '/' . $form_state['values']['comodu'],
            array('fragment' => 'edit_session_anchor',
-                    'query' => array('sess_id'=>$sessid),'absolute' => TRUE));
+                    'query' => array('sess_id' => $sessid), 'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
-function form_sessions_modifier_submit($form, &$form_state) 
-{
-  $url = url('gest_module/' . $form_state['values']['codegre'].
+function form_sessions_modifier_submit($form, &$form_state) {
+
+  $url = url('gest_module/' . $form_state['values']['codegre'] .
                         '/' . $form_state['values']['comodu'],
            array('fragment' => 'edit_session_anchor',
-                    'query' => array('sess_id'=>$form_state['values']['table']),'absolute' => TRUE));
+                    'query' => array('sess_id' => $form_state['values']['table']), 'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
 /**
  * Formulaire de convocation infos à porter ou non sur la convoc
  */
-function form_convoc($form, &$form_state) 
-{
+function form_convoc($form, &$form_state) {
+
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
   $query  ->rightjoin('gbb_gmodu','m','m.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
@@ -744,6 +751,7 @@ function form_convoc($form, &$form_state)
     '#type' => 'textarea',
     '#title' => t('Info à ne pas porter sur la convocation '),
     '#default_value' => $txt,
+    '#cols' => 50,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
     '#ajax' => array
@@ -759,6 +767,7 @@ function form_convoc($form, &$form_state)
     '#type' => 'textarea',
     '#title' => t('Info à porter sur la convocation '),
     '#default_value' => $txt,
+    '#cols' => 50,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
     '#ajax' => array

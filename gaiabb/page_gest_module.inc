@@ -93,7 +93,9 @@ function infos_detail($args) {
 
   if ($args == 'NaN') return "";
   $liste = array();
-  $result = db_query('
+
+/* AFAC
+$result = db_query('
        SELECT lobjt, n.lib_long AS ori, lautre, m.duree_prev, lmoda, lform, r.co_resp, concat(prenom,\' \',nomu) AS resp, co_tres
        FROM {gbb_gmodu} AS m 
        JOIN {gbb_gdisp} AS ds ON ds.co_disp = m.co_disp
@@ -107,6 +109,30 @@ function infos_detail($args) {
          AND m.co_degre = :codegre
        ', array(':codegre' => arg(1),
                 ':comodu'  => arg(2)) );
+*/
+
+  $query = db_select('gbb_gmodu', 'm');
+  $query  ->join('gbb_gdisp', 'ds', 'ds.co_disp = m.co_disp AND ds.co_degre = m.co_degre');
+  $query  ->leftjoin('gbb_norie', 'n',  'n.co_orie = ds.co_orie');
+  $query  ->leftjoin('gbb_gdire', 'dr', 'dr.co_modu = m.co_modu AND dr.co_degre = m.co_degre');
+  $query  ->leftjoin('gbb_gresp', 'r',  'r.co_resp  = dr.co_resp AND r.co_degre = m.co_degre');
+  $query  ->condition('m.co_modu', arg(2), '=')
+          ->condition('m.co_degre', arg(1), '=')
+          ->fields('m', array('lautre',
+                              'duree_prev',
+                              'lmoda',
+                              'lform',
+                               ))
+          ->fields('r', array('prenom',
+                              'nomu',
+                               ))
+          ->fields('dr', array('co_resp',
+                              'co_tres',
+                               ));
+  $query  ->addField('ds', 'lobjt');
+  $query  ->addField('n', 'lib_long', 'ori');
+$result = $query->execute();
+
 
   $TRES = array( 1 => t("Interlocuteur"),
                  2 => t("Responsable organisationnel"),
@@ -115,7 +141,7 @@ function infos_detail($args) {
   foreach ($result as $r) {
     $rows[] = array( 
                 array('data' => $TRES[$r->co_tres]),
-                array('data' => $r->resp),
+                array('data' => $r->prenom . ' ' .$r->nomu),
               );
   }
     $rows[] = array( 
@@ -151,6 +177,7 @@ function infos_detail($args) {
  * Formulaire d'organisation de la formation
  */
 function form_organisation($form, &$form_state) {
+  global $user;
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
@@ -160,10 +187,16 @@ function form_organisation($form, &$form_state) {
           ->fields('mp', array('organisation', 'module_alert'));
   $r = $query->execute()->fetchObject();
 
+  if (in_array("DAFOR_administratif",$user->roles)) {
+      $collapsed = 'collapsed';
+  }
+  if (in_array("DAFOR_conseiller",$user->roles)) {
+      $collapsed = '';
+  }
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Organisation'),
-    '#attributes' => array('class' => array('organisation', 'collapsible')),
+    '#attributes' => array('class' => array('organisation', 'collapsible', $collapsed)),
   );
 
   $html = $r->organisation;
@@ -823,7 +856,7 @@ function form_edit_session($form, $form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Editer/Ajouter la session') . $r->sess_id . '<a name="edit_session_anchor"></a>' ,
-    '#attributes' => array('class' => array('editsession')),
+    '#attributes' => array('class' => array('eeditsession')),
   );
 
   drupal_add_library('system', 'ui.datepicker');
@@ -898,6 +931,13 @@ function form_edit_session($form, $form_state, $args) {
     '#default_value' => $r->session_alert,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
+   // This #states rule limits visibility to when the $form['f']['en_attente']
+   // checkbox is not checked."
+    '#states' => array(
+      'visible' => array(  // action to take.
+         ':input[name="en_attente"]' => array('checked' => FALSE),
+      ),
+    ),
   );
 
   $form['f']['en_attente'] = array(
@@ -906,7 +946,14 @@ function form_edit_session($form, $form_state, $args) {
     '#default_value' => $r->en_attente,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
-  );
+   // This #states rule limits visibility to when the $form['f']['session_alert']
+   // checkbox is not checked."
+    '#states' => array(
+      'visible' => array(  // action to take.
+         ':input[name="session_alert"]' => array('checked' => FALSE),
+      ),
+    ),
+);
 
   $form['f']['lieu'] = array(
     '#type' => 'textfield',

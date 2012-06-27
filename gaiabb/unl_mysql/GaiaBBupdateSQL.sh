@@ -28,7 +28,7 @@ do
 case "$1" in
   -n) ## **N**ettoyage
 	echo "_N_etttoyage du dossier"
-	rm *.unl *.SQL *.cl2
+	cd $HOME && rm *.unl *.SQL *.cl2
     shift;;
   -g) ## recuperation des donnees par ftp**G**et
 	echo "_G_et FTP des donnees"

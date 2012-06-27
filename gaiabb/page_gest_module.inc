@@ -245,12 +245,14 @@ function form_organisation($form, &$form_state) {
 
 
 function form_organisation_submit(&$form, &$form_state) {
-  db_update('gbb_gmodu_plus')
+  // Merge Queries : http://drupal.org/node/310085
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],
+             ))
     ->fields(array('organisation' => $form_state['values']['organisation'],
                    'module_alert' => $form_state['values']['module_alert'],
              ))
-    ->condition('co_modu',  $form_state['values']['comodu'],  '=')
-    ->condition('co_degre', $form_state['values']['codegre'], '=')
     ->execute();
 }
 
@@ -827,13 +829,14 @@ function form_convoc($form, &$form_state) {
 
 
 function form_convoc_submit(&$form, &$form_state) {
-
-  db_update('gbb_gmodu_plus')
+  // Merge Queries : http://drupal.org/node/310085
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],
+             ))
     ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on'],
                    'convoc_info_off' => $form_state['values']['convoc_info_off'],
              ))
-    ->condition('co_modu',  $form_state['values']['comodu'],  '=')
-    ->condition('co_degre', $form_state['values']['codegre'], '=')
     ->execute();
 }
 

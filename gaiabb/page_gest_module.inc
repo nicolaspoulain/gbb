@@ -700,7 +700,7 @@ function form_sessions_old($form, $form_state, $args) {
         'title' => t('Alerte sur session : le service administratif est prévenu d\'un changement important.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $NOT_en_attente_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
         'alt' => 'en attente',
         'title' => t('Demande de préparation des convocations.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
@@ -714,6 +714,11 @@ function form_sessions_old($form, $form_state, $args) {
         'alt' => 'Convoc imprimee',
         'title' => t('La convocation pour cette session a été imprimée.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+  $convoc_sent_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.png',
+        'alt' => 'Convoc envoyée',
+        'title' => t('La convocation pour cette session a été envoyée.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $row = array();
   setlocale(LC_TIME, 'fr_FR');
   foreach ($result as $r) {
@@ -723,6 +728,9 @@ function form_sessions_old($form, $form_state, $args) {
     } 
     elseif ($r->session_alert) {
       $icon = theme('image', $session_alert_icon);
+    } 
+    elseif ($r->convoc_sent) {
+      $icon = theme('image', $convoc_sent_icon);
     } 
     elseif ($r->convoc_printed) {
       $icon = theme('image', $convoc_printed_icon);
@@ -752,11 +760,19 @@ function form_sessions_old($form, $form_state, $args) {
     '#title' => t('Sessions - Dernière modifcation : ' . utf8_encode(strftime('%A %e %B %Y %T', strtotime($date_session_modif) ))),
     '#attributes' => array('class' => array('sessions', 'collapsible')),
   );
+
+  global $user;
+  if (in_array("DAFOR_conseiller",$user->roles)) {
+      $multiple=FALSE;
+  }
+  else {
+      $multiple=TRUE;
+  }
   $form['f']['table'] = array
   (
     '#type' => 'tableselect',
     '#header' => $header,
-    '#multiple' => FALSE,
+    '#multiple' => $multiple,
     '#options' => $row,
     '#default_value' => (isset($_GET['sess_id']))? $_GET['sess_id'] : 0,
     '#empty' => t('Aucune session. cliquez sur Ajouter pour en créer.'),
@@ -1002,10 +1018,13 @@ function form_edit_session($form, $form_state, $args) {
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
+
+
+  $default_value = ($r->convoc_sent)? 1 : $r->session_alert;
   $form['f']['session_alert'] = array(
     '#type' => 'checkbox',
     '#title' => t('Alerte'),
-    '#default_value' => $r->session_alert,
+    '#default_value' => $default_value,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
    // This #states rule limits visibility to when the $form['f']['en_attente']
@@ -1016,21 +1035,48 @@ function form_edit_session($form, $form_state, $args) {
       ),
     ),
   );
-
-  $form['f']['en_attente'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('En attente'),
-    '#default_value' => $r->en_attente,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>&nbsp;',
-   // This #states rule limits visibility to when the $form['f']['session_alert']
-   // checkbox is not checked."
-    '#states' => array(
-      'visible' => array(  // action to take.
-         ':input[name="session_alert"]' => array('checked' => FALSE),
+  if (!$r->convoc_sent) {
+    $form['f']['en_attente'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('En attente'),
+      '#default_value' => $r->en_attente,
+      '#prefix' => '<div class="inline">',
+      '#suffix' => '</div>&nbsp;',
+       // This #states rule limits visibility to when the $form['f']['session_alert']
+       // checkbox is not checked."
+      '#states' => array(
+        'visible' => array(  // action to take.
+          ':input[name="session_alert"]' => array('checked' => FALSE),
       ),
     ),
 );
+}
+
+  global $user;
+  if (in_array("administrator",$user->roles)) {
+    $form['f']['convoc_sent'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Convoc envoyée'),
+      '#default_value' => $r->convoc_sent,
+      '#prefix' => '<div class="inline">',
+      '#suffix' => '</div>&nbsp;',
+     // This #states rule limits visibility to when the $form['f']['session_alert']
+     // checkbox is not checked."
+      '#states' => array(
+        'visible' => array(  // action to take.
+           ':input[name="session_alert"]' => array('checked' => FALSE),
+           ':input[name="en_attente"]' => array('checked' => FALSE),
+          ),
+        ),
+    );
+  } 
+  else {
+    $form['f']['convoc_sent'] = array(
+      '#type' => 'hidden',
+      '#value' => 0,
+    );
+  }
+
 
   $form['f']['lieu'] = array(
     '#type' => 'textfield',
@@ -1078,6 +1124,7 @@ function form_edit_session_submit($form, &$form_state) {
   $valeurs = array(':sess_id' => $form_state['values']['sess_id'],
                    ':co_modu' => $form_state['values']['co_modu'], 
                    ':groupe' => $form_state['values']['groupe'], 
+                   ':convoc_sent' => $form_state['values']['convoc_sent'], 
                    ':en_attente' => $form_state['values']['en_attente'], 
                    ':session_alert' => $form_state['values']['session_alert'], 
                    ':date' => $form_state['values']['date'], 
@@ -1094,6 +1141,7 @@ function form_edit_session_submit($form, &$form_state) {
                                    co_modu = :co_modu,
                                    session_alert = :session_alert,
                                    en_attente = :en_attente,
+                                   convoc_sent = :convoc_sent,
                                    groupe = :groupe,
                                    horaires = :horaires,
                                    dureeprevue = :dureeprevue,

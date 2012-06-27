@@ -95,15 +95,7 @@ function form_people($form, &$form_state, $args) {
     '#suffix' => '</div>',
   );
 
-  $form['f']['voir_ferme'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Voir les modules fermés'),
-    '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>',
-  );
-
-  $form['f']['cotres'] = array(
+$form['f']['cotres'] = array(
     '#type' => 'hidden',
     '#value' => arg(3),
   );
@@ -111,6 +103,12 @@ function form_people($form, &$form_state, $args) {
   $form['f']['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Envoyer',
+  );
+
+  $form['f']['voir_ferme'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Voir les modules fermés'),
+    '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
   );
 
   return $form;

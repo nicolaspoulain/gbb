@@ -26,7 +26,26 @@ function gest_module($args = 'NaN') {
                                )
                              )
                            );
-  $build['organisation'] = render(drupal_get_form('form_organisation' , $args));
+
+  $collapsed = 'collapsed';
+
+  global $user;
+  if (in_array("DAFOR_conseiller",$user->roles)) {
+      $build['organisation'] = render(drupal_get_form('form_organisation' , $args));
+  }
+  if (in_array("DAFOR_administratif",$user->roles)) {
+      $collapsed = '';
+  }
+ 
+  $build['convoc_stagiaire'] = theme('fieldset', array(
+                             'element' => array(
+                               '#attributes' => array('class' => array('organisation', 'collapsible', $collapsed)),
+                               '#children' => '',
+                               '#title' => t('Convoc stagiaire ...'),
+                               '#value' => convoc_stagiaire($args),
+                               )
+                             )
+                           );
   $build['attachements'] = render(drupal_get_form('form_attachements' , $args));
 
 /*
@@ -172,12 +191,73 @@ $result = $query->execute();
   return theme('table', array('rows' => $rows));
 }
 
+/**
+ * Tableau convocation stagiaire pour le service adiministratif
+ */
+function convoc_stagiaire($args) {
+
+  if ($args == 'NaN') return "";
+/*
+SELECT CONCAT('(:cellnr:)',DATE_FORMAT(date ,'%d/%m/%Y'),'\n',
+                 '(:cell:)',horaires,'\n',
+                                  '(:cell:)',IF(drapeau,'Attach:16calendarred.png','Attach:16flaggreen.png'),'\n',
+                                                   '(:cell:)',groupe,'\n',
+                                                                    '(:cell:)',(SELECT CONCAT(denom_comp,' (',sigle,')') FROM etablissements WHERE co_lieu=rne LIMIT 1),'\n',
+                                                                                     '(:cell:)',rne,'\n') 
+                                                                       FROM `formateur-dafor` AS dd 
+                                                                          LEFT JOIN formateur AS d ON d.id = dd.id_formateur 
+                                                                             WHERE co_modu='{$?Id}' 
+                                                                                GROUP BY rne, date, groupe, horaires
+                                                                                   ORDER BY groupe, date
+*/
+
+  $query = db_select('gbb_session', 'm');
+  $query  ->condition('m.co_modu', arg(2), '=')
+          ->condition('m.co_degre', arg(1), '=')
+          ->fields('m', array('date',
+                              'groupe',
+                              'horaires',
+                              'co_lieu',
+                               ))
+          ->fields('e', array('denom_princ',
+                              'denom_comp',
+                              'sigle',
+                               ))
+          ->leftJoin('gbb_netab', 'e', 'e.co_lieu = m.co_lieu');
+  $query  ->groupBy('co_lieu');
+  $query  ->groupBy('date');
+  $query  ->groupBy('groupe');
+  $query  ->groupBy('horaires');
+  $query  ->orderBy('groupe', 'ASC');
+  $query  ->orderBy('date', 'ASC');
+  $result = $query->execute();
+
+  $header = array(
+    'date' => t('Date'),
+    'horaires' => t('Horaires'),
+    'groupe' => t('Gr'),
+    'etab' => t('Établissement'),
+    'co_lieu' => t('RNE'),
+  );
+
+  foreach ($result as $r) {
+    $rows[] = array( 
+                array('data' => $r->date),
+                array('data' => $r->horaires),
+                array('data' => $r->groupe),
+                array('data' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')'),
+                array('data' => $r->co_lieu),
+              );
+  }
+  if (!isset($rows)) return $args;
+  return theme('table', array('rows' => $rows, 'header' => $header));
+}
+
 
 /**
  * Formulaire d'organisation de la formation
  */
 function form_organisation($form, &$form_state) {
-  global $user;
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
@@ -187,16 +267,10 @@ function form_organisation($form, &$form_state) {
           ->fields('mp', array('organisation', 'module_alert'));
   $r = $query->execute()->fetchObject();
 
-  if (in_array("DAFOR_administratif",$user->roles)) {
-      $collapsed = 'collapsed';
-  }
-  if (in_array("DAFOR_conseiller",$user->roles)) {
-      $collapsed = '';
-  }
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Organisation'),
-    '#attributes' => array('class' => array('organisation', 'collapsible', $collapsed)),
+    '#attributes' => array('class' => array('organisation', 'collapsible')),
   );
 
   $html = $r->organisation;

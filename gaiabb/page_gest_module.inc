@@ -361,7 +361,10 @@ function form_attachements($form, &$form_state, $args) {
     '#type'  => 'managed_file',
     '#upload_location' => 'public://',
     '#process' => array('form_attachment_process')
+//    '#upload_validators'['file_validate_extensions'][0] = 'png jpg gif pdf';
   );
+
+$form['f']['Myfile']['#upload_validators']['file_validate_extensions'][0] = 'jpg jpeg gif png txt rtf doc docx odt xls xlsx ods pdf zip rar';
 
   $form['f']['comodu'] = array(
     '#type' => 'hidden',
@@ -401,7 +404,6 @@ function form_attachements_submit($form, &$form_state) {
   //}
   if ( isset($form_state['values']['files']) ) {
     $file = file_load($form_state['values']['files']);
-    //file_validate_extensions($file, "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp docx rtf");
     $file->status |= 'FILE_STATUS_TEMPORARY';
     $file = file_save($file);
     drupal_set_message( t('Le fichier n°@num a été archivé.', array('@num' => $form_state['values']['files']) ),
@@ -413,6 +415,7 @@ function form_attachements_submit($form, &$form_state) {
   else {
     // Load the file via file.fid.
     $file = file_load($form_state['values']['Myfile']);
+    //file_validate_extensions($file, "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp docx rtf");
     // Change status to permanent.
     $file->status = FILE_STATUS_PERMANENT;
     // Save.

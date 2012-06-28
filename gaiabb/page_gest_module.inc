@@ -30,10 +30,10 @@ function gest_module($args = 'NaN') {
   $collapsed = 'collapsed';
 
   global $user;
-  if (in_array("DAFOR_conseiller",$user->roles)) {
+  if (in_array("DAFOR_conseiller", $user->roles)) {
       $build['organisation'] = render(drupal_get_form('form_organisation' , $args));
   }
-  if (in_array("DAFOR_administratif",$user->roles)) {
+  if (in_array("DAFOR_administratif", $user->roles)) {
       $collapsed = '';
   }
  
@@ -47,20 +47,6 @@ function gest_module($args = 'NaN') {
                              )
                            );
   $build['attachements'] = render(drupal_get_form('form_attachements' , $args));
-
-/*
- *EN COURS...
-  $build['sessions'] = theme('fieldset', array(
-                             'element' => array(
-                             '#attributes' => array('class' => array('sessions', 'collapsible')),
-                             '#children' => '',
-                             '#title' => t('Détails ...'),
-                             '#value' => sessions($args),
-                             )
-                           )
-                         );
-  $build['sessions']     = "";  // a commenter pour obtenir le formualire AJAX ci-dessus
- */
   $build['tableau_sessions']     = render(drupal_get_form('form_tableau_sessions', $args));
   $build['form_edit_session'] = render(drupal_get_form('form_edit_session', $args));
   $build['convoc'] = render(drupal_get_form('form_convoc', $args));
@@ -158,7 +144,7 @@ $result = $query->execute();
   foreach ($result as $r) {
     $rows[] = array( 
                 array('data' => $TRES[$r->co_tres]),
-                array('data' => $r->prenom . ' ' .$r->nomu),
+                array('data' => $r->prenom . ' ' . $r->nomu),
               );
   }
     $rows[] = array( 
@@ -190,7 +176,7 @@ $result = $query->execute();
 }
 
 /**
- * Tableau convocation stagiaire pour le service adiministratif
+ * Tableau ** CONVOCATIONS STAGIAIRES ** pour le service adiministratif
  */
 function convoc_stagiaire($args) {
 
@@ -226,9 +212,11 @@ function convoc_stagiaire($args) {
     'co_lieu' => t('RNE'),
   );
 
+  setlocale(LC_TIME, 'fr_FR');
+
   foreach ($result as $r) {
     $rows[] = array( 
-                array('data' => $r->date),
+                array('data' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date)))),
                 array('data' => $r->horaires),
                 array('data' => $r->groupe),
                 array('data' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')'),
@@ -437,11 +425,7 @@ function form_attachements_submit($form, &$form_state) {
  */
 function form_tableau_sessions($form, $form_state, $args) {
   global $user;
-  $flag_red = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
-        'alt' => 'session_alert',
-        'title' => t('Alerte sur session'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+
   $header = array(
     'date' => t('Date'),
     'icone' => '',
@@ -454,8 +438,6 @@ function form_tableau_sessions($form, $form_state, $args) {
     'TypePaiement' => t('Type pmt'),
   );
 
-  $date_session_modif = '1970-01-01';
-  
   // La requête avec une condition suppléméntaire pour ceux qui ne sont pas conseillers
   // afin que les stages en attente ne leur apparaissent pas.
   $query = db_select('gbb_session', 's');
@@ -471,12 +453,14 @@ function form_tableau_sessions($form, $form_state, $args) {
           ->fields('mp', array('date_session_modif'))
           ->fields('r', array('prenom', 'nomu'))
           ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
-  if (!in_array("DAFOR_conseiller",$user->roles) ) {
+  if (!in_array("DAFOR_conseiller", $user->roles) ) {
     $query  ->condition('s.en_attente', 0, '=');
   }
   $result = $query->execute();
 
   $default = (isset($_GET['sess_id']))? $_GET['sess_id'] : 0;
+  $date_session_modif = '1970-01-01';
+
   $session_alert_icon = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
         'alt' => 'session_alert',
@@ -493,7 +477,7 @@ function form_tableau_sessions($form, $form_state, $args) {
         'title' => t('En attente : ne pas préparer les convocations pour le moment.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $convoc_printed_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.png',
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/email_open.png',
         'alt' => 'Convoc imprimee',
         'title' => t('La convocation pour cette session a été imprimée.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
@@ -502,8 +486,10 @@ function form_tableau_sessions($form, $form_state, $args) {
         'alt' => 'Convoc envoyée',
         'title' => t('La convocation pour cette session a été envoyée.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+
   $row = array();
   setlocale(LC_TIME, 'fr_FR');
+
   foreach ($result as $r) {
     $visibilite = ($r->en_attente)? 'grisclair' : '';
     if ($r->en_attente) {
@@ -544,8 +530,7 @@ function form_tableau_sessions($form, $form_state, $args) {
     '#attributes' => array('class' => array('sessions', 'collapsible')),
   );
 
-  global $user;
-  if (in_array("DAFOR_conseiller",$user->roles)) {
+  if (in_array("DAFOR_conseiller", $user->roles)) {
       $multiple=FALSE;
   }
   else {
@@ -569,7 +554,7 @@ function form_tableau_sessions($form, $form_state, $args) {
     '#value' => arg(1),
   );
 
-  if (!in_array("DAFOR_administratif",$user->roles) ) {
+  if (!in_array("DAFOR_administratif", $user->roles) ) {
     $form['f']['modifier'] = array
     (
       '#type' => 'submit',
@@ -589,7 +574,7 @@ function form_tableau_sessions($form, $form_state, $args) {
       '#submit' => array('form_tableau_sessions_ajouter_submit'),
     );
   }
-  if (!in_array("DAFOR_conseiller",$user->roles) ) {
+  if (!in_array("DAFOR_conseiller", $user->roles) ) {
     $form['f']['convoc_envoyee'] = array
     (
       '#type' => 'submit',
@@ -864,7 +849,7 @@ function form_edit_session($form, $form_state, $args) {
       ),
     ),
   );
-  if ($r->convoc_sent != 1 || !in_array("DAFOR_administratif",$user->roles) ) {
+  if ($r->convoc_sent != 1 || !in_array("DAFOR_administratif", $user->roles) ) {
     $form['f']['en_attente'] = array(
       '#type' => 'checkbox',
       '#title' => t('En attente'),
@@ -887,7 +872,7 @@ function form_edit_session($form, $form_state, $args) {
     );
   }
 
-  if (in_array("DAFOR_administratif",$user->roles) || in_array("administrator",$user->roles)) {
+  if (in_array("DAFOR_administratif", $user->roles) || in_array("administrator", $user->roles)) {
     $form['f']['convoc_sent'] = array(
       '#type' => 'checkbox',
       '#title' => t('Convoc envoyée'),

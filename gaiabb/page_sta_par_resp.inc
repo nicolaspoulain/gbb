@@ -6,7 +6,6 @@
  *
  */
 
-
 /**
  * Fonction d'appel aux differents elements composant la page
  * affichant une liste de responsables et les stages qui leur
@@ -31,7 +30,7 @@ function sta_par_resp($args = 'NaN') {
 }
 
 /**
- * Formulaire de choix d'un conseiller
+ * Formulaire de ** CHOIX D'UN CONSEILLER ** 
  */
 function form_people($form, &$form_state, $args) {
 
@@ -114,6 +113,9 @@ $form['f']['cotres'] = array(
   return $form;
 }
 
+/**
+ * ----> Submit
+ */
 function form_people_submit($form, &$form_state) {
 
   $url = url('sta_par_resp/' . $form_state['values']['year']
@@ -124,9 +126,8 @@ function form_people_submit($form, &$form_state) {
   $form_state['redirect'] = $url;
 }
 
-
 /**
- * Formulaire de filtrage javascript du tableau
+ * Formulaire de ** FILTRE JS DU TABLEAU **
  */
 function filter_form($form, &$form_state, $args) {
 
@@ -139,10 +140,8 @@ function filter_form($form, &$form_state, $args) {
   return $form;
 }
 
-
 /**
- * Liste l'ensemble des stages pour un conseiller donne en argument
- * TODO : FAIRE LES DEUX REQUETES EN UNE SEULE AVEC UN GROUP BY POUR OPTIMISER 
+ * Fonction de ** LISTE DES STAGES ** pour un conseiller donne en argument
  */
 function liste_stages($args) {
 
@@ -151,7 +150,8 @@ function liste_stages($args) {
             ->condition('u.entity_id', $user->uid, '=')
             ->fields('u', array('field_id_resp_value'));
   $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
-   $query = '
+  // TODO : FAIRE LES DEUX REQUETES EN UNE SEULE AVEC UN GROUP BY POUR OPTIMISER 
+  $query = '
       SELECT DISTINCT m.co_modu,
                       mp.module_alert,
                       m.lib AS libm,

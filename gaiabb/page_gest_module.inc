@@ -50,7 +50,6 @@ function gest_module($args = 'NaN') {
 
 /*
  *EN COURS...
- */
   $build['sessions'] = theme('fieldset', array(
                              'element' => array(
                              '#attributes' => array('class' => array('sessions', 'collapsible')),
@@ -61,13 +60,13 @@ function gest_module($args = 'NaN') {
                            )
                          );
   $build['sessions']     = "";  // a commenter pour obtenir le formualire AJAX ci-dessus
-  $build['sessions_old']     = render(drupal_get_form('form_sessions_old', $args));
+ */
+  $build['tableau_sessions']     = render(drupal_get_form('form_tableau_sessions', $args));
   $build['form_edit_session'] = render(drupal_get_form('form_edit_session', $args));
   $build['convoc'] = render(drupal_get_form('form_convoc', $args));
 
   return implode('', $build);
 }
-
 
 /**
  * Un tableau à deux lignes qui affiche le dispo et le module
@@ -103,7 +102,6 @@ function infos_gaia($args) {
   if (!isset($rows)) return $args;
   return theme('table', array('rows' => $rows));
 }
-
 
 /**
  * Un tableau qui affiche les détails du module
@@ -241,9 +239,8 @@ function convoc_stagiaire($args) {
   return theme('table', array('rows' => $rows, 'header' => $header));
 }
 
-
 /**
- * Formulaire d'organisation de la formation
+ * Formulaire d' ** ORGANISATION ** de la formation
  */
 function form_organisation($form, &$form_state) {
 
@@ -305,7 +302,9 @@ function form_organisation($form, &$form_state) {
  return $form;
 }
 
-
+/**
+ * ----> Submit
+ */
 function form_organisation_submit(&$form, &$form_state) {
   // Merge Queries : http://drupal.org/node/310085
   db_merge('gbb_gmodu_plus')
@@ -319,7 +318,7 @@ function form_organisation_submit(&$form, &$form_state) {
 }
 
 /**
- * Formulaire des attachements
+ * Formulaire des ** ATTACHEMENTS **
  */
 function form_attachements($form, &$form_state, $args) {
   $form['f'] = array(
@@ -385,7 +384,7 @@ $form['f']['Myfile']['#upload_validators']['file_validate_extensions'][0] = 'jpg
 }
 
 /**
- * modifie le comportement du formulaire d'attachement
+ * ----> modifie le comportement du formulaire d'attachement
  */
 function form_attachment_process($element, &$form_state, $form) {
 
@@ -394,6 +393,9 @@ function form_attachment_process($element, &$form_state, $form) {
   return $element;
 }
 
+/**
+ * ----> Submit
+ */
 function form_attachements_submit($form, &$form_state) {
 
   // TODO : actuellement on écrit dans public:// il faudrait écrire dans le dir ci_dessous :
@@ -430,210 +432,10 @@ function form_attachements_submit($form, &$form_state) {
   $form_state['redirect'] = "gest_module/" . $form_state['values']['codegre'] . '/' . $form_state['values']['comodu'];
 }
 
-
-/* EN COURS  
-*/
-function sessions($args) {
-
-  $result = db_query('
-       SELECT sess_id
-       FROM {gbb_session} AS s
-       WHERE s.co_modu  = :comodu
-         AND s.co_degre = :codegre
-       ', array(':codegre' => arg(1), 
-                ':comodu'  => arg(2)) );
-
-  $flag_red = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
-        'alt' => 'session_alert',
-        'title' => t('Alerte sur session'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-
-  $header = array(
-    'Suppr' => t('Del'),
-    'date' => t('Date'),
-    'horaires' => t('Horaires'),
-    'lieu' => t('Lieu'),
-    'session_alert' => theme('image', $flag_red),
-    'groupe' => t('Gr'),
-    'formateur' => t('Formateur'),
-    'dureeprevue' => t('Prévues'),
-    'dureeapayer' => t('À payer'),
-    'TypePaiement' => t('Type paiemt'),
-    'Valid' => t('Ok'),
-  );
-
-  foreach ($result as $r) {
-    $form = drupal_get_form('form_session', $r->sess_id);
-    $rows[] = array( 
-                array('data' => $form, // render($form['date_session_modif']);,
-                      'class' => array('class'),
-                ),
-              );
-  }
-
-  if (!isset($rows)) return $args;
-  return theme('table', array('rows' => $rows, 'header' => $header));
-}
-
-function form_session($form, $form_state, $args) {
-
-  $result = db_query("
-        SELECT  
-               date,
-               date_session_modif,
-               horaires, 
-               s.co_lieu AS co_lieu, 
-               denom_princ, 
-               denom_comp, 
-               session_alert, 
-               groupe, 
-               s.co_resp, 
-               dureeprevue, 
-               dureeapayer, 
-               typePaiement, 
-               nomu, 
-               prenom
-        FROM {gbb_session} AS s
-        LEFT JOIN {gbb_gmodu_plus} AS m ON m.co_modu = s.co_modu
-                                  AND m.co_degre = s.co_degre
-        LEFT JOIN {gbb_gresp_dafor} AS r ON r.co_resp = s.co_resp
-                                   AND r.co_degre = s.co_degre
-        LEFT JOIN {gbb_netab} AS e ON e.co_lieu = s.co_lieu
-        WHERE s.sess_id  = :sessid
-        ", array(':sessid' => $args, )
-                 );
-  foreach ($result as $r) { }
-
-  $form['delete'] = array(
-    '#type' => 'checkbox',
-    '#default_value' => 0,
-  );
-
-   $form['date'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->date,
-    '#size' => 5,
-    '#maxlength' => 10,
-    '#attributes' => array('class' => array('pickadate')),
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['horaires'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->horaires,
-    '#size' => 15,
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['lieu'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->denom_comp,
-    '#size' => 25,
-    '#autocomplete_path' => 'autocomp/etablissement',
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['session_alert'] = array(
-    '#type' => 'checkbox',
-    '#default_value' => $r->session_alert,
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['groupe'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->groupe,
-    '#size' => 1,
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['formateur'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->prenom . ' ' . $r->nomu,
-    '#size' => 20,
-    '#autocomplete_path' => 'autocomp/formateur',
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['dureeprevue'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->dureeprevue,
-    '#size' => 2,
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['dureeapayer'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->dureeapayer,
-    '#size' => 2,
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['typePaiement'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $r->typePaiement,
-    '#size' => 4,
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-  );
-
-  $form['f']['sess_id'] = array(
-    '#type' => 'hidden',
-    '#value' => $args,
-  );
-
-  $form['modif'] = array(
-    '#type' => 'image_button',
-    '#value' => 1,
-    '#src' => drupal_get_path('module', 'gaiabb') . '/images/tick.png',
-    '#prefix' => '<td>',
-    '#suffix' => '</td>',
-    '#attributes' => array('class' => array('nope')),
-    '#ajax' => array
-    (
-      'callback' => 'form_session_modif_submit',
-      'progress' => array('type' => 'throbber', 'message' => ''),
-    ),
-  );
-
-  return $form;
-}
-
-function form_session_modif_submit(&$form, &$form_state) {
-
-  $valeurs = array(':sess_id' => $form_state['values']['sess_id'],
-                   ':date' => $form_state['values']['date'], 
-                   ':session_alert' => $form_state['values']['session_alert'],
-                   ':horaires' => $form_state['values']['horaires'],
-                   ':dureeprevue' => $form_state['values']['dureeprevue'], 
-                   ':dureeapayer' => $form_state['values']['dureeapayer'], 
-                   ':typePaiement' => $form_state['values']['typePaiement'], 
-                   ':lieu' => $form_state['values']['lieu'], 
-                   ':formateur' => $form_state['values']['formateur'],
-  ); 
-  db_query("UPDATE {gbb_session} SET date = :date,
-                                   horaires = :horaires,
-                                   session_alert= :session_alert,
-                                   dureeprevue = :dureeprevue,
-                                   dureeapayer = :dureeapayer,
-                                   typePaiement = :typePaiement,
-                                   co_lieu = (SELECT co_lieu FROM {gbb_netab} WHERE denom_comp = :lieu),
-                                   co_resp = (SELECT co_resp FROM {gbb_gresp_dafor} WHERE CONCAT(prenom,' ',nomu) = :formateur)
-            WHERE sess_id = :sess_id", $valeurs);
-  //die(print_r($form_state['values']));
-}
-
-
-
-function form_sessions_old($form, $form_state, $args) {
+/**
+ * Formulaire du ** TABLEAU DES SESSIONS **
+ */
+function form_tableau_sessions($form, $form_state, $args) {
   global $user;
   $flag_red = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
@@ -653,74 +455,26 @@ function form_sessions_old($form, $form_state, $args) {
   );
 
   $date_session_modif = '1970-01-01';
-  if (in_array("DAFOR_conseiller",$user->roles) ) {
-    $result = db_query("
-        SELECT sess_id,
-               en_attente, 
-               date,
-               convoc_printed,
-               convoc_sent,
-               date_session_modif,
-               horaires, 
-               s.co_lieu,
-               sigle,
-               denom_princ, 
-               denom_comp, 
-               session_alert, 
-               groupe, 
-               s.co_resp, 
-               dureeprevue, 
-               dureeapayer, 
-               typePaiement, 
-               nomu, 
-               prenom
-        FROM {gbb_session} AS s
-        LEFT JOIN {gbb_gmodu_plus} AS m ON m.co_modu = s.co_modu
-                                  AND m.co_degre = s.co_degre
-        LEFT JOIN {gbb_gresp_dafor} AS r ON r.co_resp = s.co_resp
-                                   AND r.co_degre = s.co_degre
-        LEFT JOIN {gbb_netab} AS e ON e.co_lieu = s.co_lieu
-        WHERE s.co_modu  = :comodu
-          AND s.co_degre = :codegre
-        ORDER BY date
-        ", array(':codegre' => arg(1),
-                 ':comodu'  => arg(2)) );
-  } 
-  else {
-    $result = db_query("
-        SELECT sess_id,
-               en_attente, 
-               date,
-               convoc_printed,
-               convoc_sent,
-               date_session_modif,
-               horaires, 
-               s.co_lieu,
-               sigle,
-               denom_princ, 
-               denom_comp, 
-               session_alert, 
-               groupe, 
-               s.co_resp, 
-               dureeprevue, 
-               dureeapayer, 
-               typePaiement, 
-               nomu, 
-               prenom
-        FROM {gbb_session} AS s
-        LEFT JOIN {gbb_gmodu_plus} AS m ON m.co_modu = s.co_modu
-                                  AND m.co_degre = s.co_degre
-        LEFT JOIN {gbb_gresp_dafor} AS r ON r.co_resp = s.co_resp
-                                   AND r.co_degre = s.co_degre
-        LEFT JOIN {gbb_netab} AS e ON e.co_lieu = s.co_lieu
-        WHERE s.co_modu  = :comodu
-          AND s.co_degre = :codegre
-          AND s.en_attente=0 
-        ORDER BY date
-        ", array(':codegre' => arg(1),
-                 ':comodu'  => arg(2)) );
-  } 
- 
+  
+  // La requête avec une condition suppléméntaire pour ceux qui ne sont pas conseillers
+  // afin que les stages en attente ne leur apparaissent pas.
+  $query = db_select('gbb_session', 's');
+  $query  ->leftjoin('gbb_gmodu_plus', 'mp', 'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
+  $query  ->leftjoin('gbb_gresp_dafor', 'r', 'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
+  $query  ->leftjoin('gbb_netab', 'e', 'e.co_lieu = s.co_lieu');
+  $query  ->orderBy('date', 'ASC');
+  $query  ->condition('mp.co_modu', arg(2), '=')
+          ->condition('mp.co_degre', arg(1), '=')
+          ->fields('s', array('sess_id', 'date', 'dureeprevue', 'dureeapayer', 'typePaiement',
+                              'convoc_printed', 'en_attente', 'convoc_sent', 'session_alert',
+                              'horaires', 'co_lieu', 'co_resp', 'groupe'))
+          ->fields('mp', array('date_session_modif'))
+          ->fields('r', array('prenom', 'nomu'))
+          ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
+  if (!in_array("DAFOR_conseiller",$user->roles) ) {
+    $query  ->condition('s.en_attente', 0, '=');
+  }
+  $result = $query->execute();
 
   $default = (isset($_GET['sess_id']))? $_GET['sess_id'] : 0;
   $session_alert_icon = array(
@@ -820,19 +574,19 @@ function form_sessions_old($form, $form_state, $args) {
     (
       '#type' => 'submit',
       '#value' => t('Modifier'),
-      '#submit' => array('form_sessions_modifier_submit'),
+      '#submit' => array('form_tableau_sessions_modifier_submit'),
     );
     $form['f']['supprimer'] = array
     (
       '#type' => 'submit',
       '#value' => t('Supprimer'),
-      '#submit' => array('form_sessions_supprimer_submit'),
+      '#submit' => array('form_tableau_sessions_supprimer_submit'),
     );
     $form['f']['ajouter'] = array
     (
       '#type' => 'submit',
       '#value' => t('Ajouter'),
-      '#submit' => array('form_sessions_ajouter_submit'),
+      '#submit' => array('form_tableau_sessions_ajouter_submit'),
     );
   }
   if (!in_array("DAFOR_conseiller",$user->roles) ) {
@@ -840,13 +594,16 @@ function form_sessions_old($form, $form_state, $args) {
     (
       '#type' => 'submit',
       '#value' => t('Convocs envoyées'),
-      '#submit' => array('form_sessions_convoc_submit'),
+      '#submit' => array('form_tableau_sessions_convoc_submit'),
     );
   }
   return $form;
 }
 
-function form_sessions_supprimer_submit($form, &$form_state) {
+/**
+ * ----> Submit
+ */
+function form_tableau_sessions_supprimer_submit($form, &$form_state) {
 
   db_delete('gbb_session')
       ->condition('sess_id', $form_state['values']['table'])
@@ -857,7 +614,10 @@ function form_sessions_supprimer_submit($form, &$form_state) {
   $form_state['redirect'] = $url;
 }
 
-function form_sessions_ajouter_submit($form, &$form_state) {
+/**
+ * ----> Submit
+ */
+function form_tableau_sessions_ajouter_submit($form, &$form_state) {
 
   db_insert('gbb_session')
     ->fields(array(
@@ -882,7 +642,10 @@ function form_sessions_ajouter_submit($form, &$form_state) {
   $form_state['redirect'] = $url;
 }
 
-function form_sessions_modifier_submit($form, &$form_state) {
+/**
+ * ----> Submit
+ */
+function form_tableau_sessions_modifier_submit($form, &$form_state) {
 
   $url = url('gest_module/' . $form_state['values']['codegre'] .
                         '/' . $form_state['values']['comodu'],
@@ -891,8 +654,10 @@ function form_sessions_modifier_submit($form, &$form_state) {
   $form_state['redirect'] = $url;
 }
 
-
-function form_sessions_convoc_submit($form, &$form_state) {
+/**
+ * ----> Submit
+ */
+function form_tableau_sessions_convoc_submit($form, &$form_state) {
 
   $url = url('gest_module/' . $form_state['values']['codegre'] .
                         '/' . $form_state['values']['comodu'],
@@ -913,7 +678,7 @@ function form_sessions_convoc_submit($form, &$form_state) {
 }
 
 /**
- * Formulaire de convocation infos à porter ou non sur la convoc
+ * Formulaire de ** CONVOCATIONS INFOS ** à porter ou non sur la convoc
  */
 function form_convoc($form, &$form_state) {
 
@@ -978,7 +743,9 @@ function form_convoc($form, &$form_state) {
  return $form;
 }
 
-
+/**
+ * ----> Submit
+ */
 function form_convoc_submit(&$form, &$form_state) {
   // Merge Queries : http://drupal.org/node/310085
   db_merge('gbb_gmodu_plus')
@@ -992,7 +759,7 @@ function form_convoc_submit(&$form, &$form_state) {
 }
 
 /**
- * Formulaire de modification d'une session particulière
+ * Formulaire de ** MODIF D'UNE SESSION ** particulière
  */
 function form_edit_session($form, $form_state, $args) {
 
@@ -1186,6 +953,9 @@ function form_edit_session($form, $form_state, $args) {
   return $form;
 }
 
+/**
+ * ----> Submit
+ */
 function form_edit_session_submit($form, &$form_state) {
 
   $valeurs = array(':sess_id' => $form_state['values']['sess_id'],
@@ -1251,7 +1021,7 @@ function form_edit_session_submit($form, &$form_state) {
 }
 
 /**
- * Fonctions d'autoclompletion AJAX
+ * Fonctions d' ** AUTOCOMPLETE AJAX ETABLISSEMENTS **
  */
 function _gaiabb_autocompetab($string) {
 
@@ -1270,6 +1040,9 @@ function _gaiabb_autocompetab($string) {
   drupal_json_output($matches);
 }
 
+/**
+ * Fonctions d' ** AUTOCOMPLETE AJAX FORMATEURS **
+ */
 function _gaiabb_autocompform($string) {
 
   $matches = array();

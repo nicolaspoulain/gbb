@@ -631,7 +631,7 @@ function form_session_modif_submit(&$form, &$form_state) {
 
 
 function form_sessions_old($form, $form_state, $args) {
-
+  global $user;
   $flag_red = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
         'alt' => 'session_alert',
@@ -650,7 +650,8 @@ function form_sessions_old($form, $form_state, $args) {
   );
 
   $date_session_modif = '1970-01-01';
-  $result = db_query("
+  if (in_array("DAFOR_conseiller",$user->roles) ) {
+    $result = db_query("
         SELECT sess_id,
                en_attente, 
                date,
@@ -681,6 +682,42 @@ function form_sessions_old($form, $form_state, $args) {
         ORDER BY date
         ", array(':codegre' => arg(1),
                  ':comodu'  => arg(2)) );
+  } 
+  else {
+    $result = db_query("
+        SELECT sess_id,
+               en_attente, 
+               date,
+               convoc_printed,
+               convoc_sent,
+               date_session_modif,
+               horaires, 
+               s.co_lieu,
+               sigle,
+               denom_princ, 
+               denom_comp, 
+               session_alert, 
+               groupe, 
+               s.co_resp, 
+               dureeprevue, 
+               dureeapayer, 
+               typePaiement, 
+               nomu, 
+               prenom
+        FROM {gbb_session} AS s
+        LEFT JOIN {gbb_gmodu_plus} AS m ON m.co_modu = s.co_modu
+                                  AND m.co_degre = s.co_degre
+        LEFT JOIN {gbb_gresp_dafor} AS r ON r.co_resp = s.co_resp
+                                   AND r.co_degre = s.co_degre
+        LEFT JOIN {gbb_netab} AS e ON e.co_lieu = s.co_lieu
+        WHERE s.co_modu  = :comodu
+          AND s.co_degre = :codegre
+          AND s.en_attente=0 
+        ORDER BY date
+        ", array(':codegre' => arg(1),
+                 ':comodu'  => arg(2)) );
+  } 
+ 
 
   $default = (isset($_GET['sess_id']))? $_GET['sess_id'] : 0;
   $session_alert_icon = array(
@@ -755,7 +792,7 @@ function form_sessions_old($form, $form_state, $args) {
       $multiple=FALSE;
   }
   else {
-      $multiple=FALSE;
+      $multiple=TRUE;
   }
   $form['f']['table'] = array
   (
@@ -774,24 +811,35 @@ function form_sessions_old($form, $form_state, $args) {
     '#type' => 'hidden',
     '#value' => arg(1),
   );
-  $form['f']['modifier'] = array
-  (
-    '#type' => 'submit',
-    '#value' => t('Modifier'),
-    '#submit' => array('form_sessions_modifier_submit'),
-  );
-  $form['f']['supprimer'] = array
-  (
-    '#type' => 'submit',
-    '#value' => t('Supprimer'),
-    '#submit' => array('form_sessions_supprimer_submit'),
-  );
-  $form['f']['ajouter'] = array
-  (
-    '#type' => 'submit',
-    '#value' => t('Ajouter'),
-    '#submit' => array('form_sessions_ajouter_submit'),
-  );
+
+  if (!in_array("DAFOR_administratif",$user->roles) ) {
+    $form['f']['modifier'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Modifier'),
+      '#submit' => array('form_sessions_modifier_submit'),
+    );
+    $form['f']['supprimer'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Supprimer'),
+      '#submit' => array('form_sessions_supprimer_submit'),
+    );
+    $form['f']['ajouter'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Ajouter'),
+      '#submit' => array('form_sessions_ajouter_submit'),
+    );
+  }
+  if (!in_array("DAFOR_conseiller",$user->roles) ) {
+    $form['f']['convoc_envoyee'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Convocs envoyées'),
+      '#submit' => array('form_sessions_convoc_submit'),
+    );
+  }
   return $form;
 }
 
@@ -838,6 +886,27 @@ function form_sessions_modifier_submit($form, &$form_state) {
            array('fragment' => 'edit_session_anchor',
                     'query' => array('sess_id' => $form_state['values']['table']), 'absolute' => TRUE));
   $form_state['redirect'] = $url;
+}
+
+
+function form_sessions_convoc_submit($form, &$form_state) {
+
+  $url = url('gest_module/' . $form_state['values']['codegre'] .
+                        '/' . $form_state['values']['comodu'],
+           array('fragment' => 'edit_session_anchor',
+                    'query' => array('sess' => $form_state['values']['table']), 'absolute' => TRUE));
+  $form_state['redirect'] = $url;
+
+  foreach ($form_state['values']['table'] as $i) {
+    db_merge('gbb_session')
+      ->key(array('sess_id'  => $i,
+               ))
+      ->fields(array('convoc_sent' => 1,
+                     'session_alert' => 0,
+               ))
+      ->execute();
+  }
+  drupal_set_message(t('Les convocs sont envoyées.'));
 }
 
 /**

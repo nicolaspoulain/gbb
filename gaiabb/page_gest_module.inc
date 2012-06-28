@@ -197,23 +197,11 @@ $result = $query->execute();
 function convoc_stagiaire($args) {
 
   if ($args == 'NaN') return "";
-/*
-SELECT CONCAT('(:cellnr:)',DATE_FORMAT(date ,'%d/%m/%Y'),'\n',
-                 '(:cell:)',horaires,'\n',
-                                  '(:cell:)',IF(drapeau,'Attach:16calendarred.png','Attach:16flaggreen.png'),'\n',
-                                                   '(:cell:)',groupe,'\n',
-                                                                    '(:cell:)',(SELECT CONCAT(denom_comp,' (',sigle,')') FROM etablissements WHERE co_lieu=rne LIMIT 1),'\n',
-                                                                                     '(:cell:)',rne,'\n') 
-                                                                       FROM `formateur-dafor` AS dd 
-                                                                          LEFT JOIN formateur AS d ON d.id = dd.id_formateur 
-                                                                             WHERE co_modu='{$?Id}' 
-                                                                                GROUP BY rne, date, groupe, horaires
-                                                                                   ORDER BY groupe, date
-*/
 
   $query = db_select('gbb_session', 'm');
   $query  ->condition('m.co_modu', arg(2), '=')
           ->condition('m.co_degre', arg(1), '=')
+          ->condition('m.en_attente', 1, '<>')
           ->fields('m', array('date',
                               'groupe',
                               'horaires',
@@ -413,6 +401,7 @@ function form_attachements_submit($form, &$form_state) {
   //}
   if ( isset($form_state['values']['files']) ) {
     $file = file_load($form_state['values']['files']);
+    //file_validate_extensions($file, "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp docx rtf");
     $file->status |= 'FILE_STATUS_TEMPORARY';
     $file = file_save($file);
     drupal_set_message( t('Le fichier n°@num a été archivé.', array('@num' => $form_state['values']['files']) ),
@@ -766,7 +755,7 @@ function form_sessions_old($form, $form_state, $args) {
       $multiple=FALSE;
   }
   else {
-      $multiple=TRUE;
+      $multiple=FALSE;
   }
   $form['f']['table'] = array
   (
@@ -935,6 +924,7 @@ function form_convoc_submit(&$form, &$form_state) {
  */
 function form_edit_session($form, $form_state, $args) {
 
+  global $user;
   if (!isset($_GET['sess_id'])) return '';
   // On récupère les valeurs associées à la session pour peupler le formulaire
   $result = db_query("
@@ -1035,7 +1025,7 @@ function form_edit_session($form, $form_state, $args) {
       ),
     ),
   );
-  if (!$r->convoc_sent) {
+  if ($r->convoc_sent != 1 || !in_array("DAFOR_administratif",$user->roles) ) {
     $form['f']['en_attente'] = array(
       '#type' => 'checkbox',
       '#title' => t('En attente'),
@@ -1049,11 +1039,16 @@ function form_edit_session($form, $form_state, $args) {
           ':input[name="session_alert"]' => array('checked' => FALSE),
       ),
     ),
-);
-}
+  );
+  }
+  else {
+    $form['f']['en_attente'] = array(
+      '#type' => 'hidden',
+      '#value' => 0,
+    );
+  }
 
-  global $user;
-  if (in_array("administrator",$user->roles)) {
+  if (in_array("DAFOR_administratif",$user->roles) || in_array("administrator",$user->roles)) {
     $form['f']['convoc_sent'] = array(
       '#type' => 'checkbox',
       '#title' => t('Convoc envoyée'),

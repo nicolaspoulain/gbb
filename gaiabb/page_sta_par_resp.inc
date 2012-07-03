@@ -161,7 +161,8 @@ function liste_stages($args) {
                       co_camp,
                       co_andi,
                       co_anmo,
-                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) as nb_nea,
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0 AND convoc_sent=0) as nb_nea,
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) as nb_s,
                       (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=1) as nb_ea,
                       (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) as nb_sa,
                       (select count({gbb_file}.fid) from {gbb_file} JOIN {file_managed} ON {file_managed}.fid={gbb_file}.fid  Where co_modu=mp.co_modu AND co_degre=mp.co_degre AND status=1) as nb_pj
@@ -180,6 +181,7 @@ function liste_stages($args) {
   $query = '
       SELECT DISTINCT m.co_modu,
                       mp.module_alert,
+                      mp.module_alert,
                       m.lib AS libm,
                       d.co_disp,
                       id_disp,
@@ -187,11 +189,7 @@ function liste_stages($args) {
                       co_camp,
                       co_andi,
                       co_anmo,
-                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) as nb_nea,
-                      0 as nb_ea,
-                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) as nb_sa,
-                      (select count({gbb_file}.fid) from {gbb_file} JOIN {file_managed} ON {file_managed}.fid={gbb_file}.fid  Where co_modu=mp.co_modu AND co_degre=mp.co_degre AND status=1) as nb_pj
-      FROM {gbb_gmodu} as m
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0 AND convoc_sent=0) as nb_nea,
       LEFT JOIN {gbb_gmodu_plus} as mp ON mp.co_modu=m.co_modu
                                       AND mp.co_degre=m.co_degre
       JOIN {gbb_gdisp} as d ON m.co_disp=d.co_disp
@@ -266,11 +264,11 @@ function liste_stages($args) {
       $module_alert = ($r->module_alert)? theme('image', $variables) : '';
 
       $variables = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.gif',
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.png',
         'alt' => 'convoc_sent',
         'title' => t('Convocations envoyées'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      //$convoc_sent = ($r->convoc_sent)? theme('image', $variables) : '';
+      $convoc_sent = ($r->nb_s >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_s . '</span>' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/attachement.gif',
@@ -281,7 +279,8 @@ function liste_stages($args) {
 
       $rows[] = array( 
                   array('data' => 
-                                  $attachement .
+                                  //$attachement .
+                                  $convoc_sent .
                                   $session_alert .
                                   $NOT_en_attente .
                                   $en_attente .

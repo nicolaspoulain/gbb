@@ -522,7 +522,6 @@ function form_tableau_sessions($form, $form_state, $args) {
     $date_session_modif = $r->date_session_modif;
   }
 
-
   setlocale(LC_TIME, 'fr_FR');
   $form['f'] = array(
     '#type' => 'fieldset',
@@ -531,10 +530,12 @@ function form_tableau_sessions($form, $form_state, $args) {
   );
 
   if (in_array("DAFOR_conseiller", $user->roles)) {
-      $multiple=FALSE;
+      $multiple = FALSE;
+      $defaultv = (isset($_GET['sess_id']))? $_GET['sess_id'] : 0;
   }
   else {
-      $multiple=TRUE;
+      $multiple = TRUE;
+      $defaultv = array();
   }
   $form['f']['table'] = array
   (
@@ -542,7 +543,7 @@ function form_tableau_sessions($form, $form_state, $args) {
     '#header' => $header,
     '#multiple' => $multiple,
     '#options' => $row,
-    '#default_value' => (isset($_GET['sess_id']))? $_GET['sess_id'] : 0,
+    '#default_value' => $defaultv,
     '#empty' => t('Aucune session. cliquez sur Ajouter pour en créer.'),
   );
   $form['f']['comodu'] = array(
@@ -619,6 +620,16 @@ function form_tableau_sessions_ajouter_submit($form, &$form_state) {
         'dureeprevue' => 0,
         ))
     ->execute();
+
+  db_merge('gbb_gmodu_plus')
+      ->key(array('co_modu'  => $form_state['values']['comodu'],
+                  'co_degre' => $form_state['values']['codegre'],
+               ))
+      ->fields(array('date_session_modif' => '1999-01-01 01:01:10', // A MODIFIER avec un timestamp correct
+               ))
+      ->execute();
+
+
   $sessid = db_query("SELECT MAX(sess_id) as sessid FROM {gbb_session}")->fetchField();
   $url = url('gest_module/' . $form_state['values']['codegre'] .
                         '/' . $form_state['values']['comodu'],

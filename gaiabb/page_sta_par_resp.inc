@@ -178,40 +178,17 @@ function liste_stages($args) {
         AND id_disp LIKE :year
         ';
   if (!in_array("DAFOR_conseiller", $user->roles) ) {
-  $query = '
-      SELECT DISTINCT m.co_modu,
-                      mp.module_alert,
-                      mp.module_alert,
-                      m.lib AS libm,
-                      d.co_disp,
-                      id_disp,
-                      d.lib AS libd,
-                      co_camp,
-                      co_andi,
-                      co_anmo,
-                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0 AND convoc_sent=0) as nb_nea,
-      LEFT JOIN {gbb_gmodu_plus} as mp ON mp.co_modu=m.co_modu
-                                      AND mp.co_degre=m.co_degre
-      JOIN {gbb_gdisp} as d ON m.co_disp=d.co_disp
-                           AND m.co_degre=d.co_degre
-      JOIN {gbb_gdire} as j ON m.co_modu=j.co_modu
-                           AND m.co_degre=j.co_degre
-      WHERE j.co_degre = :codegre
-        AND j.co_resp =  :coresp
-        AND id_disp LIKE :year
-        AND (
+  
+    $query .= 'AND (
          (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) > 0
          OR
          (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
          )
         ';
+  
   }
   if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
     $query .= 'AND co_anmo = \'\'';
-  }
-
-  if ( isset($_GET['adm']) && $_GET['adm'] == 1) {
-    $query .= 'AND mp.date_premiere_session BETWEEN CURDATE() AND ADDDATE(CURDATE(),365)';
   }
 
   $result = db_query($query, 
@@ -221,6 +198,7 @@ function liste_stages($args) {
             );
   $liste = array();
   $libd_precedent= '';
+  $rows = array();
   foreach ($result as $r) {
       $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
       $options_comodu = array('attributes' => array('class' => array($m_ouvert_ou_ferme),

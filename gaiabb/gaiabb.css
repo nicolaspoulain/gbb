@@ -123,3 +123,7 @@ ul.nope {
 #autocomplete {
   background : #FFF;
 }
+
+.block-user li{
+    display:inline;
+}

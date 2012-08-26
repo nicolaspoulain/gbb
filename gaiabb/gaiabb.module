@@ -44,6 +44,18 @@ function gaiabb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+
+  // Etant donné un id (1 ou 2)
+  // Affiche la page de gestion des formateurs
+  //   exemple : formateur/2/26142
+
+  $items['formateur'] = array(
+        'title' => '',
+        'page callback' => 'formateur',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+  );
+
   // Pages pour autocomplete AJAX
   $items['autocomp/etablissement'] = array(
     'page callback' => '_gaiabb_autocompetab',
@@ -58,5 +70,6 @@ function gaiabb_menu() {
   return $items;
 }
 
+module_load_include('inc', 'gaiabb', 'page_formateur');
 module_load_include('inc', 'gaiabb', 'page_sta_par_resp');
 module_load_include('inc', 'gaiabb', 'page_gest_module');

@@ -448,7 +448,7 @@ function form_tableau_sessions($form, $form_state, $args) {
   $query  ->condition('mp.co_modu', arg(2), '=')
           ->condition('mp.co_degre', arg(1), '=')
           ->fields('s', array('sess_id', 'date', 'dureeprevue', 'dureeapayer', 'typePaiement',
-                              'convoc_printed', 'en_attente', 'convoc_sent', 'session_alert',
+                              'en_attente', 'convoc_sent', 'session_alert',
                               'horaires', 'co_lieu', 'co_resp', 'groupe'))
           ->fields('mp', array('date_session_modif'))
           ->fields('r', array('prenom', 'nomu'))
@@ -467,7 +467,8 @@ function form_tableau_sessions($form, $form_state, $args) {
         'title' => t('Alerte sur session : le service administratif est prévenu d\'un changement important.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $NOT_en_attente_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
+        //'path' => drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
         'alt' => 'en attente',
         'title' => t('Demande de préparation des convocations.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
@@ -475,11 +476,6 @@ function form_tableau_sessions($form, $form_state, $args) {
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
         'alt' => 'en attente',
         'title' => t('En attente : ne pas préparer les convocations pour le moment.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $convoc_printed_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/email_open.png',
-        'alt' => 'Convoc imprimee',
-        'title' => t('La convocation pour cette session a été imprimée.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $convoc_sent_icon = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.png',
@@ -500,9 +496,6 @@ function form_tableau_sessions($form, $form_state, $args) {
     } 
     elseif ($r->convoc_sent) {
       $icon = theme('image', $convoc_sent_icon);
-    } 
-    elseif ($r->convoc_printed) {
-      $icon = theme('image', $convoc_printed_icon);
     } 
     else {
       $icon = theme('image', $NOT_en_attente_icon);
@@ -678,12 +671,13 @@ function form_tableau_sessions_convoc_submit($form, &$form_state) {
  */
 function form_convoc($form, &$form_state) {
 
+  global $user;
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
   $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query  ->condition('m.co_modu', arg(2), '=')
           ->condition('m.co_degre', arg(1), '=')
-          ->fields('mp', array('convoc_info_off', 'convoc_info_on'));
+          ->fields('mp', array('convoc_info_off', 'convoc_info_on', 'module_printed'));
   $r = $query->execute()->fetchObject();
 
   $form['f'] = array(
@@ -691,6 +685,31 @@ function form_convoc($form, &$form_state) {
     '#title' => t('Convocation'),
     '#attributes' => array('class' => array('collapsible', 'convoc')),
   );
+
+  $image = array(
+        'path' => ($r->module_printed)? drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.gif' : drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
+        'alt' => 'module_printed',
+        'title' => t('Imprimé'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+
+  if (in_array("DAFOR_administratif", $user->roles)) {
+  $form['f']['module_printed'] = array(
+    '#type' => 'checkbox',
+    '#title' => theme('image', $image) . t('Imprimé'),
+    '#default_value' => $r->module_printed,
+    '#ajax' => array
+    (
+      'callback' => 'form_convoc_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+  );
+  }
+  else {
+    $form['f']['module_printed'] = array(
+      '#type' => 'hidden',
+      '#value' => $r->module_printed,
+    );
+  }
 
   $html = $r->convoc_info_off;
   $txt = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
@@ -750,6 +769,7 @@ function form_convoc_submit(&$form, &$form_state) {
              ))
     ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on'],
                    'convoc_info_off' => $form_state['values']['convoc_info_off'],
+                   'module_printed' => $form_state['values']['module_printed'],
              ))
     ->execute();
 }
@@ -761,6 +781,10 @@ function form_edit_session($form, $form_state, $args) {
 
   global $user;
   if (!isset($_GET['sess_id'])) return '';
+  if ($_GET['sess_id'] == 0 ) {
+      drupal_set_message(t('Choisissez la session en cochant la case dans la ligne correspondante.'),'warning');
+      return '';
+  }
   // On récupère les valeurs associées à la session pour peupler le formulaire
   $result = db_query("
         SELECT * 
@@ -835,11 +859,19 @@ function form_edit_session($form, $form_state, $args) {
     '#suffix' => '</div>&nbsp;',
   );
 
+
   $form['f']['typePaiement'] = array(
-    '#type' => 'textfield',
+    '#type' => 'select',
     '#title' => t('Type de paiement'),
+    '#options' => array(
+          'CONV' => t('CONV'),
+          'BDC' => t('BDC'),
+          'DECH' => t('DECH'),
+          'HSE' => t('HSE'),
+          'SF' => t('SF'),
+          'VAC' => t('VAC'),
+                    ),
     '#default_value' => $r->typePaiement,
-    '#size' => 10,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );

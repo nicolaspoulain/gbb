@@ -56,6 +56,7 @@ function gaiabb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+
   // Pages pour autocomplete AJAX
   $items['autocomp/etablissement'] = array(
     'page callback' => '_gaiabb_autocompetab',

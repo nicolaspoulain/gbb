@@ -451,7 +451,7 @@ function form_tableau_sessions($form, $form_state, $args) {
                               'en_attente', 'convoc_sent', 'session_alert',
                               'horaires', 'co_lieu', 'co_resp', 'groupe'))
           ->fields('mp', array('date_session_modif'))
-          ->fields('r', array('prenom', 'nomu'))
+          ->fields('r', array('prenom', 'nomu', 'co_resp'))
           ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
   if (!in_array("DAFOR_conseiller", $user->roles) ) {
     $query  ->condition('s.en_attente', 0, '=');
@@ -482,6 +482,11 @@ function form_tableau_sessions($form, $form_state, $args) {
         'alt' => 'Convoc envoyée',
         'title' => t('La convocation pour cette session a été envoyée.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+  $user_edit_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/user_edit.png',
+        'alt' => 'user_edit',
+        'title' => t('Voir la fiche.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
 
   $row = array();
   setlocale(LC_TIME, 'fr_FR');
@@ -506,7 +511,7 @@ function form_tableau_sessions($form, $form_state, $args) {
                        'horaires' => $r->horaires,
                        'lieu' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')',
                        'groupe' => $r->groupe,
-                       'formateur' => $r->prenom . ' ' . $r->nomu,
+                       'formateur' => $r->prenom . ' ' . $r->nomu.'&nbsp;'.l(theme('image',$user_edit_icon),'formateur/'.$r->co_resp,array('attributes' => array('class' => 'anchor-class'), 'html' => TRUE)),
                        'dureeprevue' => $r->dureeprevue . "h",
                        'dureeapayer' => $r->dureeapayer . "h",
                        'TypePaiement' => $r->typePaiement,
@@ -549,23 +554,29 @@ function form_tableau_sessions($form, $form_state, $args) {
   );
 
   if (!in_array("DAFOR_administratif", $user->roles) ) {
+    $form['f']['ajouter'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Ajouter'),
+      '#submit' => array('form_tableau_sessions_ajouter_submit'),
+    );
     $form['f']['modifier'] = array
     (
       '#type' => 'submit',
       '#value' => t('Modifier'),
       '#submit' => array('form_tableau_sessions_modifier_submit'),
     );
+    $form['f']['dupliquer'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Dupliquer'),
+      '#submit' => array('form_tableau_sessions_dupliquer_submit'),
+    );
     $form['f']['supprimer'] = array
     (
       '#type' => 'submit',
-      '#value' => t('Supprimer'),
+      '#value' => t('*Supprimer*'),
       '#submit' => array('form_tableau_sessions_supprimer_submit'),
-    );
-    $form['f']['ajouter'] = array
-    (
-      '#type' => 'submit',
-      '#value' => t('Ajouter'),
-      '#submit' => array('form_tableau_sessions_ajouter_submit'),
     );
   }
   if (!in_array("DAFOR_conseiller", $user->roles) ) {
@@ -590,6 +601,44 @@ function form_tableau_sessions_supprimer_submit($form, &$form_state) {
   drupal_set_message(t('La session a été supprimée.'));
   $url = url('gest_module/' . $form_state['values']['codegre'] .
                         '/' . $form_state['values']['comodu'], array('absolute' => TRUE));
+  $form_state['redirect'] = $url;
+}
+
+
+/**
+ * ----> Submit
+ */
+function form_tableau_sessions_dupliquer_submit($form, &$form_state) {
+
+  // Build the SELECT query.
+  $query = db_select('gbb_session', 's');
+  // Add the fields we want.
+  $query->addField('s','session_alert');
+  $query->addField('s','co_resp');
+  $query->addField('s','co_modu');
+  $query->addField('s','co_degre');
+  $query->addField('s','co_lieu');
+  $query->addField('s','date');
+  $query->addField('s','groupe');
+  $query->addField('s','horaires');
+  $query->addField('s','typePaiement');
+  $query->addField('s','dureeapayer');
+  $query->addField('s','dureeprevue');
+  // Add a condition to only get page nodes.
+  $query  ->condition('s.co_modu', $form_state['values']['comodu'], '=')
+          ->condition('s.co_degre',$form_state['values']['codegre'], '=');
+   // Perform the insert.
+   db_insert('gbb_session')
+     ->from($query)
+     ->execute();
+  
+  drupal_set_message(t('La session a été dupliquéé.'));
+
+  $sessid = db_query("SELECT MAX(sess_id) as sessid FROM {gbb_session}")->fetchField();
+  $url = url('gest_module/' . $form_state['values']['codegre'] .
+                        '/' . $form_state['values']['comodu'],
+           array('fragment' => 'edit_session_anchor',
+                    'query' => array('sess_id' => $sessid), 'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
@@ -621,7 +670,6 @@ function form_tableau_sessions_ajouter_submit($form, &$form_state) {
       ->fields(array('date_session_modif' => '1999-01-01 01:01:10', // A MODIFIER avec un timestamp correct
                ))
       ->execute();
-
 
   $sessid = db_query("SELECT MAX(sess_id) as sessid FROM {gbb_session}")->fetchField();
   $url = url('gest_module/' . $form_state['values']['codegre'] .
@@ -950,9 +998,16 @@ function form_edit_session($form, $form_state, $args) {
     '#suffix' => '</div>&nbsp;',
   );
 
+  $user_add_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/user_add.png',
+        'alt' => 'user_add',
+        'title' => t('Ajouter un formateur manquant.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+
   $form['f']['formateur'] = array(
     '#type' => 'textfield',
-    '#title' => t('Formateur'),
+    '#title' => t('Formateur&nbsp;').l(theme('image',$user_add_icon),'formateur/',
+                                   array('attributes' =>  array('class' => 'anchor-class'), 'html' => TRUE)),
     '#default_value' => $r->prenom . ' ' . $r->nomu,
     '#size' => 30,
     '#autocomplete_path' => 'autocomp/formateur',

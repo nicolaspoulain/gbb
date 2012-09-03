@@ -2,7 +2,7 @@
 /**
  * @file
  *
- * Composition de la page de gestion des formateurs
+ * Composition de la page de gestion des établissements
  *
  */
 
@@ -11,23 +11,23 @@
  * affichant une liste de responsables et les stages qui leur
  * associes
  */
-function formateur($args = 'NaN') {
+function etablissement($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   // Construction de la page
   $build = array();
-  $build['choix_formateur'] = render(drupal_get_form('form_choix_formateur' , $args));
-  $build['modif_formateur'] = render(drupal_get_form('form_modif_formateur' , $args));
+  $build['choix_etab'] = render(drupal_get_form('form_choix_etab' , $args));
+  $build['modif_etab'] = render(drupal_get_form('form_modif_etab' , $args));
   
 
   return implode('', $build);
 }
 
 /**
- * Formulaire de ** CHOIX ** du formateur à éditer
+ * Formulaire de ** CHOIX ** de l'établissement à éditer
  */
-function form_choix_formateur($form, &$form_state) {
+function form_choix_etab($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gresp_dafor', 'r')
@@ -70,7 +70,7 @@ function form_choix_formateur($form, &$form_state) {
 /**
  * ----> Submit
  */
-function form_choix_formateur_submit($form, &$form_state) {
+function form_choix_etab_submit($form, &$form_state) {
 
   $url = url('formateur/' . $form_state['values']['coresp'],
                             array('absolute' => TRUE));
@@ -81,7 +81,7 @@ function form_choix_formateur_submit($form, &$form_state) {
 /**
  * Formulaire de ** MODIFICATION ** de la fiche formateur
 */
-function form_modif_formateur($form, &$form_state) {
+function form_modif_etab($form, &$form_state) {
 
   if (arg(1)=='') return '';
 
@@ -205,7 +205,7 @@ $form['f']['divers'] = array(
 /**
  * ----> Submit
  */
-function form_modif_formateur_submit($form, &$form_state) {
+function form_modif_etab_submit($form, &$form_state) {
 
 // Merge Queries : http://drupal.org/node/310085
   db_merge('gbb_gresp_dafor')

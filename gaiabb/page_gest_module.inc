@@ -625,8 +625,7 @@ function form_tableau_sessions_dupliquer_submit($form, &$form_state) {
   $query->addField('s','dureeapayer');
   $query->addField('s','dureeprevue');
   // Add a condition to only get page nodes.
-  $query  ->condition('s.co_modu', $form_state['values']['comodu'], '=')
-          ->condition('s.co_degre',$form_state['values']['codegre'], '=');
+  $query  ->condition('s.sess_id', $form_state['values']['table'], '=');
    // Perform the insert.
    db_insert('gbb_session')
      ->from($query)

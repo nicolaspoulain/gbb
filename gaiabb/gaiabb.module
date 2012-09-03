@@ -64,13 +64,24 @@ function gaiabb_menu() {
         'type' => MENU_CALLBACK,
   );
 
-  // Etant donné un id (1 ou 2)
+  // Etant donné un id (112 ou 2222)
   // Affiche la page de gestion des formateurs
-  //   exemple : formateur/2/26142
+  //   exemple : formateur/112
 
   $items['formateur'] = array(
         'title' => '',
         'page callback' => 'formateur',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Etant donné un id (112 ou 2222)
+  // Affiche la page de gestion des établisssemnets
+  //   exemple : etablissement/112
+
+  $items['etablissement'] = array(
+        'title' => '',
+        'page callback' => 'etablissement',
         'access arguments' => array('access gaiabb'),
         'type' => MENU_CALLBACK,
   );
@@ -92,3 +103,4 @@ function gaiabb_menu() {
 module_load_include('inc', 'gaiabb', 'page_formateur');
 module_load_include('inc', 'gaiabb', 'page_sta_par_resp');
 module_load_include('inc', 'gaiabb', 'page_gest_module');
+module_load_include('inc', 'gaiabb', 'page_gest_etab');

@@ -154,6 +154,7 @@ function liste_stages($args) {
   $query = '
       SELECT DISTINCT m.co_modu,
                       mp.module_alert,
+                      mp.prioritaire,
                       m.lib AS libm,
                       d.co_disp,
                       id_disp,
@@ -178,12 +179,22 @@ function liste_stages($args) {
         AND id_disp LIKE :year
         ';
   if (!in_array("DAFOR_conseiller", $user->roles) ) {
-  
-    $query .= 'AND (
-         (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) > 0
-         OR
-         (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
-         )
+  //  les non conseillers càd les administratifs
+  //  voient seulement les stages.qui:
+  //  - ont des sessions non-en attente
+  //  
+    $query .= '
+         AND (
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) > 0
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
+         ) 
+         AND (
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) <
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre)
+           OR
+           mp.module_alert = 1
+        )
         ';
   
   }
@@ -235,11 +246,18 @@ function liste_stages($args) {
       $en_attente = ($r->nb_ea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
 
       $variables = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/module_alert.png',
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
         'alt' => 'module_alert',
         'title' => t('Alerte entre conseillers'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
       $module_alert = ($r->module_alert)? theme('image', $variables) : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/prioritaire.png',
+        'alt' => 'prioritaire',
+        'title' => t('Prioritaire'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $prioritaire = ($r->prioritaire)? theme('image', $variables) . '<span class="invisible">!</span> ' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.png',
@@ -262,7 +280,8 @@ function liste_stages($args) {
                                   $session_alert .
                                   $NOT_en_attente .
                                   $en_attente .
-                                  $module_alert,
+                                  $module_alert .
+                                  $prioritaire,
                        ),
                   array('data' =>
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .

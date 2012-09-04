@@ -85,6 +85,41 @@ function infos_gaia($args) {
               );
   }
 
+  $query = db_select('gbb_gmodu', 'm');
+  $query  ->join('gbb_gdisp', 'ds', 'ds.co_disp = m.co_disp AND ds.co_degre = m.co_degre');
+  $query  ->leftjoin('gbb_norie', 'n',  'n.co_orie = ds.co_orie');
+  $query  ->leftjoin('gbb_gdire', 'dr', 'dr.co_modu = m.co_modu AND dr.co_degre = m.co_degre');
+  $query  ->leftjoin('gbb_gresp', 'r',  'r.co_resp  = dr.co_resp AND r.co_degre = m.co_degre');
+  $query  ->condition('m.co_modu', arg(2), '=')
+          ->condition('m.co_degre', arg(1), '=')
+          ->fields('m', array('lautre',
+                              'duree_prev',
+                              'lmoda',
+                              'lform',
+                               ))
+          ->fields('r', array('prenom',
+                              'nomu',
+                               ))
+          ->fields('dr', array('co_resp',
+                              'co_tres',
+                              'co_degre',
+                               ));
+  $query  ->addField('ds', 'lobjt');
+  $query  ->addField('n', 'lib_long', 'ori');
+  $result = $query->execute();
+
+  $TRES = array( 1 => t("Interlocuteur"),
+                 2 => t("Resp. orga."),
+                 3 => t("Resp. péda.")
+    );
+  $str="";
+  foreach ($result as $r) {
+    $str .= $TRES[$r->co_tres] . " : ";
+    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/' . $r->co_tres . '/' . $r->co_resp) ;
+    $str .= "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;";
+  }
+  $rows[] = array(array('data' => $str));
+
   if (!isset($rows)) return $args;
   return theme('table', array('rows' => $rows));
 }
@@ -96,23 +131,6 @@ function infos_detail($args) {
 
   if ($args == 'NaN') return "";
   $liste = array();
-
-/* AFAC
-$result = db_query('
-       SELECT lobjt, n.lib_long AS ori, lautre, m.duree_prev, lmoda, lform, r.co_resp, concat(prenom,\' \',nomu) AS resp, co_tres
-       FROM {gbb_gmodu} AS m 
-       JOIN {gbb_gdisp} AS ds ON ds.co_disp = m.co_disp
-                             AND ds.co_degre = m.co_degre 
-       LEFT JOIN {gbb_norie} AS n  ON n.co_orie  = ds.co_orie
-       LEFT JOIN {gbb_gdire} AS dr ON dr.co_modu = m.co_modu
-                             AND dr.co_degre = m.co_degre 
-       LEFT JOIN {gbb_gresp} AS r  ON r.co_resp  = dr.co_resp
-                             AND r.co_degre = m.co_degre 
-       WHERE m.co_modu  = :comodu
-         AND m.co_degre = :codegre
-       ', array(':codegre' => arg(1),
-                ':comodu'  => arg(2)) );
-*/
 
   $query = db_select('gbb_gmodu', 'm');
   $query  ->join('gbb_gdisp', 'ds', 'ds.co_disp = m.co_disp AND ds.co_degre = m.co_degre');
@@ -136,11 +154,11 @@ $result = db_query('
   $query  ->addField('n', 'lib_long', 'ori');
 $result = $query->execute();
 
-
   $TRES = array( 1 => t("Interlocuteur"),
                  2 => t("Responsable organisationnel"),
                  3 => t("Responsable pédagogique")
     );
+
   foreach ($result as $r) {
     $rows[] = array( 
                 array('data' => $TRES[$r->co_tres]),
@@ -237,7 +255,7 @@ function form_organisation($form, &$form_state) {
   $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query  ->condition('m.co_modu', arg(2), '=')
           ->condition('m.co_degre', arg(1), '=')
-          ->fields('mp', array('organisation', 'module_alert'));
+          ->fields('mp', array('organisation', 'module_alert', 'prioritaire'));
   $r = $query->execute()->fetchObject();
 
   $form['f'] = array(
@@ -259,15 +277,15 @@ function form_organisation($form, &$form_state) {
     ),
   );
   $image = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/module_alert.png',
-        'alt' => 'module_alert',
-        'title' => t('Alerte entre conseillers'),
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/prioritaire.png',
+        'alt' => 'prioritaire',
+        'title' => t('Prioritaire'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
 
-  $form['f']['module_alert'] = array(
+  $form['f']['prioritaire'] = array(
     '#type' => 'checkbox',
-    '#title' => theme('image', $image) . t('Alerte entre conseillers'),
-    '#default_value' => $r->module_alert,
+    '#title' => theme('image', $image) . t('Prioritaire'),
+    '#default_value' => $r->prioritaire,
     '#ajax' => array
     (
       'callback' => 'form_organisation_submit',
@@ -300,7 +318,7 @@ function form_organisation_submit(&$form, &$form_state) {
                 'co_degre' => $form_state['values']['codegre'],
              ))
     ->fields(array('organisation' => $form_state['values']['organisation'],
-                   'module_alert' => $form_state['values']['module_alert'],
+                   'prioritaire' => $form_state['values']['prioritaire'],
              ))
     ->execute();
 }
@@ -724,7 +742,7 @@ function form_convoc($form, &$form_state) {
   $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query  ->condition('m.co_modu', arg(2), '=')
           ->condition('m.co_degre', arg(1), '=')
-          ->fields('mp', array('convoc_info_off', 'convoc_info_on', 'module_printed'));
+          ->fields('mp', array('convoc_info_off', 'convoc_info_on', 'module_printed', 'module_alert'));
   $r = $query->execute()->fetchObject();
 
   $form['f'] = array(
@@ -744,6 +762,8 @@ function form_convoc($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => theme('image', $image) . t('Imprimé'),
     '#default_value' => $r->module_printed,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
     '#ajax' => array
     (
       'callback' => 'form_convoc_submit',
@@ -757,6 +777,23 @@ function form_convoc($form, &$form_state) {
       '#value' => $r->module_printed,
     );
   }
+
+  $alert_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
+        'alt' => 'module_alert',
+        'title' => t('Alerte : le service administratif est prévenu d\'un changement important.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+
+  $form['f']['module_alert'] = array(
+    '#type' => 'checkbox',
+    '#title' => theme('image', $alert_icon) . t('Alerte'),
+    '#default_value' => $r->module_alert,
+    '#ajax' => array
+    (
+      'callback' => 'form_convoc_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+  );
 
   $html = $r->convoc_info_off;
   $txt = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
@@ -817,6 +854,7 @@ function form_convoc_submit(&$form, &$form_state) {
     ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on'],
                    'convoc_info_off' => $form_state['values']['convoc_info_off'],
                    'module_printed' => $form_state['values']['module_printed'],
+                   'module_alert' => $form_state['values']['module_alert'],
              ))
     ->execute();
 }

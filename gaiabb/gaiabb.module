@@ -29,7 +29,11 @@ function gaiabb_permission() {
     'access gaiabb' => array(
       'title' => t('Accéder à GaiaBB'), 
       'description' => t('Gestion des modules, des formateurs et des établissements.'),
-    ),
+      ),
+    'co_resp gaiabb' => array(
+      'title' => t('Sélectionner co_resp'), 
+      'description' => t('Afin de choisir le rôle (Interlocuteur, resp. orga. ou péda.).'),
+      ),
   );
 }
 

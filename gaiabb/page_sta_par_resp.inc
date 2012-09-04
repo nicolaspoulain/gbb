@@ -39,10 +39,12 @@ function form_people($form, &$form_state, $args) {
   $query  ->rightjoin('gbb_gdisp', 's', 'j.co_disp=s.co_disp AND j.co_degre=s.co_degre');
   $query  ->join('gbb_gresp', 'r', 'j.co_resp=r.co_resp AND j.co_degre=r.co_degre');
   $query  ->condition('j.co_degre', arg(2), '=')
-          ->condition('j.co_tres' , arg(3), '=')
           ->condition('s.id_disp' , db_like(arg(1)) . '%', 'LIKE')
           ->fields('j', array('co_resp'))
           ->fields('r', array('nomu'));
+  if (user_access('co_resp gaiabb') && arg(3) != 0) {
+      $query->condition('j.co_tres' , arg(3), '=');
+  };
   $result = $query->execute();
 
   foreach ($result as $r) {
@@ -93,11 +95,29 @@ function form_people($form, &$form_state, $args) {
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-
-$form['f']['cotres'] = array(
-    '#type' => 'hidden',
-    '#value' => arg(3),
-  );
+  
+  if (user_access('co_resp gaiabb')) {
+      $tres = array(
+                  0 => 'Tous',
+                  1 => 'Interlocuteur',
+                  2 => 'Resp. orga.',
+                  3 => 'Resp. péda.'
+                  );
+      $form['f']['cotres'] = array(
+           '#type' => 'select',
+           '#title' => t('Rôle'),
+           '#default_value' => arg(3),
+           '#options' => $tres,
+           '#prefix' => '<div class="inline">',
+           '#suffix' => '</div>',
+           );
+  }
+  else {
+      $form['f']['cotres'] = array(
+           '#type' => 'hidden',
+           '#value' => arg(3),
+           );
+  };
 
   $form['f']['submit'] = array(
     '#type' => 'submit',
@@ -135,7 +155,7 @@ function filter_form($form, &$form_state, $args) {
     '#type' => 'textfield',
     '#title' => t('Filtrage en direct'),
     '#attributes' => array('id' => array('filter')),
-    '#description' => t('Saisissez quelques lettres pour réduire la liste -- saisissez «paf*» ou «fil*» pour ne voir qu\'un type de stage'),
+    '#description' => t('Saisissez quelques lettres pour réduire la liste -- saisissez «paf*» ou «fil*» pour ne voir qu\'un type de stage -- «!» pour les stages prioritaires.'),
   );
   return $form;
 }
@@ -198,18 +218,43 @@ function liste_stages($args) {
         ';
   
   }
+
   if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
     $query .= 'AND co_anmo = \'\'';
   }
 
-  $result = db_query($query, 
+  if (user_access('co_resp gaiabb') && arg(3) != 0) {
+      $query .= 'AND j.co_tres = :cotres';
+      $result = db_query($query, 
+                     array(':year'    => arg(1) . '%',
+                           ':codegre' => arg(2),
+                           ':cotres' => arg(3),
+                           ':coresp'  => $co_resp)
+                );
+  }
+  else {
+    $result = db_query($query, 
                      array(':year'    => arg(1) . '%',
                            ':codegre' => arg(2),
                            ':coresp'  => $co_resp)
-            );
+                );
+  }
   $liste = array();
   $libd_precedent= '';
   $rows = array();
+
+
+  $rows[] = array( 
+              array('data' => ""), 
+              array('data' => "Le " .
+                              format_date(time(), 'custom', 'l j F Y à H:i') .
+                              ", " .
+                              $result->rowCount() .
+                              " stages." 
+                   ),
+              array('data' => ""), 
+            );
+
   foreach ($result as $r) {
       $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
       $options_comodu = array('attributes' => array('class' => array($m_ouvert_ou_ferme),
@@ -290,7 +335,7 @@ function liste_stages($args) {
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
                                  '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
                        ),
-                  array('data' => "lnk",
+                  array('data' => "&nbsp;",
                        ),
                );
       $libd_precedent = $r->libd;

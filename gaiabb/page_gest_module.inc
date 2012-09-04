@@ -571,6 +571,7 @@ function form_tableau_sessions($form, $form_state, $args) {
     '#value' => arg(1),
   );
 
+  //if (user_access('co_resp gaiabb')) {
   if (!in_array("DAFOR_administratif", $user->roles) ) {
     $form['f']['ajouter'] = array
     (
@@ -737,6 +738,11 @@ function form_tableau_sessions_convoc_submit($form, &$form_state) {
 function form_convoc($form, &$form_state) {
 
   global $user;
+  $r->convoc_info_off = '';
+  $r->convoc_info_on = '';
+  $r->module_printed = 0;
+  $r->module_alert = 0;
+
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
   $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');

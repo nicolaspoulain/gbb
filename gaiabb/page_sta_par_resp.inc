@@ -44,6 +44,11 @@ function form_people($form, &$form_state, $args) {
           ->fields('r', array('nomu'));
   if (user_access('co_resp gaiabb') && arg(3) != 0) {
       $query->condition('j.co_tres' , arg(3), '=');
+  }
+  elseif (user_access('co_resp gaiabb')  && arg(3) == 0) {
+  }
+  else {
+      $query->condition('j.co_tres' , 2, '=');
   };
   $result = $query->execute();
 
@@ -198,7 +203,7 @@ function liste_stages($args) {
         AND j.co_resp =  :coresp
         AND id_disp LIKE :year
         ';
-  if (!in_array("DAFOR_conseiller", $user->roles) ) {
+  if (user_access('gest_convocs gaiabb') and !user_access('co_resp gaiabb')) {
   //  les non conseillers càd les administratifs
   //  voient seulement les stages.qui:
   //  - ont des sessions non-en attente
@@ -281,11 +286,11 @@ function liste_stages($args) {
         'alt' => 'session_alert',
         'title' => t('session en route'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>' : '';
+      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>' .'<span class="invisible">></span> ' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
-        'alt' => 'session_alert',
+        'alt' => 'en_attente',
         'title' => t('En attente'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
       $en_attente = ($r->nb_ea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
@@ -295,7 +300,7 @@ function liste_stages($args) {
         'alt' => 'module_alert',
         'title' => t('Alerte entre conseillers'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $module_alert = ($r->module_alert)? theme('image', $variables) : '';
+      $module_alert = ($r->module_alert)? theme('image', $variables) . '<span class="invisible">></span> ' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/prioritaire.png',

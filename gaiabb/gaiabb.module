@@ -32,7 +32,19 @@ function gaiabb_permission() {
       ),
     'co_resp gaiabb' => array(
       'title' => t('Sélectionner co_resp'), 
-      'description' => t('Afin de choisir le rôle (Interlocuteur, resp. orga. ou péda.).'),
+      'description' => t('Afin de choisir le rôle (Interlocuteur, resp. orga. ou péda.) sur la page sta_par_resp d\'affichage de la liste des stages.'),
+      ),
+    'gest_sessions gaiabb' => array(
+      'title' => t('Gérer les sessions d\'un module'), 
+      'description' => t('Autorise à jouter, modifier, dupliquer ou supprimer des sessions.'),
+      ),
+    'gest_convocs gaiabb' => array(
+      'title' => t('Gérer les convocations d\'un module'), 
+      'description' => t('Autorise à marquer comme imprimées ou envoyées les convocations.'),
+      ),
+    'gest_etablissements gaiabb' => array(
+      'title' => t('Ajouter un établissement dans la base de données'), 
+      'description' => t('Permet aussi de modifier le RNE (l\'identifiant), le nom et le sigle. Les autres données sont modifiables par tous.'),
       ),
   );
 }

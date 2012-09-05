@@ -571,8 +571,7 @@ function form_tableau_sessions($form, $form_state, $args) {
     '#value' => arg(1),
   );
 
-  //if (user_access('co_resp gaiabb')) {
-  if (!in_array("DAFOR_administratif", $user->roles) ) {
+  if (user_access('gest_sessions gaiabb')) {
     $form['f']['ajouter'] = array
     (
       '#type' => 'submit',
@@ -598,7 +597,8 @@ function form_tableau_sessions($form, $form_state, $args) {
       '#submit' => array('form_tableau_sessions_supprimer_submit'),
     );
   }
-  if (!in_array("DAFOR_conseiller", $user->roles) ) {
+
+  if (user_access('gest_convocs gaiabb')) {
     $form['f']['convoc_envoyee'] = array
     (
       '#type' => 'submit',

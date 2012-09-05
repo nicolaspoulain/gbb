@@ -30,23 +30,25 @@ function etablissement($args = 'NaN') {
 function form_choix_etab($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
-  $query = db_select('gbb_gresp_dafor', 'r')
-           ->fields('r', array('co_resp', 'nomu', 'prenom'));
+  $query = db_select('gbb_netab', 'e')
+           ->fields('e', array('co_lieu', 'denom_comp', 'sigle'));
   $result = $query->execute();
 
   foreach ($result as $r) {
-    $rows[$r->co_resp] = $r->nomu.' '.$r->prenom;
+    $rows[$r->co_lieu] = $r->denom_comp . ' (' . $r->sigle . ')';
   }
   unset($rows['']);
-  $rows['add'] = '  ** AJOUTER UN FORMATEUR **';
-  asort($rows);
+if (user_access('gest_etablissements gaiabb')) {
+  $rows['add'] = '  ** AJOUTER UN ETABLISSEMENT **';
+};
+asort($rows);
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Choix de la fiche formateur à éditer'),
+    '#title' => t('Choix de la fiche établissement à éditer'),
   );
 
-  $form['f']['coresp'] = array(
+  $form['f']['colieu'] = array(
     '#type' => 'select',
     '#default_value' => arg(1),
     '#options' => $rows,
@@ -72,7 +74,7 @@ function form_choix_etab($form, &$form_state) {
  */
 function form_choix_etab_submit($form, &$form_state) {
 
-  $url = url('formateur/' . $form_state['values']['coresp'],
+  $url = url('etablissement/' . $form_state['values']['colieu'],
                             array('absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
@@ -85,59 +87,78 @@ function form_modif_etab($form, &$form_state) {
 
   if (arg(1)=='') return '';
 
-  $query = db_select('gbb_gresp_dafor', 'r');
-  $query   ->leftjoin('gbb_gresp_plus', 'rp', 'r.co_resp=rp.co_resp');
-  $query   ->condition('r.co_resp', arg(1), '=')
-           ->fields('r', array('co_resp', 'nomu', 'prenom', 'mel', 'tel'))
-           ->fields('rp', array('discipline','resp_dafor', 'decharge', 'grade', 'divers'));
+  $query = db_select('gbb_netab', 'e');
+  $query   ->condition('e.co_lieu', arg(1), '=')
+           ->fields('e', array('co_lieu', 'denom_comp', 'sigle', 'adr', 'cp', 'tel', 'fax', 'mel'));
   $record = $query->execute()->fetchObject();
 
   if (arg(1)=='add'){
-    $record->co_resp = db_query("SELECT MAX(co_resp)+1 as max_id FROM gbb_gresp_dafor")->fetchField();
-    $record->nomu = '';
-    $record->prenom = '';
-    $record->mel = '';
+    $record->co_lieu = '';
+    $record->denom_comp = '';
+    $record->sigle = '';
+    $record->adr = '';
+    $record->cp = '';
     $record->tel = '';
-    $record->discipline = '';
-    $record->resp_dafor = '';
-    $record->decharge = '';
-    $record->grade = '';
-    $record->divers = '';
+    $record->fax = '';
+    $record->mel = '';
   }
-  $record->co_degre = '2';
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Fiche formateur'),
+    '#title' => t('Fiche établissement'),
   );
   
-$form['f']['coresp'] = array(
-    '#type' => 'hidden',
-    '#value' => $record->co_resp,
-  );
-$form['f']['codegre'] = array(
-    '#type' => 'hidden',
-    '#value' => $record->co_degre,
-  );
-$form['f']['nomu'] = array(
+$form['f']['colieu'] = array(
     '#type' => 'textfield',
-    '#title' => t('Nom'),
-    '#default_value' => $record->nomu,
+    '#title' => t('RNE (non modifiable)'),
+    '#description' => t('Pour ajout ou modification de fiche,'),
+    '#default_value' => $record->co_lieu,
     '#size' => 40,
     '#maxlength' => 128,
-    '#required' => TRUE,
+    '#disabled' => TRUE,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['prenom'] = array(
+$form['f']['sigle'] = array(
+    '#type' => 'select',
+    '#title' => t('Sigle'),
+    '#description' => t('contacter'),
+    '#default_value' => $record->sigle,
+    '#disabled' => TRUE,
+    '#options' => drupal_map_assoc(array(
+'','CLG','LP', 'LYC'
+    )),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>&nbsp;',
+  );
+$form['f']['denomcomp'] = array(
     '#type' => 'textfield',
-    '#title' => t('Prénom'),
-    '#default_value' => $record->prenom,
+    '#title' => t('Nom (non modifiable)'),
+    '#description' => t('Catherine Laigle ou Christian Muir'),
+    '#default_value' => $record->denom_comp,
     '#size' => 40,
     '#maxlength' => 128,
-    '#required' => TRUE,
+    '#disabled' => TRUE,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
+  );
+if (user_access('gest_etablissements gaiabb')) {
+  $form['f']['colieu']['#title' ] = t('RNE');
+  $form['f']['colieu']['#disabled' ] = FALSE;
+  $form['f']['colieu']['#required' ] = TRUE;
+  $form['f']['sigle']['#title' ] = t('Sigle');
+  $form['f']['sigle']['#disabled' ] = FALSE;
+  $form['f']['sigle']['#required' ] = TRUE;
+  $form['f']['denomcomp']['#title' ] = t('Nom');
+  $form['f']['denomcomp']['#disabled' ] = FALSE;
+  $form['f']['denomcomp']['#required' ] = TRUE;
+}
+$form['f']['adr'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Adresse'),
+    '#default_value' => $record->adr,
+    '#size' => 40,
+    '#maxlength' => 128,
   );
 $form['f']['mel'] = array(
     '#type' => 'textfield',
@@ -145,6 +166,8 @@ $form['f']['mel'] = array(
     '#default_value' => $record->mel,
     '#size' => 40,
     '#maxlength' => 128,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
   );
 $form['f']['tel'] = array(
     '#type' => 'textfield',
@@ -152,48 +175,18 @@ $form['f']['tel'] = array(
     '#default_value' => $record->tel,
     '#size' => 40,
     '#maxlength' => 128,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
   );
-$form['f']['discipline'] = array(
+$form['f']['fax'] = array(
     '#type' => 'textfield',
-    '#title' => t('Discipline'),
-    '#default_value' => $record->discipline,
+    '#title' => t('Fax'),
+    '#default_value' => $record->fax,
     '#size' => 40,
-    '#maxlength' => 128,
-  );
-$form['f']['grade'] = array(
-    '#type' => 'select',
-    '#title' => t('Grade'),
-    '#default_value' => $record->grade,
-    '#options' => drupal_map_assoc(array(
-'','NOMENCLATURE','VACATAIRE','CONTRACTUEL','MA','PEGC','PLP','CERTIFIE','AGREGE','INST','PE','COP','CPE','INF','MED','ING','ASU','CASU','AS','PERDIR','IA-IPR','IEN-EG','IEN-ET','IEN-CC','CC','PREC','PRCE','PRAG','MC','PR','ASSOCIATION','ENTREPRISE','UNIVERSITE','INTERVENANT-XT'
-    )),
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>&nbsp;',
-  );
-$form['f']['decharge'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Décharge (h)'),
-    '#default_value' => $record->decharge,
-    '#size' => 10,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>&nbsp;',
-  );
-$form['f']['resp_dafor'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Responsable DAFOR'),
-    '#default_value' => $record->resp_dafor,
-    '#size' => 10,
     '#maxlength' => 128,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['divers'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Divers'),
-    '#default_value' => $record->divers,
-  );
-
-
   $form['f']['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Enregistrer',
@@ -208,29 +201,20 @@ $form['f']['divers'] = array(
 function form_modif_etab_submit($form, &$form_state) {
 
 // Merge Queries : http://drupal.org/node/310085
-  db_merge('gbb_gresp_dafor')
-    ->key(array('co_resp'  => $form_state['values']['coresp'],
+  db_merge('gbb_netab')
+    ->key(array('co_lieu'  => $form_state['values']['colieu'],
              ))
-    ->fields(array('nomu'   => $form_state['values']['nomu'],
-                   'prenom' => $form_state['values']['prenom'],
-                   'mel'    => $form_state['values']['mel'],
-                   'tel'    => $form_state['values']['tel'],
-                   'co_degre'    => $form_state['values']['codegre'],
-             ))
-    ->execute();
-  if ($form_state['values']['decharge']=='') $form_state['values']['decharge']='0.0';
-  db_merge('gbb_gresp_plus')
-    ->key(array('co_resp'  => $form_state['values']['coresp'],
-             ))
-    ->fields(array('discipline' => $form_state['values']['discipline'],
-                   'resp_dafor' => $form_state['values']['resp_dafor'],
-                   'decharge'   => $form_state['values']['decharge'],
-                   'grade'      => $form_state['values']['grade'],
-                   'divers'     => $form_state['values']['divers'],
+    ->fields(array('co_lieu'   => $form_state['values']['colieu'],
+                   'sigle'     => $form_state['values']['sigle'],
+                   'denom_comp'=> $form_state['values']['denomcomp'],
+                   'adr'       => $form_state['values']['adr'],
+                   'mel'       => $form_state['values']['mel'],
+                   'tel'       => $form_state['values']['tel'],
+                   'fax'       => $form_state['values']['fax'],
              ))
     ->execute();
 
-  $url = url('formateur/' . $form_state['values']['coresp'],
+  $url = url('etablissement/' . $form_state['values']['colieu'],
                             array('absolute' => TRUE));
   $form_state['redirect'] = $url;
 }

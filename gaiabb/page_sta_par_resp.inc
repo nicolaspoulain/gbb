@@ -23,6 +23,9 @@ function sta_par_resp($args = 'NaN') {
   // Construction de la page
   $build = array();
   $build['form_people'] = render(drupal_get_form('form_people', $args));
+  if (user_access('unstable gaiabb')) {
+    $build['form_orientation'] = render(drupal_get_form('form_orientation', $args));
+  }
   $build['filter_form'] = render(drupal_get_form('filter_form', $args));
   $build['liste_stages'] = liste_stages($args);
 
@@ -62,6 +65,125 @@ function form_people($form, &$form_state, $args) {
             ->condition('u.entity_id', $user->uid, '=')
             ->fields('u', array('field_id_resp_value'));
   $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
+
+
+  $form['f']['voir_ferme'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Voir les modules fermés'),
+    '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
+  );
+
+  $degre = array(1 => 'Premier',
+                 2 => 'Second' ,
+                  );
+  $form['f']['codegre'] = array(
+    '#type' => 'select',
+    '#title' => t('Degré'),
+    '#default_value' => arg(2),
+    '#options' => $degre,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+
+  $periode = array(
+                  10 => '2010-2011',
+                  11 => '2011-2012',
+                  12 => '2012-2013'
+                  );
+  $form['f']['year'] = array(
+    '#type' => 'select',
+    '#title' => t('Année'),
+    '#default_value' => arg(1),
+    '#options' => $periode,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+
+  $form['f']['people'] = array(
+    '#type' => 'select',
+    '#title' => t('Conseiller'),
+    '#options' => $rows,
+    '#default_value' => $co_resp,
+    '#attributes' => array(//'onChange' => "this.form.submit();",
+                           //'class' => array("flottant")
+                          ),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  
+  if (user_access('co_resp gaiabb')) {
+      $tres = array(
+                  0 => 'Tous',
+                  1 => 'Interlocuteur',
+                  2 => 'Resp. orga.',
+                  3 => 'Resp. péda.'
+                  );
+      $form['f']['cotres'] = array(
+           '#type' => 'select',
+           '#title' => t('Rôle'),
+           '#default_value' => arg(3),
+           '#options' => $tres,
+           '#prefix' => '<div class="inline">',
+           '#suffix' => '</div>',
+           );
+  }
+  else {
+      $form['f']['cotres'] = array(
+           '#type' => 'hidden',
+           '#value' => arg(3),
+           );
+  };
+
+  $form['f']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Envoyer',
+  );
+  return $form;
+}
+
+
+/**
+ * Formulaire de ** CHOIX D'UNE orientation ** 
+ */
+function form_orientation($form, &$form_state, $args) {
+
+/*
+(:input select name=Id value="ENCADR." label="ENCADREMENT" :)
+(:StartSQL 04:)
+   SELECT distinct concat('(:input select name=Id value="',orientation,'" label="',orientation,'":)') 
+   FROM paf ORDER BY orientation 
+(:EndSQL 04:)
+*/
+
+  global $user;
+  $query = db_select('gbb_gdire', 'j');
+  $query  ->rightjoin('gbb_gdisp', 's', 'j.co_disp=s.co_disp AND j.co_degre=s.co_degre');
+  $query  ->join('gbb_gresp', 'r', 'j.co_resp=r.co_resp AND j.co_degre=r.co_degre');
+  $query  ->condition('j.co_degre', arg(2), '=')
+          ->condition('s.id_disp' , db_like(arg(1)) . '%', 'LIKE')
+          ->fields('j', array('co_resp'))
+          ->fields('r', array('nomu'));
+  if (user_access('co_resp gaiabb') && arg(3) != 0) {
+      $query->condition('j.co_tres' , arg(3), '=');
+  }
+  elseif (user_access('co_resp gaiabb')  && arg(3) == 0) {
+  }
+  else {
+      $query->condition('j.co_tres' , 2, '=');
+  };
+  $result = $query->execute();
+
+  foreach ($result as $r) {
+    $rows[$r->co_resp] = $r->nomu;
+  }
+  unset($rows['']);
+  asort($rows);
+
+  $query = db_select('field_data_field_id_resp', 'u')
+            ->condition('u.entity_id', $user->uid, '=')
+            ->fields('u', array('field_id_resp_value'));
+  $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
+
 
   $degre = array(1 => 'Premier',
                  2 => 'Second' ,
@@ -129,12 +251,6 @@ function form_people($form, &$form_state, $args) {
     '#value' => 'Envoyer',
   );
 
-  $form['f']['voir_ferme'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Voir les modules fermés'),
-    '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
-  );
-
   return $form;
 }
 
@@ -160,7 +276,9 @@ function filter_form($form, &$form_state, $args) {
     '#type' => 'textfield',
     '#title' => t('Filtrage en direct'),
     '#attributes' => array('id' => array('filter')),
-    '#description' => t('Saisissez quelques lettres pour réduire la liste -- saisissez «paf*» ou «fil*» pour ne voir qu\'un type de stage -- «!» pour les stages prioritaires.'),
+    '#description' => t('Saisissez quelques lettres pour réduire la liste. Saisissez :<br />- « paf* » ou « fil* » pour réduire à un type de stage, <br />- « ! » pour réduire aux stages prioritaires, <br />- « > » pour réduire aux stages vus par le service administratif.'),
+    '#prefix' => '<div class="directfilter">',
+    '#suffix' => '</div>',
   );
   return $form;
 }

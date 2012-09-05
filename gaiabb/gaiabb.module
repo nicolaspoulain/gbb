@@ -46,6 +46,10 @@ function gaiabb_permission() {
       'title' => t('Ajouter un établissement dans la base de données'), 
       'description' => t('Permet aussi de modifier le RNE (l\'identifiant), le nom et le sigle. Les autres données sont modifiables par tous.'),
       ),
+    'unstable gaiabb' => array(
+      'title' => t('UNSTABLE'), 
+      'description' => t('Donne accès aux fonctionnlités instables en cours de développement.'),
+      ),
   );
 }
 

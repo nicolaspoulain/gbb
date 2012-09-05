@@ -22,10 +22,11 @@ function sta_par_resp($args = 'NaN') {
 
   // Construction de la page
   $build = array();
-  $build['form_people'] = render(drupal_get_form('form_people', $args));
   if (user_access('unstable gaiabb')) {
-    $build['form_orientation'] = render(drupal_get_form('form_orientation', $args));
-  }
+    $build['form_choose'] = render(drupal_get_form('form_choose', $args));
+  } else { 
+    $build['form_people'] = render(drupal_get_form('form_people', $args));
+  };
   $build['filter_form'] = render(drupal_get_form('filter_form', $args));
   $build['liste_stages'] = liste_stages($args);
 
@@ -143,17 +144,9 @@ function form_people($form, &$form_state, $args) {
 
 
 /**
- * Formulaire de ** CHOIX D'UNE orientation ** 
+ * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
  */
-function form_orientation($form, &$form_state, $args) {
-
-/*
-(:input select name=Id value="ENCADR." label="ENCADREMENT" :)
-(:StartSQL 04:)
-   SELECT distinct concat('(:input select name=Id value="',orientation,'" label="',orientation,'":)') 
-   FROM paf ORDER BY orientation 
-(:EndSQL 04:)
-*/
+function form_choose($form, &$form_state, $args) {
 
   global $user;
   $query = db_select('gbb_gdire', 'j');
@@ -177,13 +170,13 @@ function form_orientation($form, &$form_state, $args) {
     $rows[$r->co_resp] = $r->nomu;
   }
   unset($rows['']);
+  $rows['0'] = ' ';
   asort($rows);
 
   $query = db_select('field_data_field_id_resp', 'u')
             ->condition('u.entity_id', $user->uid, '=')
             ->fields('u', array('field_id_resp_value'));
   $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
-
 
   $degre = array(1 => 'Premier',
                  2 => 'Second' ,
@@ -211,14 +204,19 @@ function form_orientation($form, &$form_state, $args) {
     '#suffix' => '</div>',
   );
 
+  $form['f']['voir_ferme'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Voir les modules fermés'),
+    '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div><br />',
+  );
+
   $form['f']['people'] = array(
     '#type' => 'select',
     '#title' => t('Conseiller'),
     '#options' => $rows,
     '#default_value' => $co_resp,
-    '#attributes' => array(//'onChange' => "this.form.submit();",
-                           //'class' => array("flottant")
-                          ),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
@@ -251,6 +249,29 @@ function form_orientation($form, &$form_state, $args) {
     '#value' => 'Envoyer',
   );
 
+  $query = db_select('gbb_norie', 'o');
+  $query  ->rightjoin('gbb_gdisp', 'd', 'o.co_orie=d.co_orie');
+  $query  ->condition('d.co_degre', arg(2), '=')
+          ->condition('d.id_disp' , db_like(arg(1)) . '%', 'LIKE')
+          ->fields('o', array('co_orie', 'lib_long'));
+  $orientations = $query->execute();
+
+  foreach ($orientations as $r) {
+    $ories[$r->co_orie] = $r->lib_long;
+  }
+  unset($ories['']);
+  $ories['0']=' ';
+  asort($ories);
+
+  $co_orie = ( arg(5)=='' )? 0 : arg(5);
+  $form['f']['coorie'] = array(
+    '#type' => 'select',
+    '#title' => t('Orientation'),
+    '#options' => $ories,
+    '#default_value' => $co_orie,
+  );
+  
+
   return $form;
 }
 
@@ -263,6 +284,19 @@ function form_people_submit($form, &$form_state) {
                                        . '/' . $form_state['values']['codegre']
                                        . '/' . $form_state['values']['cotres']
                                        . '/' . $form_state['values']['people'],
+                            array('query' => array('voir_ferme' => $form_state['values']['voir_ferme']), 'absolute' => TRUE));
+  $form_state['redirect'] = $url;
+}
+
+/**
+ * ----> Submit
+ */
+function form_choose_submit($form, &$form_state) {
+  $url = url('sta_par_resp/' . $form_state['values']['year']
+                                       . '/' . $form_state['values']['codegre']
+                                       . '/' . $form_state['values']['cotres']
+                                       . '/' . $form_state['values']['people']
+                                       . '/' . $form_state['values']['coorie'],
                             array('query' => array('voir_ferme' => $form_state['values']['voir_ferme']), 'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
@@ -323,10 +357,21 @@ function liste_stages($args) {
         ';
   if (user_access('gest_convocs gaiabb') and !user_access('co_resp gaiabb')) {
   //  les non conseillers càd les administratifs
-  //  voient seulement les stages.qui:
-  //  - ont des sessions non-en attente
-  //  
-    $query .= '
+  //  voient seulement les stages qui ont
+  //  - OU  module_alert = 1
+  //  - OU  ( nb session_alert = 1 ) > 0
+  //  - OU  ( nb de convoc_sent = 1 ) < (nb en_attente = 0 )
+  $query .= '
+         AND (
+           mp.module_alert = 1
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) <
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0)
+        )
+        ';
+ /*    $query .= '
          AND (
            (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) > 0
            OR
@@ -339,7 +384,7 @@ function liste_stages($args) {
            mp.module_alert = 1
         )
         ';
-  
+*/
   }
 
   if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {

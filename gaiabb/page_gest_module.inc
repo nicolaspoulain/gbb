@@ -833,6 +833,11 @@ function form_convoc($form, &$form_state) {
     ),
   );
 
+  if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
+    $form['f']['convoc_info_off']['#disabled']= TRUE;
+    $form['f']['convoc_info_on']['#disabled']= TRUE;
+  };
+
   $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
   $form['f']['comodu'] = array(
     '#type' => 'hidden',

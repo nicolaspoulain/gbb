@@ -28,8 +28,11 @@ function sta_par_resp($args = 'NaN') {
     $build['form_people'] = render(drupal_get_form('form_people', $args));
   };
   $build['filter_form'] = render(drupal_get_form('filter_form', $args));
-  $build['liste_stages'] = liste_stages($args);
-
+  if (user_access('unstable gaiabb')) {
+    $build['liste_stages'] = liste_stagesBIS($args);
+  } else {
+    $build['liste_stages'] = liste_stages($args);
+  }; 
   return implode('', $build);
 }
 
@@ -244,11 +247,6 @@ function form_choose($form, &$form_state, $args) {
            );
   };
 
-  $form['f']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => 'Envoyer',
-  );
-
   $query = db_select('gbb_norie', 'o');
   $query  ->rightjoin('gbb_gdisp', 'd', 'o.co_orie=d.co_orie');
   $query  ->condition('d.co_degre', arg(2), '=')
@@ -269,8 +267,15 @@ function form_choose($form, &$form_state, $args) {
     '#title' => t('Orientation'),
     '#options' => $ories,
     '#default_value' => $co_orie,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
   );
   
+  $form['f']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Envoyer',
+  );
+
 
   return $form;
 }
@@ -313,6 +318,7 @@ function filter_form($form, &$form_state, $args) {
     '#description' => t('Saisissez quelques lettres pour réduire la liste. Saisissez :<br />- « paf* » ou « fil* » pour réduire à un type de stage, <br />- « ! » pour réduire aux stages prioritaires, <br />- « > » pour réduire aux stages vus par le service administratif.'),
     '#prefix' => '<div class="directfilter">',
     '#suffix' => '</div>',
+    '#size' => 40, 
   );
   return $form;
 }
@@ -513,3 +519,197 @@ function liste_stages($args) {
   $attributes = array('id' => 'table-id', 'class' => 'food_planner');
   return theme('table', array('rows' => $rows, 'attributes' => $attributes));
 }
+
+
+
+
+/**
+ * Fonction de ** LISTE DES STAGES ** pour un conseiller donne en argument
+ */
+function liste_stagesBIS($args) {
+
+  global $user;
+  $query = db_select('field_data_field_id_resp', 'u')
+            ->condition('u.entity_id', $user->uid, '=')
+            ->fields('u', array('field_id_resp_value'));
+  $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
+  // TODO : FAIRE LES DEUX REQUETES EN UNE SEULE AVEC UN GROUP BY POUR OPTIMISER 
+  $query = '
+      SELECT DISTINCT m.co_modu,
+                      mp.module_alert,
+                      mp.prioritaire,
+                      m.lib AS libm,
+                      d.co_disp,
+                      id_disp,
+                      d.lib AS libd,
+                      co_camp,
+                      co_andi,
+                      co_anmo,
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0 AND convoc_sent=0) as nb_nea,
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) as nb_s,
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=1) as nb_ea,
+                      (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) as nb_sa,
+                      (select count({gbb_file}.fid) from {gbb_file} JOIN {file_managed} ON {file_managed}.fid={gbb_file}.fid  Where co_modu=mp.co_modu AND co_degre=mp.co_degre AND status=1) as nb_pj
+      FROM {gbb_gmodu} as m
+      LEFT JOIN {gbb_gmodu_plus} as mp ON mp.co_modu=m.co_modu
+                                      AND mp.co_degre=m.co_degre
+      JOIN {gbb_gdisp} as d ON m.co_disp=d.co_disp
+                           AND m.co_degre=d.co_degre
+      JOIN {gbb_gdire} as j ON m.co_modu=j.co_modu
+                           AND m.co_degre=j.co_degre
+      WHERE d.co_degre = :codegre
+        AND id_disp LIKE :year
+        ';
+  $variables = array();
+  $variables[':year'] = arg(1) . '%';
+  $variables[':codegre'] = arg(2);
+
+  if (user_access('gest_convocs gaiabb') and !user_access('gest_sessions gaiabb')) {
+  //  les administratifs
+  //  voient seulement les stages qui ont
+  //  - OU  module_alert = 1
+  //  - OU  ( nb session_alert = 1 ) > 0
+  //  - OU  ( nb de convoc_sent = 1 ) < (nb en_attente = 0 )
+  $query .= '
+         AND d.co_resp = :coresp
+         AND d.co_tres = 2
+         AND (
+           mp.module_alert = 1
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) <
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0)
+        )
+        ';
+  $variables[':coresp'] = $co_resp;
+  }
+  else {
+
+    if (arg(4)!=0) {
+      $query .= 'AND j.co_resp = :coresp ';
+      $variables[':coresp'] = arg(4);
+      if (arg(3)!=0) {
+        $query .= 'AND j.co_tres = :cotres ';
+        $variables[':cotres'] = arg(3);
+      };
+    };
+    if (arg(5)!='0') {
+      $query .= 'AND d.co_orie = :coorie ';
+      $variables[':coorie'] = arg(5);
+    };
+  };
+
+  if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
+    $query .= 'AND co_anmo = \'\'';
+  }
+  
+  $result = db_query($query, $variables);
+
+  $liste = array();
+  $libd_precedent= '';
+  $rows = array();
+
+
+  $rows[] = array( 
+              array('data' => ""), 
+              array('data' => "Le " .
+                              format_date(time(), 'custom', 'l j F Y à H:i') .
+                              ", " .
+                              $result->rowCount() .
+                              " stages." 
+                   ),
+              array('data' => ""), 
+            );
+
+  foreach ($result as $r) {
+      $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
+      $options_comodu = array('attributes' => array('class' => array($m_ouvert_ou_ferme),
+                                                    'id' => 'cool-id',
+                                                   ),
+                              'html' => FALSE,
+                             );
+
+      $d_ouvert_ou_ferme = ($r->co_andi == '')? '' : 'Ferme';
+
+      $paf_ou_fil = ($r->co_camp == 'BS')? 'fil' : 'paf';
+      $libd_class = ($r->co_camp == 'BS')? 'fil' : 'paf';
+      $libd_class = ($r->libd == $libd_precedent)? "gris" : $libd_class;
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
+        'alt' => 'session_alert',
+        'title' => t('Alerte sur session'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $session_alert = ($r->nb_sa >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_sa . '</span>' : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
+        'alt' => 'session_alert',
+        'title' => t('session en route'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>' .'<span class="invisible">></span> ' : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
+        'alt' => 'en_attente',
+        'title' => t('En attente'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $en_attente = ($r->nb_ea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
+        'alt' => 'module_alert',
+        'title' => t('Alerte entre conseillers'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $module_alert = ($r->module_alert)? theme('image', $variables) . '<span class="invisible">></span> ' : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/prioritaire.png',
+        'alt' => 'prioritaire',
+        'title' => t('Prioritaire'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $prioritaire = ($r->prioritaire)? theme('image', $variables) . '<span class="invisible">!</span> ' : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.png',
+        'alt' => 'convoc_sent',
+        'title' => t('Convocations envoyées'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $convoc_sent = ($r->nb_s >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_s . '</span>' : '';
+
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/attachement.gif',
+        'alt' => 'convoc_sent',
+        'title' => t('Fichier(s) attaché(s)'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $attachement = ($r->nb_pj > 0)? theme('image', $variables) . '<span class="nb_pj">' . $r->nb_pj . '</span>' : '';
+
+      $rows[] = array( 
+                  array('data' => 
+                                  //$attachement .
+                                  $convoc_sent .
+                                  $session_alert .
+                                  $NOT_en_attente .
+                                  $en_attente .
+                                  $module_alert .
+                                  $prioritaire,
+                       ),
+                  array('data' =>
+                                 '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
+                                 '<span class="' . $libd_class . ' ' .
+                                 $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> ' .
+                                 l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
+                                 '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
+                       ),
+                  array('data' => "&nbsp;",
+                       ),
+               );
+      $libd_precedent = $r->libd;
+    }
+
+
+  $attributes = array('id' => 'table-id', 'class' => 'food_planner');
+  return theme('table', array('rows' => $rows, 'attributes' => $attributes));
+}
+

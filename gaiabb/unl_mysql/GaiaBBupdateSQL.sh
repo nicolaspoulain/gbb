@@ -1,9 +1,10 @@
 #!/bin/sh
-opt=`getopt :ngme: $*`; statut=$?
+opt=`getopt :ngmse: $*`; statut=$?
 # Si une option invalide a été trouvée
-echo "Usage: `basename $0` [-n nettoyage] [-g getFPT] [-m mysqlInjections]"
+echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-g getFPT] [-m mysqlInjections]"
 
 HOME="/var/www/drupal-7.14/sites/default/modules/gaiabb/unl_mysql"
+BACKUPANDMIGRATE="/var/www/drupal-7.14/sites/default/files/private/backup_migrate/*"
 BDD="drup"
 source $HOME/BB-include.sh
 
@@ -14,6 +15,8 @@ GDIRE="gdire"
 NCONT="ncont"
 NTCAN="ntcan"
 NORIE="norie"
+
+jour=`date +%A`
 
 if test $statut -ne 0; then
 	echo "Pour tout lancer : ./`basename $0` -ngm"
@@ -30,6 +33,50 @@ case "$1" in
 	echo "_N_etttoyage du dossier"
 	cd $HOME && rm *.unl *.SQL *.cl2
     shift;;
+  -s) ## **S**auvegardes prealables
+	echo "S_auvegardes"
+	/usr/bin/mysqldump --user=root --password=$BDDPW $BDD > $HOME/../$BDD-$jour.sql
+	/bin/tar czfv $HOME/drupal-$jour.tgz /var/www/drupal-7.14/ --exclude=$HOME --exclude=$BACKUPANDMIGRATE
+	mv $HOME/../$BDD-$jour.sql $HOME/
+    shift;;
+  -p) ## upload par ftp**P**ut de la sauvegarde de la BDD
+	echo "P_ut FTP des sauvegardes"
+	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/utils.tgz
+	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/dafor_d-1.sql
+	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/ent_d-1.tgz
+    shift;;
+  -i) ## sauvegardes **I**ncrementales : vendredi (dow=5 =>fichier:w-1) et 1er du mois (dom=1=>fichier:m-1)
+	echo "I_ncremental Backups"
+	dow=`date +%u` ; dom=`date +%d`
+	if [[ $dow == 5 ]]
+	then
+	/usr/bin/ftp  -n ftpweb8.scola.ac-paris.fr <<EOF
+quote USER bgfc
+quote PASS bgfc@bgfc
+
+binary
+delete ftpbgfc/dafor_w-2.sql
+rename ftpbgfc/dafor_w-1.sql ftpbgfc/dafor_w-2.sql
+rename ftpbgfc/dafor_d-7.sql ftpbgfc/dafor_w-1.sql
+delete ftpbgfc/ent_w-2.tgz
+rename ftpbgfc/ent_w-1.tgz ftpbgfc/ent_w-2.tgz
+rename ftpbgfc/ent_d-7.tgz ftpbgfc/ent_w-1.tgz
+quit
+EOF
+	    cp $HOME/dafor_d-7.sql $HOME/dafor_w-1.sql
+	    cp $HOME/ent_d-7.tgz $HOME/ent_w-1.tgz
+	fi
+	if [[ $dom == 1 ]]
+	then
+	    cp $HOME/dafor_d-7.sql $HOME/dafor_m-1.sql
+	    cp $HOME/ent_d-7.tgz $HOME/ent_m-1.tgz
+	    /bin/tar czfv $HOME/utils.tgz $HOME/paf.sql $HOME/fil.sql $HOME/insertIntoModule.sql $HOME/paf_futur.sql $HOME/paf_futur1.sql $HOME/unl2sql.sh $HOME/BouleEtBillUpdateMySQL.sh
+	    /usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/utils.tgz
+	fi
+    shift;;
+
+
+
   -g) ## recuperation des donnees par ftp**G**et
 	echo "_G_et FTP des donnees"
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GDISP.unl

@@ -1,7 +1,7 @@
 #!/bin/sh
-opt=`getopt :ngmse: $*`; statut=$?
+opt=`getopt :nspgme: $*`; statut=$?
 # Si une option invalide a été trouvée
-echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-g getFPT] [-m mysqlInjections]"
+echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-p Put FTP des sauvegardes] [-g getFPT] [-m mysqlInjections]"
 
 HOME="/var/www/drupal-7.14/sites/default/modules/gaiabb/unl_mysql"
 BACKUPANDMIGRATE="/var/www/drupal-7.14/sites/default/files/private/backup_migrate/*"
@@ -16,7 +16,9 @@ NCONT="ncont"
 NTCAN="ntcan"
 NORIE="norie"
 
+dow=`date +%u` ; dom=`date +%d`
 jour=`date +%A`
+date=`date +%F--%H-%M`
 
 if test $statut -ne 0; then
 	echo "Pour tout lancer : ./`basename $0` -ngm"
@@ -33,50 +35,21 @@ case "$1" in
 	echo "_N_etttoyage du dossier"
 	cd $HOME && rm *.unl *.SQL *.cl2
     shift;;
-  -s) ## **S**auvegardes prealables
+  -s) ## **S**auvegardes locales (drupal-jour.tgz est un backup complet)
 	echo "S_auvegardes"
 	/usr/bin/mysqldump --user=root --password=$BDDPW $BDD > $HOME/../$BDD-$jour.sql
-	/bin/tar czfv $HOME/drupal-$jour.tgz /var/www/drupal-7.14/ --exclude=$HOME --exclude=$BACKUPANDMIGRATE
+	/bin/tar czfv $HOME/drupal-$jour.tgz /var/www/drupal-7.14/ --exclude=$HOME --exclude=$BACKUPANDMIGRATE > /dev/null
 	mv $HOME/../$BDD-$jour.sql $HOME/
     shift;;
-  -p) ## upload par ftp**P**ut de la sauvegarde de la BDD
+  -p) ## upload par ftp**P**ut du backup quotidien, et hebdo
 	echo "P_ut FTP des sauvegardes"
-	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/utils.tgz
-	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/dafor_d-1.sql
-	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/ent_d-1.tgz
-    shift;;
-  -i) ## sauvegardes **I**ncrementales : vendredi (dow=5 =>fichier:w-1) et 1er du mois (dom=1=>fichier:m-1)
-	echo "I_ncremental Backups"
-	dow=`date +%u` ; dom=`date +%d`
-	if [[ $dow == 5 ]]
+	/usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/drupal-$jour.tgz
+	if [[ $dow == 4 ]]
 	then
-	/usr/bin/ftp  -n ftpweb8.scola.ac-paris.fr <<EOF
-quote USER bgfc
-quote PASS bgfc@bgfc
-
-binary
-delete ftpbgfc/dafor_w-2.sql
-rename ftpbgfc/dafor_w-1.sql ftpbgfc/dafor_w-2.sql
-rename ftpbgfc/dafor_d-7.sql ftpbgfc/dafor_w-1.sql
-delete ftpbgfc/ent_w-2.tgz
-rename ftpbgfc/ent_w-1.tgz ftpbgfc/ent_w-2.tgz
-rename ftpbgfc/ent_d-7.tgz ftpbgfc/ent_w-1.tgz
-quit
-EOF
-	    cp $HOME/dafor_d-7.sql $HOME/dafor_w-1.sql
-	    cp $HOME/ent_d-7.tgz $HOME/ent_w-1.tgz
-	fi
-	if [[ $dom == 1 ]]
-	then
-	    cp $HOME/dafor_d-7.sql $HOME/dafor_m-1.sql
-	    cp $HOME/ent_d-7.tgz $HOME/ent_m-1.tgz
-	    /bin/tar czfv $HOME/utils.tgz $HOME/paf.sql $HOME/fil.sql $HOME/insertIntoModule.sql $HOME/paf_futur.sql $HOME/paf_futur1.sql $HOME/unl2sql.sh $HOME/BouleEtBillUpdateMySQL.sh
-	    /usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/utils.tgz
+	    cp $HOME/drupal-$jour.tgz $HOME/drupal-$date.tgz
+	    /usr/bin/ncftpput -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr /ftpbgfc/ $HOME/drupal-$date.tgz
 	fi
     shift;;
-
-
-
   -g) ## recuperation des donnees par ftp**G**et
 	echo "_G_et FTP des donnees"
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GDISP.unl
@@ -93,7 +66,7 @@ EOF
 	echo -ne "* $GMODU.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $GMODU 39
 	echo "fait."
-	NB_CHAMPS=`cat $GMODU.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$GMODU.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$GMODU.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $GMODU 40 $NB_CHAMPS 23900 $POIDS`
 	if [[ "$TEST" = "ERROR" ]]; then 
@@ -108,7 +81,7 @@ EOF
 	echo -ne "* $GDISP.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $GDISP 28
 	echo "fait."
-	NB_CHAMPS=`cat $GDISP.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$GDISP.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$GDISP.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $GDISP 29 $NB_CHAMPS 8000 $POIDS`
 	if [[ "$TEST" = "ERROR" ]]; then 
@@ -123,7 +96,7 @@ EOF
 	echo -ne "* $GRESP.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $GRESP 17
 	echo "fait."
-	NB_CHAMPS=`cat $GRESP.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$GRESP.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$GRESP.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $GRESP 18 $NB_CHAMPS 960 $POIDS`
 	if [ "$TEST" == "ERROR" ]; then 
@@ -138,7 +111,7 @@ EOF
 	echo -ne "* $GDIRE.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $GDIRE 5
 	echo "fait."
-	NB_CHAMPS=`cat $GDIRE.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$GDIRE.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$GDIRE.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $GDIRE 6 $NB_CHAMPS 2650 $POIDS`
 	if [ "$TEST" == "ERROR" ]; then 
@@ -153,7 +126,7 @@ EOF
 	echo -ne "* $NCONT.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $NCONT 5
 	echo "fait."
-	NB_CHAMPS=`cat $NCONT.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$NCONT.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$NCONT.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $NCONT 6 $NB_CHAMPS 11 $POIDS`
 	if [ "$TEST" == "ERROR" ]; then 
@@ -168,7 +141,7 @@ EOF
 	echo -ne "* $NTCAN.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $NTCAN 5
 	echo "fait."
-	NB_CHAMPS=`cat $NTCAN.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$NTCAN.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$NTCAN.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $NTCAN 6 $NB_CHAMPS 3 $POIDS`
 	if [ "$TEST" == "ERROR" ]; then 
@@ -183,7 +156,7 @@ EOF
 	echo -ne "* $NORIE.unl en traitement par unl2sql ...\t\t"
 	$HOME/unl2sql.sh $NORIE 5
 	echo "fait."
-	NB_CHAMPS=`cat $NORIE.log | cut -d' ' -f4 | uniq`
+	NB_CHAMPS=`/bin/cat $HOME/$NORIE.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
 	POIDS=$(/usr/bin/du $HOME/$NORIE.SQL | /usr/bin/cut -f1)
 	TEST=`$HOME/unlChecker.sh $NORIE 6 $NB_CHAMPS 39 $POIDS`
 	if [ "$TEST" == "ERROR" ]; then 
@@ -194,7 +167,7 @@ EOF
 	  echo -e "fait."
 	  echo -e "\t\t\t\t\t\t\t$TEST"
 	fi
-    tail -n 7 ETAT.log
+    /usr/bin/tail -n 7 ETAT.log
     shift;;
   --) # Fin des options - Sortie de boucle
    shift; break;;

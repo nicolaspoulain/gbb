@@ -505,6 +505,11 @@ function form_tableau_sessions($form, $form_state, $args) {
         'alt' => 'user_edit',
         'title' => t('Voir la fiche.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+  $etab_edit_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/building.png',
+        'alt' => 'etab_edit',
+        'title' => t('Voir la fiche.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
 
   $row = array();
   setlocale(LC_TIME, 'fr_FR');
@@ -527,7 +532,7 @@ function form_tableau_sessions($form, $form_state, $args) {
                        'date' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date))),
                        'icone' => $icon,
                        'horaires' => $r->horaires,
-                       'lieu' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')',
+                       'lieu' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')' . '&nbsp;'.l(theme('image',$etab_edit_icon),'etablissement/'.$r->co_lieu,array('attributes' => array('class' => 'anchor-class'), 'html' => TRUE)),
                        'groupe' => $r->groupe,
                        'formateur' => $r->prenom . ' ' . $r->nomu.'&nbsp;'.l(theme('image',$user_edit_icon),'formateur/'.$r->co_resp,array('attributes' => array('class' => 'anchor-class'), 'html' => TRUE)),
                        'dureeprevue' => $r->dureeprevue . "h",
@@ -1036,15 +1041,25 @@ function form_edit_session($form, $form_state, $args) {
   }
 
 
+  $etab_add_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/building_add.png',
+        'alt' => 'etab_add',
+        'title' => t('Ajouter un établissement manquant.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+
   $form['f']['lieu'] = array(
     '#type' => 'textfield',
-    '#title' => t('Lieu'),
+    '#title' => t('Lieu&nbsp;').l(theme('image',$etab_add_icon),'etablissement/',
+                                   array('attributes' =>  array('class' => 'anchor-class'), 'html' => TRUE)),
     '#default_value' => $r->denom_comp . ' (' . $r->sigle . ')',
     '#size' => 40,
     '#autocomplete_path' => 'autocomp/etablissement',
     '#prefix' => '<br/><div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );
+  if (!user_access('gest_etablissements gaiabb')) {
+      $form['f']['lieu']['#title'] = t('Lieu');
+  };
 
   $user_add_icon = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/user_add.png',

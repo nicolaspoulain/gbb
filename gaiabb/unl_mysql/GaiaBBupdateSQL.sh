@@ -1,7 +1,7 @@
 #!/bin/sh
-opt=`getopt :nspgme: $*`; statut=$?
+opt=`getopt :nspgmre: $*`; statut=$?
 # Si une option invalide a été trouvée
-echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-p Put FTP des sauvegardes] [-g getFPT] [-m mysqlInjections]"
+echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-p Put FTP des sauvegardes] [-g getFPT] [-m mysqlInjections] [-r rapport par email]"
 
 HOME="/var/www/drupal-7.14/sites/default/modules/gaiabb/unl_mysql"
 BACKUPANDMIGRATE="/var/www/drupal-7.14/sites/default/files/private/backup_migrate/*"
@@ -59,6 +59,10 @@ case "$1" in
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NCONT.unl
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NTCAN.unl
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NORIE.unl
+    cd $HOME && echo `ls -alh *.unl`
+    shift;;
+  -r) ## **R**apport par mail
+    /usr/bin/mail -s "$(echo -e "Rapport de mise à jour BB\nFrom: Administrateur BB <nicolas.poulain@ac-paris.fr>")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr < LOG.log
     shift;;
   -m) ## Injections **M**YSQL après amélioration des données
 	echo "Injections _M_YSQL après amélioration des données"
@@ -167,7 +171,15 @@ case "$1" in
 	  echo -e "fait."
 	  echo -e "\t\t\t\t\t\t\t$TEST"
 	fi
-    /usr/bin/tail -n 7 ETAT.log
+    echo "Rapport du jour" > LOG.log
+    echo "===============" >> LOG.log
+    echo " " >> LOG.log
+    echo "Exécution ; FichierUnl ; Réussite ;" >> LOG.log
+    echo "  Date: duFichierUnl = attendu; " >> LOG.log
+    echo "  NbChamps: duFichierUnl = attendu ;" >> LOG.log
+    echo "  Poids: duFichierUnl > minimum attendu" >> LOG.log
+    echo " " >> LOG.log
+    /usr/bin/tail -n 7 ETAT.log >> LOG.log
     shift;;
   --) # Fin des options - Sortie de boucle
    shift; break;;

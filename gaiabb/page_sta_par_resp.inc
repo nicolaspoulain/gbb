@@ -16,15 +16,15 @@ function sta_par_resp($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.ui.tablefilter.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/my_food_plan_pick_foods.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
 
   // Construction de la page
   $build = array();
   if (user_access('unstable gaiabb')) {
     $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));
   } else {
+  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.ui.tablefilter.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/my_food_plan_pick_foods.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     $build['form_choose'] = render(drupal_get_form('form_choose', $args));
   };
   $build['filter_form'] = render(drupal_get_form('filter_form', $args));
@@ -200,15 +200,6 @@ function form_chooseBIS($form, &$form_state, $args) {
   $rows['0'] = ' ** TOUS ** ';
   asort($rows);
 
-  // ------------
-  // Ici on récupère le co_resp par défaut si arg(4) est vide
-  // cela pour caler le select sur le bon conseiller
-  $query = db_select('field_data_field_id_resp', 'u')
-            ->condition('u.entity_id', $user->uid, '=')
-            ->fields('u', array('field_id_resp_value'));
-  $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
-  // ------------
-
   $degre = array(1 => 'Premier',
                  2 => 'Second' ,
                   );
@@ -252,14 +243,40 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#suffix' => '</div><br />',
   );
 
+  // ------------
+  // Ici on récupère le co_resp par défaut si arg(4) est vide
+  // cela pour caler le select sur le bon conseiller
+  $query = db_select('field_data_field_id_resp', 'u')
+            ->condition('u.entity_id', $user->uid, '=')
+            ->fields('u', array('field_id_resp_value'));
+  $input = ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
+
+  // Si $input est numérique alors c'est bien un co_resp
+  // Si $input est une chaine, alors c'est un nomu, il faut récupérer les co_resp correspondants
+  if( preg_match('/[^0-9]/', $input) ) {
+      //echo $co_resp." is String";
+    $nomu = $input;
+  } else {
+      //echo $co_resp." is Int";
+      // ------------
+      // Ici on récupère le nom du conseiller correspondant à $co_resp
+      $query = db_select('gbb_gresp', 'r');
+      $query  ->condition('r.co_resp', $input, '=')
+              ->condition('r.co_degre', arg(2), '=')
+              ->fields('r', array('nomu'));
+      $nomu = $query->execute()->fetchField();
+  };
+
   $form['f']['people'] = array(
-    '#type' => 'select',
+    '#type' => 'textfield',
     '#title' => t('Conseiller'),
-    '#options' => $rows,
-    '#default_value' => $co_resp,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>',
+    '#default_value' => $nomu,
+    '#size' => 20,
+    '#autocomplete_path' => 'autocomp/responsable',
+    '#prefix' => '<br/><div class="inline"><div class="ajaxform">',
+    '#suffix' => '</div></div>&nbsp;',
   );
+
   $query = db_select('gbb_norie', 'o');
   $query  ->rightjoin('gbb_gdisp', 'd', 'o.co_orie=d.co_orie');
   $query  ->condition('d.co_degre', arg(2), '=')
@@ -271,15 +288,15 @@ function form_chooseBIS($form, &$form_state, $args) {
     $ories[$r->co_orie] = $r->lib_long;
   }
   unset($ories['']);
-  $ories['0']=' ** TOUTES ** ';
+  $ories['0']='TOUS';
   asort($ories);
 
   $co_orie = ( arg(5)=='' )? 0 : arg(5);
 
   if (user_access('gest_sessions gaiabb')) {
       $tres = array(
-                  0 => 'Tous',
-                  1 => 'Interlocuteur',
+                  0 => 'TOUS',
+                 // 1 => 'Interlocuteur',
                   2 => 'Resp. orga.',
                   3 => 'Resp. péda.'
                   );
@@ -560,12 +577,6 @@ function liste_stages($args) {
  * Fonction de ** LISTE DES STAGES ** pour un conseiller donne en argument
  */
 function liste_stagesBIS($args) {
-
-  global $user;
-  $query = db_select('field_data_field_id_resp', 'u')
-            ->condition('u.entity_id', $user->uid, '=')
-            ->fields('u', array('field_id_resp_value'));
-  $co_resp= ( arg(4)=='' )? $query->execute()->fetchField() : arg(4);
   // ------------
 
   $query = '
@@ -588,15 +599,51 @@ function liste_stagesBIS($args) {
       LEFT JOIN {gbb_gmodu_plus} as mp ON mp.co_modu=m.co_modu
                                       AND mp.co_degre=m.co_degre
       JOIN {gbb_gdisp} as d ON m.co_disp=d.co_disp
-                           AND m.co_degre=d.co_degre
+                           AND m.co_degre=d.co_degre 
       JOIN {gbb_gdire} as j ON m.co_modu=j.co_modu
-                           AND m.co_degre=j.co_degre
-      WHERE d.co_degre = :codegre
+                                   AND m.co_degre=j.co_degre 
+      WHERE d.co_degre IN (:codegre)
         AND id_disp LIKE :year
         ';
   $variables = array();
   $variables[':year'] = arg(1) . '%';
   $variables[':codegre'] = arg(2);
+
+  if ( arg(4)=='' ) {
+    // On récupère le co_resp par défaut.dans le profil du user connecté
+    global $user;
+    $qu = db_select('field_data_field_id_resp', 'u')
+            ->condition('u.entity_id', $user->uid, '=')
+            ->fields('u', array('field_id_resp_value'));
+    $input = $qu->execute()->fetchField();
+  } else {
+  // L'URL ne la donne pas, donc la variable $co_resp est la valeur par défaut
+    $input = arg(4);
+  };
+
+  // Si $input est numérique alors c'est bien un co_resp
+  // Si $input est une chaine, alors c'est un nomu, il faut récupérer les co_resp correspondants
+  if( $input == 'TOUS' ) {
+      //echo $input." is String";
+  } elseif( preg_match('/[^0-9]/', $input) ) {
+      //echo $co_resp." is String";
+      //$tabResp = array("2011", "1690");
+      $matches = array();
+      $tabResp = db_select('gbb_gresp', 'c')
+        ->fields('c', array('co_resp'))
+        ->condition('nomu', '' . db_like($input) . '', 'LIKE')
+        ->distinct()
+        ->execute()->fetchCol();
+      $variables[':coresp'] = $tabResp;
+      //print_r($tabResp);
+      $query .='  AND j.co_resp IN (:coresp) ';
+  } else {
+      //echo $co_resp." is Int";
+      $tabResp = array( $input);
+      $variables[':coresp'] = $tabResp;
+      $query .='  AND j.co_resp IN (:coresp) ';
+  };
+
 
 
   $voirEnCours = (isset($_GET['voir_encours']))? (($_GET['voir_encours']==1)? TRUE : FALSE) : FALSE;
@@ -619,14 +666,10 @@ function liste_stagesBIS($args) {
         ';
   }
 
-    if ($co_resp!=0) {
-      $query .= 'AND j.co_resp = :coresp ';
-      $variables[':coresp'] = arg(4);
       if (arg(3)!=0) {
         $query .= 'AND j.co_tres = :cotres ';
         $variables[':cotres'] = arg(3);
       };
-    };
     if (arg(5)!='0' && arg(5)!='') {
       $query .= 'AND d.co_orie = :coorie ';
       $variables[':coorie'] = arg(5);
@@ -641,7 +684,6 @@ function liste_stagesBIS($args) {
   $liste = array();
   $libd_precedent= '';
   $rows = array();
-
 
   $rows[] = array( 
               array('data' => ""), 
@@ -745,3 +787,22 @@ function liste_stagesBIS($args) {
   return theme('table', array('rows' => $rows, 'attributes' => $attributes));
 }
 
+/**
+ * Fonctions d' ** AUTOCOMPLETE AJAX RESPONSABLES **
+ */
+function _gaiabb_autocompresp($string) {
+
+  $matches = array();
+  $result = db_select('gbb_gresp', 'c')
+    ->fields('c', array('nomu'))
+    ->condition('nomu', '%' . db_like($string) . '%', 'LIKE')
+    ->distinct()
+    ->range(0, 10)
+    ->execute();
+  foreach ($result as $r) {
+    $matches[$r->nomu] = $r->nomu;
+  }
+  $count = $result->rowCount();
+  if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';
+  drupal_json_output($matches);
+}

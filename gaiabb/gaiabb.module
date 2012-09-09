@@ -13,8 +13,6 @@
  * - g_formateur : la table des formateurs assurant les stages.
  */
 
-
-
 /**
 * Implements hook_permission().
 *

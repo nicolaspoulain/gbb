@@ -6,6 +6,21 @@
  *
  */
 
+/*
+
+http://drupal.org/node/1058168
+http://drupal.org/project/jqmulti
+http://drupal.org/project/jquery_update
+http://www.picnet.com.au/picnet-table-filter.html
+http://drupal.org/node/1001508
+
+
+function gaiabb_js_alter(&$javascript) {
+      // Swap out jQuery to use an updated version of the library. 
+        $javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'gaiabb') . '/jquery-1.4.2.min.js';
+}
+*/
+
 /**
  * Fonction d'appel aux differents elements composant la page
  * affichant une liste de responsables et les stages qui leur
@@ -20,17 +35,19 @@ function sta_par_resp($args = 'NaN') {
   // Construction de la page
   $build = array();
   if (user_access('unstable gaiabb')) {
+    drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+    drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.load.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+    //$build['form_choose'] = render(drupal_get_form('form_choose', $args));
     $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));
-  } else {
-  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.ui.tablefilter.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  drupal_add_js(drupal_get_path('module', 'gaiabb') . '/my_food_plan_pick_foods.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-    $build['form_choose'] = render(drupal_get_form('form_choose', $args));
-  };
-  $build['filter_form'] = render(drupal_get_form('filter_form', $args));
-  if (user_access('unstable gaiabb')) {
+    //$build['filter_form'] = render(drupal_get_form('filter_form', $args));
+    //$build['liste_stages'] = liste_stages($args);
     $build['liste_stages'] = liste_stagesBIS($args);
   } else {
+    drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery122.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+    drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.ui.tablefilter.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+    drupal_add_js(drupal_get_path('module', 'gaiabb') . '/my_food_plan_pick_foods.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+    $build['form_choose'] = render(drupal_get_form('form_choose', $args));
+    $build['filter_form'] = render(drupal_get_form('filter_form', $args));
     $build['liste_stages'] = liste_stages($args);
   };
   return implode('', $build);
@@ -685,15 +702,15 @@ function liste_stagesBIS($args) {
   $libd_precedent= '';
   $rows = array();
 
-  $rows[] = array( 
-              array('data' => ""), 
-              array('data' => "Le " .
+  $header = array(
+               'col1' => array('data' => ""), 
+               'col2' => array('data' => "Le " .
                               format_date(time(), 'custom', 'l j F Y à H:i') .
                               ", " .
                               $result->rowCount() .
                               " stages." 
                    ),
-              array('data' => ""), 
+               'col3' => array('data' => ""), 
             );
 
   foreach ($result as $r) {
@@ -760,7 +777,7 @@ function liste_stagesBIS($args) {
       $attachement = ($r->nb_pj > 0)? theme('image', $variables) . '<span class="nb_pj">' . $r->nb_pj . '</span>' : '';
 
       $rows[] = array( 
-                  array('data' => 
+                  'col1' => array('data' => 
                                   //$attachement .
                                   $convoc_sent .
                                   $session_alert .
@@ -769,23 +786,59 @@ function liste_stagesBIS($args) {
                                   $module_alert .
                                   $prioritaire,
                        ),
-                  array('data' =>
+                  'col2' => array('data' =>
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
                                  '<span class="' . $libd_class . ' ' .
                                  $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> ' .
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
                                  '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
                        ),
-                  array('data' => "&nbsp;",
+                  'col3' => array('data' => "&nbsp;",
                        ),
                );
       $libd_precedent = $r->libd;
     }
+  $attributes = array('id' => 'table-id', 'class' => array('food_planner'));
+  return theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => $attributes));
 
+  //$header = array('Name', 'Type', 'Updated');
+  //$attributes = array('id' => 'stagestable', 'class' => 'food_planner');
+  //return theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => $attributes));
+  //return theme('table', array('rows' => $rows, 'attributes' => $attributes));
 
-  $attributes = array('id' => 'table-id', 'class' => 'food_planner');
-  return theme('table', array('rows' => $rows, 'attributes' => $attributes));
+/*
+$header = array('Name'    => array('data' => t('Name')), 
+                'Type'    => array('data' => t('data')),
+               );
+ # set the database table
+$query = db_select('actions', 'p')->extend('PagerDefault');
+$query->fields('p', array('aid', 'type'));
+$results = $query->execute();
+$rows = array();
+foreach ($results as $row) {
+  $rows[] = array('Name' => array('data' => $row->aid),
+                  'Type' => array('data' => $row->type),
+                  );
 }
+//print_r($header);
+//print_r($rows);
+
+
+$attr = array( 'id'    => 'demotable1',
+               'class' => array('iii'),
+        );
+
+$output = theme('table', array('header' => $header,
+                               'rows' => $rows,
+                               'attributes' => $attr,
+               ));
+//$output = theme('table', $header, $rows);
+# add the pager
+$output .= theme('pager');
+return $output;
+*/
+}
+
 
 /**
  * Fonctions d' ** AUTOCOMPLETE AJAX RESPONSABLES **

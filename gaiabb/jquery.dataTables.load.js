@@ -5,15 +5,15 @@ jQuery(document).ready(function() {
     "oLanguage": {
         "sSearch": "Filtrage en direct:",
     },
-    "bPaginate": false,
-
+        "bStateSave": true,
+  "bPaginate": false,
         "fnDrawCallback": function ( oSettings ) {
             if ( oSettings.aiDisplay.length == 0 )
             {
                 return;
             }
              
-            var nTrs = $('#example tbody tr');
+            var nTrs = jQuery('tbody tr', oSettings.nTable);
             var iColspan = nTrs[0].getElementsByTagName('td').length;
             var sLastGroup = "";
             for ( var i=0 ; i<nTrs.length ; i++ )
@@ -36,6 +36,12 @@ jQuery(document).ready(function() {
         "aoColumnDefs": [
             { "bVisible": false, "aTargets": [ 0 ] }
         ],
+        "aoColumns": [
+                { "bVisible": false },
+                null,
+                null,
+                null
+              ],
         "aaSortingFixed": [[ 0, 'asc' ]],
         "aaSorting": [[ 1, 'asc' ]],
         "sDom": 'lfr<"giveHeight"t>ip'

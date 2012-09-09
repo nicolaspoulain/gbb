@@ -115,7 +115,7 @@ function infos_gaia($args) {
   $str="";
   foreach ($result as $r) {
     $str .= $TRES[$r->co_tres] . " : ";
-    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/' . $r->co_tres . '/' . $r->co_resp) ;
+    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/0/' . $r->co_resp) ;
     $str .= "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;";
   }
   $rows[] = array(array('data' => $str));

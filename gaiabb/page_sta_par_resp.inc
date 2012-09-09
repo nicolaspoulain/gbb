@@ -6,21 +6,6 @@
  *
  */
 
-/*
-
-http://drupal.org/node/1058168
-http://drupal.org/project/jqmulti
-http://drupal.org/project/jquery_update
-http://www.picnet.com.au/picnet-table-filter.html
-http://drupal.org/node/1001508
-
-
-function gaiabb_js_alter(&$javascript) {
-      // Swap out jQuery to use an updated version of the library. 
-        $javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'gaiabb') . '/jquery-1.4.2.min.js';
-}
-*/
-
 /**
  * Fonction d'appel aux differents elements composant la page
  * affichant une liste de responsables et les stages qui leur
@@ -37,10 +22,7 @@ function sta_par_resp($args = 'NaN') {
   if (user_access('unstable gaiabb')) {
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.load.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-    //$build['form_choose'] = render(drupal_get_form('form_choose', $args));
     $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));
-    //$build['filter_form'] = render(drupal_get_form('filter_form', $args));
-    //$build['liste_stages'] = liste_stages($args);
     $build['liste_stages'] = liste_stagesBIS($args);
   } else {
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery122.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
@@ -703,14 +685,15 @@ function liste_stagesBIS($args) {
   $rows = array();
 
   $header = array(
-               'col1' => array('data' => ""), 
+               'col0' => array('data' => "dispo"), 
+               'col1' => array('data' => "status"), 
                'col2' => array('data' => "Le " .
                               format_date(time(), 'custom', 'l j F Y à H:i') .
                               ", " .
                               $result->rowCount() .
                               " stages." 
                    ),
-               'col3' => array('data' => ""), 
+               'col3' => array('data' => ".."), 
             );
 
   foreach ($result as $r) {
@@ -777,6 +760,10 @@ function liste_stagesBIS($args) {
       $attachement = ($r->nb_pj > 0)? theme('image', $variables) . '<span class="nb_pj">' . $r->nb_pj . '</span>' : '';
 
       $rows[] = array( 
+                  'col0' => array('data' => 
+                                 '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
+                                 '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> '
+                  ),
                   'col1' => array('data' => 
                                   //$attachement .
                                   $convoc_sent .
@@ -787,9 +774,6 @@ function liste_stagesBIS($args) {
                                   $prioritaire,
                        ),
                   'col2' => array('data' =>
-                                 '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
-                                 '<span class="' . $libd_class . ' ' .
-                                 $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> ' .
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
                                  '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
                        ),
@@ -798,8 +782,8 @@ function liste_stagesBIS($args) {
                );
       $libd_precedent = $r->libd;
     }
-  $attributes = array('id' => 'table-id', 'class' => array('food_planner'));
-  return theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => $attributes));
+  $attributes = array('id' => 'table-id', 'class' => array('display'));
+  return theme('table', array('rows' => $rows, 'attributes' => $attributes));
 
   //$header = array('Name', 'Type', 'Updated');
   //$attributes = array('id' => 'stagestable', 'class' => 'food_planner');

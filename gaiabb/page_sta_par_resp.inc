@@ -582,6 +582,7 @@ function liste_stagesBIS($args) {
       SELECT DISTINCT m.co_modu,
                       mp.module_alert,
                       mp.prioritaire,
+                      mp.organisation,
                       m.lib AS libm,
                       d.co_disp,
                       id_disp,
@@ -715,14 +716,14 @@ function liste_stagesBIS($args) {
         'alt' => 'session_alert',
         'title' => t('Alerte sur session'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $session_alert = ($r->nb_sa >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_sa . '</span>' : '';
+      $session_alert = ($r->nb_sa >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_sa . '</span>'. '<span class="invisible">></span> '  : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
         'alt' => 'session_alert',
         'title' => t('session en route'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>' : '';
+      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>'. '<span class="invisible">></span> '  : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
@@ -736,7 +737,7 @@ function liste_stagesBIS($args) {
         'alt' => 'module_alert',
         'title' => t('Alerte entre conseillers'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $module_alert = ($r->module_alert)? theme('image', $variables) : '';
+      $module_alert = ($r->module_alert)? theme('image', $variables). '<span class="invisible">></span> '  : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/prioritaire.png',
@@ -765,19 +766,22 @@ function liste_stagesBIS($args) {
                                  '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> '
                   ),
                   'col1' => array('data' => 
-                                  //$attachement .
+                                  $attachement .
                                   $convoc_sent .
                                   $session_alert .
                                   $NOT_en_attente .
                                   $en_attente .
                                   $module_alert .
                                   $prioritaire,
+                                  'class' => 'nowrap',
                        ),
                   'col2' => array('data' =>
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
                                  '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
                        ),
-                  'col3' => array('data' => "&nbsp;",
+                  'col3' => array('data' => $r->organisation,
+                       ),
+                  'col4' => array('data' => ".",
                        ),
                );
       $libd_precedent = $r->libd;

@@ -19,7 +19,7 @@ function sta_par_resp($args = 'NaN') {
 
   // Construction de la page
   $build = array();
-  if (user_access('unstable gaiabb')) {
+  if (TRUE) {
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.load.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));

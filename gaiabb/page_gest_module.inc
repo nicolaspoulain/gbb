@@ -462,7 +462,9 @@ function form_tableau_sessions($form, $form_state, $args) {
   $query  ->leftjoin('gbb_gmodu_plus', 'mp', 'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
   $query  ->leftjoin('gbb_gresp_dafor', 'r', 'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
   $query  ->leftjoin('gbb_netab', 'e', 'e.co_lieu = s.co_lieu');
+  $query  ->orderBy('groupe', 'ASC');
   $query  ->orderBy('date', 'ASC');
+  $query  ->orderBy('nomu', 'ASC');
   $query  ->condition('mp.co_modu', arg(2), '=')
           ->condition('mp.co_degre', arg(1), '=')
           ->fields('s', array('sess_id', 'date', 'dureeprevue', 'dureeapayer', 'typePaiement',

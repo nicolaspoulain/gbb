@@ -58,6 +58,13 @@ fieldset.convoc {
 .inline {
   display:inline-block;
 }
+.inlineEncadre {
+  display:inline-block;
+  border:1px solid #000;
+  padding:0.6em;
+  margin:0.5em;
+  width:420px;
+}
 .flottant {
   float:left;
   margin-right:11px;

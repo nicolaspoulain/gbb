@@ -62,7 +62,7 @@ case "$1" in
     cd $HOME && echo `ls -alh *.unl`
     shift;;
   -r) ## **R**apport par mail
-    /usr/bin/mail -s "$(echo -e "Rapport de mise à jour BB\nFrom: Administrateur BB <nicolas.poulain@ac-paris.fr>")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr < LOG.log
+    /usr/bin/mail -s "$(echo -e "Rapport de mise à jour BB\nFrom: Administrateur BB <nicolas.poulain@ac-paris.fr>")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr christian.muir@ac-paris.fr < LOG.log
     shift;;
   -m) ## Injections **M**YSQL après amélioration des données
 	echo "Injections _M_YSQL après amélioration des données"

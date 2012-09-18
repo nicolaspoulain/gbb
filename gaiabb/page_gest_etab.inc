@@ -126,7 +126,7 @@ $form['f']['sigle'] = array(
     '#default_value' => $record->sigle,
     '#disabled' => TRUE,
     '#options' => drupal_map_assoc(array(
-'','CLG','LP', 'LYC'
+'','CLG','LP', 'LYC', 'CIO', 'LPO', 'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 'SEP', 'EXT', 'LYC_METIER'
     )),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',

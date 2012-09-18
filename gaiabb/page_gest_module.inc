@@ -809,11 +809,11 @@ function form_convoc($form, &$form_state) {
   );
 
   $html = $r->convoc_info_off;
-  $txt = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
+  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
   $form['f']['convoc_info_off'] = array(
     '#type' => 'textarea',
     '#title' => t('Info à ne pas porter sur la convocation'),
-    '#default_value' => $txt,
+    '#default_value' => $txtOff,
     '#cols' => 50,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
@@ -825,11 +825,11 @@ function form_convoc($form, &$form_state) {
   );
 
   $html = $r->convoc_info_on;
-  $txt = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
+  $txtOn = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
   $form['f']['convoc_info_on'] = array(
     '#type' => 'textarea',
     '#title' => t('Info à porter sur la convocation'),
-    '#default_value' => $txt,
+    '#default_value' => $txtOn,
     '#cols' => 50,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
@@ -843,6 +843,13 @@ function form_convoc($form, &$form_state) {
   if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
     $form['f']['convoc_info_off']['#disabled']= TRUE;
     $form['f']['convoc_info_on']['#disabled']= TRUE;
+  };
+
+  if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
+    $form['f']['convoc_info_on']['#type']= 'markup';
+    $form['f']['convoc_info_on']['#markup']= '<div class="inlineEncadre"><b>Infos a porter sur la convoc</b><br/>' . nl2br($txtOn) . '</div>';
+    $form['f']['convoc_info_off']['#type']= 'markup';
+    $form['f']['convoc_info_off']['#markup']= '<div class="inlineEncadre"><b>Infos a ne pas porter sur la convoc</b><br/>' . nl2br($txtOff) . '</div>';
   };
 
   $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
@@ -865,6 +872,16 @@ function form_convoc($form, &$form_state) {
  */
 function form_convoc_submit(&$form, &$form_state) {
   // Merge Queries : http://drupal.org/node/310085
+  if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],
+             ))
+    ->fields(array('module_printed' => $form_state['values']['module_printed'],
+                   'module_alert' => $form_state['values']['module_alert'],
+             ))
+    ->execute();
+  } else {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],
@@ -875,6 +892,7 @@ function form_convoc_submit(&$form, &$form_state) {
                    'module_alert' => $form_state['values']['module_alert'],
              ))
     ->execute();
+  }
 }
 
 /**

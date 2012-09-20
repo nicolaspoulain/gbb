@@ -333,6 +333,9 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#value' => 'Envoyer',
   );
 
+  $form['f']['infos']['#markup']= '<div class="infos">' . t('Saisissez quelques lettres ou chiffres du stage pour réduire la liste.<br />Vous pouvez aussi utiliser les jokers : « paf* » ou « fil* » pour réduire à un type de stage, ou bien « ! » pour réduire aux stages prioritaires.') . '</div>';
+
+
   return $form;
 }
 
@@ -396,6 +399,7 @@ function liste_stages($args) {
   $query = '
       SELECT DISTINCT m.co_modu,
                       mp.module_alert,
+                      mp.module_printed,
                       mp.prioritaire,
                       m.lib AS libm,
                       d.co_disp,
@@ -581,6 +585,7 @@ function liste_stagesBIS($args) {
   $query = '
       SELECT DISTINCT m.co_modu,
                       mp.module_alert,
+                      mp.module_printed,
                       mp.prioritaire,
                       mp.organisation,
                       m.lib AS libm,
@@ -601,7 +606,7 @@ function liste_stagesBIS($args) {
       JOIN {gbb_gdisp} as d ON m.co_disp=d.co_disp
                            AND m.co_degre=d.co_degre 
       JOIN {gbb_gdire} as j ON m.co_modu=j.co_modu
-                                   AND m.co_degre=j.co_degre 
+                           AND m.co_degre=j.co_degre 
       WHERE d.co_degre IN (:codegre)
         AND id_disp LIKE :year
         ';
@@ -733,6 +738,13 @@ function liste_stagesBIS($args) {
       $en_attente = ($r->nb_ea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
 
       $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.gif',
+        'alt' => 'module_printed',
+        'title' => t('Imprimé'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $module_printed = ($r->module_printed && $voirEnCours)? theme('image', $variables) . ' ' : '';
+
+      $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
         'alt' => 'module_alert',
         'title' => t('Alerte entre conseillers'),
@@ -760,6 +772,13 @@ function liste_stagesBIS($args) {
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
       $attachement = ($r->nb_pj > 0)? theme('image', $variables) . '<span class="nb_pj">' . $r->nb_pj . '</span>' : '';
 
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/comments.png',
+        'alt' => 'Organisation',
+        'title' => t('Organisation'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $plus = ($r->organisation == '')? '' : '&nbsp;' . theme('image', $variables);
+
       $rows[] = array( 
                   'col0' => array('data' => 
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
@@ -767,6 +786,7 @@ function liste_stagesBIS($args) {
                   ),
                   'col1' => array('data' => 
                                   $attachement .
+                                  $module_printed .
                                   $convoc_sent .
                                   $session_alert .
                                   $NOT_en_attente .
@@ -777,9 +797,9 @@ function liste_stagesBIS($args) {
                        ),
                   'col2' => array('data' =>
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
-                                 '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . '</span> ',
+                                 '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . $plus . '</span> ',
                        ),
-                  'col3' => array('data' => $r->organisation,
+                  'col3' => array('data' => nl2br($r->organisation),
                        ),
                   'col4' => array('data' => ".",
                        ),

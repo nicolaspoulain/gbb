@@ -113,9 +113,11 @@ function infos_gaia($args) {
                  3 => t("Resp. péda.")
     );
   $str="";
+  $voirEnCours = (user_access('gest_convocs gaiabb') and !user_access('gest_sessions gaiabb'))? 1 : 0;
+
   foreach ($result as $r) {
     $str .= $TRES[$r->co_tres] . " : ";
-    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/0/' . $r->co_resp) ;
+    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/0/' . $r->co_resp, array('query' => array('voir_encours' => $voirEnCours))) ;
     $str .= "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;";
   }
   $rows[] = array(array('data' => $str));
@@ -143,6 +145,9 @@ function infos_detail($args) {
                               'duree_prev',
                               'lmoda',
                               'lform',
+                              'lcont',
+                              'lpeda',
+                              'lcibl',
                                ))
           ->fields('r', array('prenom',
                               'nomu',
@@ -153,6 +158,7 @@ function infos_detail($args) {
   $query  ->addField('ds', 'lobjt');
   $query  ->addField('n', 'lib_long', 'ori');
 $result = $query->execute();
+
 
   $TRES = array( 1 => t("Interlocuteur"),
                  2 => t("Responsable organisationnel"),
@@ -165,27 +171,39 @@ $result = $query->execute();
                 array('data' => $r->prenom . ' ' . $r->nomu),
               );
   }
-    $rows[] = array( 
+  $rows[] = array( 
                 array('data' => "Objectif Dispositif"),
                 array('data' => $r->lobjt),
               );
-    $rows[] = array( 
+  $rows[] = array( 
+                array('data' => "Objectif Module"),
+                array('data' => $r->lcont),
+              );
+  $rows[] = array( 
+                array('data' => "Objectif pédagogique"),
+                array('data' => $r->lpeda),
+              );
+  $rows[] = array( 
+                array('data' => "Cible"),
+                array('data' => $r->lcibl),
+              );
+  $rows[] = array( 
                 array('data' => "Orientation"),
                 array('data' => $r->ori),
               );
-    $rows[] = array( 
+  $rows[] = array( 
                 array('data' => "Observation"),
                 array('data' => $r->lautre),
               );
-    $rows[] = array( 
+  $rows[] = array( 
                 array('data' => t("Durée")),
                 array('data' => $r->duree_prev . "h"),
               );
-    $rows[] = array( 
+  $rows[] = array( 
                 array('data' => t("Modalité")),
                 array('data' => $r->lmoda),
               );
-    $rows[] = array( 
+  $rows[] = array( 
                 array('data' => "Forme"),
                 array('data' => $r->lform),
               );
@@ -779,7 +797,7 @@ function form_convoc($form, &$form_state) {
     '#suffix' => '</div>',
     '#ajax' => array
     (
-      'callback' => 'form_convoc_submit',
+      'callback' => 'form_module_printed_submit',
       'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
@@ -803,7 +821,7 @@ function form_convoc($form, &$form_state) {
     '#default_value' => $r->module_alert,
     '#ajax' => array
     (
-      'callback' => 'form_convoc_submit',
+      'callback' => 'form_module_alert_submit',
       'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
@@ -819,7 +837,7 @@ function form_convoc($form, &$form_state) {
     '#suffix' => '</div>',
     '#ajax' => array
     (
-      'callback' => 'form_convoc_submit',
+      'callback' => 'form_convoc_info_off_submit',
       'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
@@ -835,15 +853,10 @@ function form_convoc($form, &$form_state) {
     '#suffix' => '</div>',
     '#ajax' => array
     (
-      'callback' => 'form_convoc_submit',
+      'callback' => 'form_convoc_info_on_submit',
       'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
   );
-
-  if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
-    $form['f']['convoc_info_off']['#disabled']= TRUE;
-    $form['f']['convoc_info_on']['#disabled']= TRUE;
-  };
 
   if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
     $form['f']['convoc_info_on']['#type']= 'markup';
@@ -851,6 +864,14 @@ function form_convoc($form, &$form_state) {
     $form['f']['convoc_info_off']['#type']= 'markup';
     $form['f']['convoc_info_off']['#markup']= '<div class="inlineEncadre"><b>Infos a ne pas porter sur la convoc</b><br/>' . nl2br($txtOff) . '</div>';
   };
+
+  $Go = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
+        'alt' => 'en attente',
+        'title' => t('En attente : ne pas préparer les convocations pour le moment.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+  $form['f']['envoyer']['#markup']= '<div class="inline">&nbsp;&nbsp;' . theme('image', $Go)  . '</div>';
+  
 
   $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
   $form['f']['comodu'] = array(
@@ -870,29 +891,44 @@ function form_convoc($form, &$form_state) {
 /**
  * ----> Submit
  */
-function form_convoc_submit(&$form, &$form_state) {
-  // Merge Queries : http://drupal.org/node/310085
-  if (user_access('gest_convocs gaiabb') && !user_access('gest_sessions gaiabb')) {
+function form_convoc_info_off_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],
              ))
-    ->fields(array('module_printed' => $form_state['values']['module_printed'],
-                   'module_alert' => $form_state['values']['module_alert'],
-             ))
+    ->fields(array('convoc_info_off' => $form_state['values']['convoc_info_off']))
     ->execute();
-  } else {
+}
+/**
+ * ----> Submit
+ */
+function form_convoc_info_on_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],
              ))
-    ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on'],
-                   'convoc_info_off' => $form_state['values']['convoc_info_off'],
-                   'module_printed' => $form_state['values']['module_printed'],
-                   'module_alert' => $form_state['values']['module_alert'],
-             ))
+    ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on']))
     ->execute();
-  }
+}
+/**
+ * ----> Submit
+ */
+function form_module_alert_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('module_alert' => $form_state['values']['module_alert'],))
+    ->execute();
+}
+/**
+ * ----> Submit
+ */
+function form_module_printed_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('module_printed' => $form_state['values']['module_printed'],))
+    ->execute();
 }
 
 /**

@@ -19,25 +19,26 @@ function sta_par_resp($args = 'NaN') {
 
   // Construction de la page
   $build = array();
-  if (TRUE) {
+  //if (TRUE) {
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.load.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));
     $build['liste_stages'] = liste_stagesBIS($args);
-  } else {
+  /*} else {
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery122.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.ui.tablefilter.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     drupal_add_js(drupal_get_path('module', 'gaiabb') . '/my_food_plan_pick_foods.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
     $build['form_choose'] = render(drupal_get_form('form_choose', $args));
     $build['filter_form'] = render(drupal_get_form('filter_form', $args));
     $build['liste_stages'] = liste_stages($args);
-  };
+  };*/
   return implode('', $build);
 }
 
 /**
  * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
  */
+/*
 function form_choose($form, &$form_state, $args) {
 
   global $user;
@@ -168,6 +169,7 @@ function form_choose($form, &$form_state, $args) {
 
   return $form;
 }
+*/
 
 /**
  * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
@@ -371,7 +373,7 @@ function form_choose_submit($form, &$form_state) {
 /**
  * Formulaire de ** FILTRE JS DU TABLEAU **
  */
-function filter_form($form, &$form_state, $args) {
+/*function filter_form($form, &$form_state, $args) {
 
   $form['f']['filter'] = array(
     '#type' => 'textfield',
@@ -383,12 +385,12 @@ function filter_form($form, &$form_state, $args) {
     '#size' => 40, 
   );
   return $form;
-}
+}*/
 
 /**
  * Fonction de ** LISTE DES STAGES ** pour un conseiller donne en argument
  */
-function liste_stages($args) {
+/*function liste_stages($args) {
 
   global $user;
   $query = db_select('field_data_field_id_resp', 'u')
@@ -575,6 +577,7 @@ function liste_stages($args) {
   $attributes = array('id' => 'table-id', 'class' => 'food_planner');
   return theme('table', array('rows' => $rows, 'attributes' => $attributes));
 }
+/*
 
 /**
  * Fonction de ** LISTE DES STAGES ** pour un conseiller donne en argument
@@ -595,6 +598,8 @@ function liste_stagesBIS($args) {
                       co_camp,
                       co_andi,
                       co_anmo,
+                      (select MIN(date) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) as dateD,
+                      (select MAX(date) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0) as dateF,
                       (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0 AND convoc_sent=0) as nb_nea,
                       (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) as nb_s,
                       (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=1) as nb_ea,
@@ -779,6 +784,36 @@ function liste_stagesBIS($args) {
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
       $plus = ($r->organisation == '')? '' : '&nbsp;' . theme('image', $variables);
 
+      $variables = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/timer_green.png',
+        'alt' => 'Timer',
+        'title' => t('Première date dans plus de 15 jours'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      if (strtotime($r->dateD) < time()) { // le premier jour dépassé
+          $variables['path']=drupal_get_path('module', 'gaiabb') . '/images/timer_red.png';
+          $variables['title']=t('Première date dépassée');
+      } elseif(strtotime($r->dateD) < time() + 1296000) { // le premier jour est dans moins de 15 jours.
+          $variables['path']=drupal_get_path('module', 'gaiabb') . '/images/timer_orange.png';
+          $variables['title']=t('Première date dans moins de 15 jours');
+      } else { // le premier jour est dans plus de 15 jours
+          $variables['path']=drupal_get_path('module', 'gaiabb') . '/images/timer_green.png';
+      };
+      if (strtotime($r->dateF) < time()) { // le dernier jour jour dépassé donc formation finie
+          $variables['path']=drupal_get_path('module', 'gaiabb') . '/images/timer_end.png';
+          $variables['title']=t('Formation terminée');
+      }
+      $timer = theme('image', $variables);
+
+      if (isset($r->dateD)) {
+        if ($r->dateD==$r->dateF) {
+            $dates = $timer . t(" le " . strftime('%x', strtotime($r->dateD))) ; 
+        } else {
+            $dates = $timer . " du " . strftime('%x', strtotime($r->dateD)) . " au " . strftime('%x', strtotime($r->dateF));
+        };
+      } else {
+          $dates ='';
+      };
+
       $rows[] = array( 
                   'col0' => array('data' => 
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
@@ -801,7 +836,7 @@ function liste_stagesBIS($args) {
                        ),
                   'col3' => array('data' => nl2br($r->organisation),
                        ),
-                  'col4' => array('data' => ".",
+                  'col4' => array('data' => $dates,
                        ),
                );
       $libd_precedent = $r->libd;

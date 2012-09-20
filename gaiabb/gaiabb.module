@@ -120,6 +120,11 @@ function gaiabb_menu() {
         'access arguments' => array('access gaiabb'),
         'type' => MENU_CALLBACK
   );
+  $items['autocomp/stage'] = array(
+        'page callback' => '_gaiabb_autocompstage',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
   return $items;
 }
 

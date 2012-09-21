@@ -19,7 +19,15 @@ function formateur($args = 'NaN') {
   $build = array();
   $build['choix_formateur'] = render(drupal_get_form('form_choix_formateur' , $args));
   $build['modif_formateur'] = render(drupal_get_form('form_modif_formateur' , $args));
-  
+  $build['infos_detail'] = theme('fieldset', array(
+                             'element' => array(
+                               '#attributes' => array('class' => array('details')), 
+                               '#children' => '',
+                               '#title' => t('Détails ...'),
+                               '#value' => infos_formateur($args),
+                               )
+                             )
+                           );
 
   return implode('', $build);
 }
@@ -233,6 +241,88 @@ function form_modif_formateur_submit($form, &$form_state) {
   $url = url('formateur/' . $form_state['values']['coresp'],
                             array('absolute' => TRUE));
   $form_state['redirect'] = $url;
+}
+
+
+/**
+ * Un tableau qui affiche les détails des interventions du formateur
+ */
+function infos_formateur($args) {
+
+  if ($args == 'NaN') return "";
+  $liste = array();
+
+  $query = db_select('gbb_session', 's');
+  $query  ->leftjoin('gbb_gresp_dafor', 'r',  'r.co_resp = s.co_resp');
+  $query  ->leftjoin('gbb_gmodu', 'm', 'm.co_modu = s.co_modu AND m.co_degre = s.co_degre');
+  $query  ->leftjoin('gbb_gdisp', 'd', 'd.co_disp = m.co_disp AND d.co_degre = s.co_degre');
+  $query  ->condition('s.co_resp', arg(1), '=')
+          ->condition('s.co_degre', '2', '=')
+          ->condition('id_disp', db_like('12') . '%', 'LIKE')
+          ->fields('d', array('id_disp',))
+          ->fields('m', array('co_modu',
+                              'lib',
+                               ))
+          ->groupBy('co_modu')
+          ->distinct();
+  $query->addExpression('SUM(dureeprevue)', 'sumprevue');
+  $query->addExpression('SUM(dureeapayer)', 'sumapayer');
+  $result = $query->execute();
+
+  $header = array(
+               'col0' => array('data' => "Code"), 
+               'col1' => array('data' => "Titre du module"), 
+               'col2' => array('data' => "Prévues"), 
+               'col3' => array('data' => "À payer"), 
+            );
+
+
+  foreach ($result as $r) {
+    $rows[] = array( 
+                'col0' => array('data' => l($r->id_disp . '/' . $r->co_modu, 'gest_module/2/' . $r->co_modu, array('attributes' => array('html' => FALSE)))),
+                'col1' => array('data' => $r->lib),
+                'col2' => array('data' => $r->sumprevue),
+                'col3' => array('data' => $r->sumapayer),
+              );
+  }
+  if (!isset($rows)) return $args;
+
+  $query = db_select('gbb_session', 's');
+  $query  ->leftjoin('gbb_gmodu', 'm', 'm.co_modu = s.co_modu AND m.co_degre = s.co_degre');
+  $query  ->leftjoin('gbb_gresp_plus', 'r',  'r.co_resp = s.co_resp');
+  $query  ->leftjoin('gbb_gdisp', 'd', 'd.co_disp = m.co_disp AND d.co_degre = s.co_degre');
+  $query  ->condition('s.co_resp', arg(1), '=')
+          ->condition('s.co_degre', '2', '=')
+          ->condition('id_disp', db_like('12') . '%', 'LIKE')
+          ->fields('r', array('decharge',))
+          ->distinct();
+  $query->addExpression('SUM(dureeprevue)', 'sumprevue');
+  $query->addExpression('SUM(dureeapayer)', 'sumapayer');
+  $r = $query->execute()->fetchObject();
+
+//http://code.google.com/p/drupal-chart-api/wiki/Examples
+//http://code.google.com/p/drupal-chart-api/wiki/PublicAPI
+
+  $dech = 27*$r->decharge;
+  $chart = array(
+         '#chart_id' => 'test_chart',
+         '#title' => t('Répartition'),
+         '#type' => CHART_TYPE_BAR_H,
+         '#size' => chart_size(min(900,max(200,2*$dech,2*$r->sumprevue)), 130), //taille adaptative mais limitée à 900px
+      );
+  $chart['#data']['dech'] = $dech;
+  $chart['#data']['prevue'] = $r->sumprevue;
+  $chart['#data']['apayer'] = $r->sumapayer;
+
+  $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =chart_mixed_axis_label(t('0'));
+  $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =chart_mixed_axis_label(max($dech,$r->sumprevue));
+
+  $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] = chart_mixed_axis_label(t('Fait ('.$r->sumapayer.'h)'));
+  $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] = chart_mixed_axis_label(t('Prév.('.$r->sumprevue.'h)'));
+  $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] = chart_mixed_axis_label(t('Déch.('.$dech.'h)'));
+
+  return theme('chart', array('chart' => $chart)) . theme('table', array('header' => $header, 'rows' => $rows));
+
 }
 
 

@@ -537,7 +537,7 @@ function recherche_form($form, &$form_state, $args) {
   );
   $form['f']['submit'] = array(
     '#type' => 'submit',
-    '#value' => 'Envoyer',
+    '#value' => 'Envoyer,',
     '#submit' => array('recherche_stage_form_submit'),
   );
 
@@ -552,7 +552,7 @@ function recherche_form($form, &$form_state, $args) {
   );
   $form['f']['submit2'] = array(
     '#type' => 'submit',
-    '#value' => 'Envoyer',
+    '#value' => 'Envoyer.',
     '#submit' => array('recherche_formateur_form_submit'),
   );
   return $form;

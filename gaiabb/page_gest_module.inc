@@ -867,8 +867,8 @@ function form_convoc($form, &$form_state) {
 
   $Go = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
-        'alt' => 'en attente',
-        'title' => t('En attente : ne pas préparer les convocations pour le moment.'),
+        'alt' => 'enregistrer',
+        'title' => t('Enregistrer.'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
   $form['f']['envoyer']['#markup']= '<div class="inline">&nbsp;&nbsp;' . theme('image', $Go)  . '</div>';
   

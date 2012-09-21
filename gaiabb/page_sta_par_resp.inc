@@ -517,7 +517,7 @@ function _gaiabb_autocompresp($string) {
 }
 
 /**
- * Formulaire de ** FILTRE JS DU TABLEAU **
+ * Formulaire de ** FORMULAIRE DE RECHERCHE TOUS AZIMUTS **
  */
 function recherche_form($form, &$form_state, $args) {
   $form['f'] = array(
@@ -555,6 +555,18 @@ function recherche_form($form, &$form_state, $args) {
     '#value' => 'Envoyer.',
     '#submit' => array('recherche_formateur_form_submit'),
   );
+
+  if (user_access('gest_etablissements gaiabb')) {
+    $etab_add_icon = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/building_add.png',
+        'alt' => 'etab_add',
+        'title' => t('Ajouter un établissement manquant.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+    $form['f']['lieu'] = array(
+       '#markup' => t('<p>Ajouter un lieu&nbsp;').l(theme('image',$etab_add_icon),'etablissement/',
+                                      array('attributes' =>  array('class' => 'anchor-class'), 'html' => TRUE)) . '</p>',
+        );
+  };
   return $form;
 }
 

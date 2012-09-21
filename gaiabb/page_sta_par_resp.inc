@@ -23,7 +23,7 @@ function sta_par_resp($args = 'NaN') {
   drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.load.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   if (user_access('unstable gaiabb')) {
-    $build['recherche_stage'] = render(drupal_get_form('recherche_stage_form',$args));
+    $build['recherche'] = render(drupal_get_form('recherche_form',$args));
   }
 
   $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));
@@ -519,7 +519,7 @@ function _gaiabb_autocompresp($string) {
 /**
  * Formulaire de ** FILTRE JS DU TABLEAU **
  */
-function recherche_stage_form($form, &$form_state, $args) {
+function recherche_form($form, &$form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Recherche tous azimuts'),
@@ -528,16 +528,32 @@ function recherche_stage_form($form, &$form_state, $args) {
 
   $form['f']['comodu'] = array(
              '#type' => 'textfield',
-             '#title' => t('Rechercher'),
+             '#title' => t('Rechercher un STAGE'),
              '#description' => t('Saisissez quelques lettres du titre (ou chiffres du numéro) pour rechercher un stage'),
              '#autocomplete_path' => 'autocomp/stage',
-             '#prefix' => '<div class="ajaxform">',
+             '#prefix' => '<div class="ajaxform inline">',
              '#suffix' => '</div>',
              '#size' => 80, 
   );
   $form['f']['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Envoyer',
+    '#submit' => array('recherche_stage_form_submit'),
+  );
+
+  $form['f']['coresp'] = array(
+             '#type' => 'textfield',
+             '#title' => t('Rechercher un FORMATEUR'),
+             '#description' => t('Saisissez quelques lettres du nom pour rechercher un formateur'),
+             '#autocomplete_path' => 'autocomp/formateur2',
+             '#prefix' => '<div class="ajaxform inline">',
+             '#suffix' => '</div>',
+             '#size' => 80, 
+  );
+  $form['f']['submit2'] = array(
+    '#type' => 'submit',
+    '#value' => 'Envoyer',
+    '#submit' => array('recherche_formateur_form_submit'),
   );
   return $form;
 }
@@ -548,6 +564,17 @@ function recherche_stage_form($form, &$form_state, $args) {
  */
 function recherche_stage_form_submit($form, &$form_state) {
   $url = url('gest_module/2/' . $form_state['values']['comodu'],
+                            array(
+                                'absolute' => TRUE));
+  $form_state['redirect'] = $url;
+}
+
+
+/**
+ * ----> Submit
+ */
+function recherche_formateur_form_submit($form, &$form_state) {
+  $url = url('formateur/' . $form_state['values']['coresp'],
                             array(
                                 'absolute' => TRUE));
   $form_state['redirect'] = $url;
@@ -575,6 +602,27 @@ function _gaiabb_autocompstage($string) {
   $result = $query->execute();
   foreach ($result as $r) {
     $matches[$r->co_modu] = $r->id_disp."/".$r->co_modu." ".$r->libmodu;
+  }
+  $count = $result->rowCount();
+  if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';
+  drupal_json_output($matches);
+}
+
+
+
+/**
+ * Fonctions d' ** AUTOCOMPLETE AJAX FORMATEURS **
+ */
+function _gaiabb_autocompform2($string) {
+
+  $matches = array();
+  $result = db_select('gbb_gresp_dafor', 'c')
+    ->fields('c', array('co_resp', 'nomu', 'prenom'))
+    ->condition('nomu', '%' . db_like($string) . '%', 'LIKE')
+    ->range(0, 10)
+    ->execute();
+  foreach ($result as $r) {
+    $matches[$r->co_resp] = $r->prenom . ' ' . $r->nomu;
   }
   $count = $result->rowCount();
   if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';

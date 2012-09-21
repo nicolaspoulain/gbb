@@ -115,6 +115,11 @@ function gaiabb_menu() {
         'access arguments' => array('access gaiabb'),
         'type' => MENU_CALLBACK
   );
+  $items['autocomp/formateur2'] = array(
+        'page callback' => '_gaiabb_autocompform2',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
   $items['autocomp/responsable'] = array(
         'page callback' => '_gaiabb_autocompresp',
         'access arguments' => array('access gaiabb'),

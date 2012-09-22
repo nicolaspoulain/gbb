@@ -50,6 +50,9 @@ function gest_module($args = 'NaN') {
   $build['tableau_sessions']     = render(drupal_get_form('form_tableau_sessions', $args));
   $build['form_edit_session'] = render(drupal_get_form('form_edit_session', $args));
   $build['convoc'] = render(drupal_get_form('form_convoc', $args));
+  if (user_access('unstable gaiabb')) {
+    $build['bilan'] = render(drupal_get_form('bilan_form',$args));
+  }
 
   return implode('', $build);
 }
@@ -782,6 +785,13 @@ function form_convoc($form, &$form_state) {
     '#attributes' => array('class' => array('collapsible', 'convoc')),
   );
 
+  $Go = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
+        'alt' => 'enregistrer',
+        'title' => t('Enregistrer.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+  $form['f']['envoyer']['#markup']= '<div class="flright">' . theme('image', $Go)  . '</div>';
+
   $image = array(
         'path' => ($r->module_printed)? drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.gif' : drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
         'alt' => 'module_printed',
@@ -865,13 +875,6 @@ function form_convoc($form, &$form_state) {
     $form['f']['convoc_info_off']['#markup']= '<div class="inlineEncadre"><b>Infos a ne pas porter sur la convoc</b><br/>' . nl2br($txtOff) . '</div>';
   };
 
-  $Go = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
-        'alt' => 'enregistrer',
-        'title' => t('Enregistrer.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $form['f']['envoyer']['#markup']= '<div class="inline">&nbsp;&nbsp;' . theme('image', $Go)  . '</div>';
-  
 
   $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
   $form['f']['comodu'] = array(
@@ -1221,6 +1224,227 @@ function form_edit_session_submit($form, &$form_state) {
   drupal_set_message(t('Les modifications ont &eacute;t&eacute; prises en compte.'));
   $form_state['redirect'] = $url;
 }
+
+
+
+/**
+ * Formulaire de ** BILANS INFOS ** Listes d'émargement, bilans etc.
+ */
+function bilan_form($form, &$form_state) {
+
+  global $user;
+  $r->convoc_info_off = '';
+  $r->convoc_info_on = '';
+  $r->module_printed = 0;
+  $r->module_alert = 0;
+
+  // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
+  $query = db_select('gbb_gmodu_plus', 'mp');
+  $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
+  $query  ->condition('m.co_modu', arg(2), '=')
+          ->condition('m.co_degre', arg(1), '=')
+          ->fields('mp', array('LE_etat', 'LE_info', 
+                               'DSF_etat', 'DSF_info',
+                               'DA_info'));
+  $r = $query->execute()->fetchObject();
+  $Go = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
+        'alt' => 'enregistrer',
+        'title' => t('Enregistrer.'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+ 
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Dossier'),
+    '#attributes' => array('class' => array('dossier', 'collapsible', 'convoc')),
+  );
+
+  $form['f']['envoyer']['#markup']= '<div class="flright">' . theme('image', $Go)  . '</div>';
+
+  $html = $r->LE_info;
+  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
+  $form['f']['LE_info'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Listes d\'émargement rendues au conseiller'),
+    '#default_value' => $txtOff,
+    '#cols' => 50,
+    '#rows' => 2,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array
+    (
+      'callback' => 'LE_info_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+  );
+  $form['f']['LE_etat_part'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Partiellement'),
+    '#default_value' => (($r->LE_etat == 1)? 1 : 0),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array
+    (
+      'callback' => 'LE_etat_part_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+   // This #states rule limits visibility to when the $form['f']['en_attente']
+   // checkbox is not checked."
+    '#states' => array(
+      'visible' => array(  // action to take.
+         ':input[name="LE_etat_total"]' => array('checked' => FALSE),
+      ),
+    ),
+   );
+
+  $form['f']['LE_etat_total'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('En totalité'),
+    '#default_value' => (($r->LE_etat == 2)? 1 : 0),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array
+    (
+      'callback' => 'LE_etat_total_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+   // This #states rule limits visibility to when the $form['f']['en_attente']
+   // checkbox is not checked."
+    '#states' => array(
+      'visible' => array(  // action to take.
+         ':input[name="LE_etat_part"]' => array('checked' => FALSE),
+      ),
+    ),
+   );
+
+  $form['f']['BR']['#markup']= '<br/>';
+
+  $html = $r->DSF_info;
+  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
+  $form['f']['DSF_info'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Déclarations de service fait rendues au conseiller'),
+    '#default_value' => $txtOff,
+    '#cols' => 50,
+    '#rows' => 2,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array
+    (
+      'callback' => 'DSF_info_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+  );
+  $form['f']['DSF_etat_part'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Partiellement'),
+    '#default_value' => (($r->DSF_etat == 1)? 1 : 0),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array
+    (
+      'callback' => 'DSF_etat_part_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+   // This #states rule limits visibility to when the $form['f']['en_attente']
+   // checkbox is not checked."
+    '#states' => array(
+      'visible' => array(  // action to take.
+         ':input[name="DSF_etat_total"]' => array('checked' => FALSE),
+      ),
+    ),
+   );
+
+  $form['f']['DSF_etat_total'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('En totalité'),
+    '#default_value' => (($r->DSF_etat == 2)? 1 : 0),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array
+    (
+      'callback' => 'DSF_etat_total_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+   // This #states rule limits visibility to when the $form['f']['en_attente']
+   // checkbox is not checked."
+    '#states' => array(
+      'visible' => array(  // action to take.
+         ':input[name="DSF_etat_part"]' => array('checked' => FALSE),
+      ),
+    ),
+   );
+
+  $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
+  $form['f']['comodu'] = array(
+    '#type' => 'hidden',
+    '#value' => $comodu,
+  );
+
+  $codegre = isset($form_state['values']['codegre'])? $form_state['values']['codegre'] : arg(1);
+  $form['f']['codegre'] = array(
+    '#type' => 'hidden',
+    '#value' => $codegre,
+  );
+
+ return $form;
+}
+/**
+ * ----> Submit
+ */
+function LE_etat_part_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('LE_etat' => $form_state['values']['LE_etat_part'],))
+    ->execute();
+}
+function LE_etat_total_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('LE_etat' => $form_state['values']['LE_etat_total'] * 2,))
+    ->execute();
+}
+/**
+ * ----> Submit
+ */
+function LE_info_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('LE_info' => $form_state['values']['LE_info'],))
+    ->execute();
+}
+/**
+ * ----> Submit
+ */
+function DSF_etat_part_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('DSF_etat' => $form_state['values']['DSF_etat_part'],))
+    ->execute();
+}
+function DSF_etat_total_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('DSF_etat' => $form_state['values']['DSF_etat_total'] *2,))
+    ->execute();
+}
+/**
+ * ----> Submit
+ */
+function DSF_info_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('DSF_info' => $form_state['values']['DSF_info'],))
+    ->execute();
+}
+
+
 
 /**
  * Fonctions d' ** AUTOCOMPLETE AJAX ETABLISSEMENTS **

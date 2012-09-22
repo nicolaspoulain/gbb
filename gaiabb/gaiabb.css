@@ -55,6 +55,10 @@ fieldset.convoc {
   background: none repeat scroll 0 0 #F5F5DC;
   clear: both;
 }
+fieldset.dossier {
+  background: none repeat scroll 0 0 #cccc99;
+  clear: both;
+}
 .inline {
   display:inline-block;
 }
@@ -138,7 +142,9 @@ ul.nope {
   height:16px;
   width:16px;
   }
-
+.flright {
+    float:right;
+}
 .ajaxform input{
  border : 1px solid #000;
   -khtml-border-radius: 4px;

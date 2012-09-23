@@ -1245,7 +1245,7 @@ function bilan_form($form, &$form_state) {
           ->condition('m.co_degre', arg(1), '=')
           ->fields('mp', array('LE_etat', 'LE_info', 
                                'DSF_etat', 'DSF_info',
-                               'DA_info'));
+                               'DA_date_depot'));
   $r = $query->execute()->fetchObject();
   $Go = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
@@ -1375,6 +1375,29 @@ function bilan_form($form, &$form_state) {
     ),
    );
 
+  $form['f']['BR']['#markup']= '<br/>';
+
+  //$date = strftime('%F');  //$date = '2008-12-31 00:00:00';
+
+  // Provide a format using regular PHP format parts (see documentation on php.net).
+  // If you're using a date_select, the format will control the order of the date parts in the selector,
+  // rearrange them any way you like. Parts left out of the format will not be displayed to the user.
+  $format = 'Y-m-d';
+
+  $form['f']['DA_date_depot'] = array(
+     '#type' => 'date_popup', // types 'date_popup', 'date_text' and 'date_timezone' are also supported. See .inc file.
+     '#title' => t('Date de dépôt du dossier'),
+     '#default_value' => (($r->DA_date_depot == '1970-01-01 00:00:00')? '' : $r->DA_date_depot),
+     '#date_format' => $format,
+     '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+     '#date_year_range' => '-1:+1', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#ajax' => array
+    (
+      'callback' => 'DA_date_depot_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
+    ),
+  );
+
   $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
   $form['f']['comodu'] = array(
     '#type' => 'hidden',
@@ -1441,6 +1464,16 @@ function DSF_info_form_submit(&$form, &$form_state) {
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('DSF_info' => $form_state['values']['DSF_info'],))
+    ->execute();
+}
+/**
+ * ----> Submit
+ */
+function DA_date_depot_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'],))
+    ->fields(array('DA_date_depot' => $form_state['values']['DA_date_depot'],))
     ->execute();
 }
 

@@ -4,3 +4,4 @@ package = GAIA
 version = 0.3
 core = 7.x
 files[] = gaiabb.module
+files[] = gaiabb.views.inc

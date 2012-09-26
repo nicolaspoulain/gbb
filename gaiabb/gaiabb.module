@@ -130,11 +130,10 @@ function gaiabb_menu() {
         'type' => MENU_CALLBACK,
   );
 
-/*
 // Etant donné un co_degre (1 ou 2),
-  // un groupe (4 ou 8) et un co_modu (12345)
+  // un co_modu (12345) et un groupe (4 ou 8)
   // Affiche la page de gestion de évaluations de la formation
-  //   exemple : evaluation/2/4/12345
+  //   exemple : evaluation/2/12345/8
 
   $items['evaluation'] = array(
         'title' => '',
@@ -142,7 +141,6 @@ function gaiabb_menu() {
         'access arguments' => array('access gaiabb'),
         'type' => MENU_CALLBACK,
   );
-*/
 
   // Pages pour autocomplete AJAX
   $items['autocomp/etablissement'] = array(
@@ -177,4 +175,4 @@ module_load_include('inc', 'gaiabb', 'page_formateur');
 module_load_include('inc', 'gaiabb', 'page_sta_par_resp');
 module_load_include('inc', 'gaiabb', 'page_gest_module');
 module_load_include('inc', 'gaiabb', 'page_gest_etab');
-module_load_include('inc', 'gaiabb', 'page_gest_evaluation.inc');
+module_load_include('inc', 'gaiabb', 'page_gest_evaluation');

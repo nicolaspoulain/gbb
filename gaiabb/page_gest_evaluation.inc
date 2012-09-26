@@ -17,141 +17,133 @@ function evaluation($args = 'NaN') {
   drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   // Construction de la page
   $build = array();
-  //$build['infos'] = render(drupal_get_form('eval_infos' , $args));
-  $build['environnement'] = render(drupal_get_form('eval_AA_form' , $args));
+  $build['infos_gaia']   = infos_gaia($args); // sur page_gest_module.inc
+  $build['infos_sessions_pour_ce_groupe']   = infos_sessions($args); // sur page_gest_module.inc
+  $build['environnement'] = render(drupal_get_form('form_environnement' , $args));
+  $build['group_participants'] = render(drupal_get_form('form_groupe_participants' , $args));
+  $build['formation'] = render(drupal_get_form('form_formation' , $args));
 
-  echo "wizzz";
   return implode('', $build);
 }
 
 /**
- * Formulaire sur l'** ENVIONNEMENT ** du stage
+ * Un tableau à deux lignes qui affiche le dispo et le module
  */
-function eval_AA_form($form, &$form_state) {
+function infos_sessions($args) {
 
-  $form['f'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Fiche formateur'),
-  );
-  return $form;
+  $query = db_select('gbb_session', 's');
+  $query  ->leftjoin('gbb_gresp_dafor', 'r',  'r.co_resp = s.co_resp AND r.co_degre=s.co_degre');
+  $query   ->condition('s.co_degre', arg(1), '=')
+           ->condition('s.co_modu', arg(2), '=')
+           ->condition('s.groupe', arg(3), '=')
+           ->distinct()
+           ->fields('r', array('nomu', 'prenom'));
+  $result = $query->execute();
+  $items = array();
+  foreach ($result as $r) {
+    $items[] = $r->prenom . ' ' . $r->nomu;
+  };
+  $formateurs = theme('item_list', array('items' => $items));
+
+  $query = db_select('gbb_session', 's');
+  $query   ->condition('s.co_degre', arg(1), '=')
+           ->condition('s.co_modu', arg(2), '=')
+           ->condition('s.groupe', arg(3), '=')
+           ->distinct()
+           ->fields('s', array('date'));
+  $result = $query->execute();
+  $items = array();
+  setlocale(LC_TIME, 'fr_FR');
+  foreach ($result as $r) {
+    $items[] = utf8_encode(strftime('%A %e %B %Y ', strtotime($r->date)));
+  };
+   $dates = theme('item_list', array('items' => $items));
+
+  $header = array('Formateur(s)', 'Date(s)');
+  $rows = array();
+  $rows[] = array($formateurs, $dates);
+
+  return theme('table', array('header' => $header, 'rows' => $rows ));;
 }
 
 
 /**
- * Formulaire sur l'** ENVIONNEMENT ** du stage
- */
-function eval_environnement_form($form, &$form_state) {
+ * Formulaire de saisie des conditions ** ENVIRONNEMENT ** du stage
+*/
+function form_environnement($form, &$form_state) {
 
-  if (arg(1)=='') return '';
+  if (arg(3)=='') return '';
 
-  $query = db_select('gbb_gresp_dafor', 'r');
-  $query   ->leftjoin('gbb_gresp_plus', 'rp', 'r.co_resp=rp.co_resp');
-  $query   ->condition('r.co_resp', arg(1), '=')
-           ->fields('r', array('co_resp', 'nomu', 'prenom', 'mel', 'tel'))
-           ->fields('rp', array('discipline','resp_dafor', 'decharge', 'grade', 'divers'));
-  $record = $query->execute()->fetchObject();
-
-  if (arg(1)=='add'){
-    $record->co_resp = db_query("SELECT MAX(co_resp)+1 as max_id FROM gbb_gresp_dafor")->fetchField();
-    $record->nomu = '';
-    $record->prenom = '';
-    $record->mel = '';
-    $record->tel = '';
-    $record->discipline = '';
-    $record->resp_dafor = '';
-    $record->decharge = '';
-    $record->grade = '';
-    $record->divers = '';
-  }
-  $record->co_degre = '2';
+  $query = db_select('gbb_evaluation', 'e');
+  $query   ->condition('e.co_degre', arg(1), '=')
+           ->condition('e.co_modu', arg(2), '=')
+           ->condition('e.groupe', arg(3), '=')
+           ->fields('e', array('co_degre',
+                               'co_modu', 
+                               'groupe',
+                               'satisAccueil',
+                               'commAccueil',
+                               'satisSalle',
+                               'commSalle',
+                               'satisMatos',
+                               'commMatos',
+                               ));
+  $r = $query->execute()->fetchAssoc();
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Fiche formateur'),
+    '#title' => t('Satisfaction concernant l\'environnement de la formation'),
   );
-  
-$form['f']['coresp'] = array(
-    '#type' => 'hidden',
-    '#value' => $record->co_resp,
-  );
-$form['f']['codegre'] = array(
-    '#type' => 'hidden',
-    '#value' => $record->co_degre,
-  );
-$form['f']['nomu'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Nom'),
-    '#default_value' => $record->nomu,
-    '#size' => 40,
-    '#maxlength' => 128,
-    '#required' => TRUE,
+  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => $r['co_degre']);
+  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => $r['co_modu']);
+  $form['f']['groupe'] = array('#type' => 'hidden','#value' => $r['groupe']);
+  $form['f']['satisAccueil'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Accueil'),
+    '#default_value' => $r['satisAccueil'],
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['prenom'] = array(
+  $form['f']['commAccueil'] = array(
     '#type' => 'textfield',
-    '#title' => t('Prénom'),
-    '#default_value' => $record->prenom,
+    '#title' => t('Commentaire'),
+    '#default_value' => $r['commAccueil'],
     '#size' => 40,
-    '#maxlength' => 128,
-    '#required' => TRUE,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
+  );
+  $form['f']['satisSalle'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Salle'),
+    '#default_value' => $r['satisSalle'],
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['mel'] = array(
+  $form['f']['commSalle'] = array(
     '#type' => 'textfield',
-    '#title' => t('email'),
-    '#default_value' => $record->mel,
+    '#default_value' => $r['commSalle'],
     '#size' => 40,
-    '#maxlength' => 128,
-  );
-$form['f']['tel'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Téléphone'),
-    '#default_value' => $record->tel,
-    '#size' => 40,
-    '#maxlength' => 128,
-  );
-$form['f']['discipline'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Discipline'),
-    '#default_value' => $record->discipline,
-    '#size' => 40,
-    '#maxlength' => 128,
-  );
-$form['f']['grade'] = array(
-    '#type' => 'select',
-    '#title' => t('Grade'),
-    '#default_value' => $record->grade,
-    '#options' => drupal_map_assoc(array(
-'','NOMENCLATURE','VACATAIRE','CONTRACTUEL','MA','PEGC','PLP','CERTIFIE','AGREGE','INST','PE','COP','CPE','INF','MED','ING','ASU','CASU','AS','PERDIR','IA-IPR','IEN-EG','IEN-ET','IEN-CC','CC','PREC','PRCE','PRAG','MC','PR','ASSOCIATION','ENTREPRISE','UNIVERSITE','INTERVENANT-XT'
-    )),
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>&nbsp;',
-  );
-$form['f']['decharge'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Décharge (h)'),
-    '#default_value' => $record->decharge,
-    '#size' => 10,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>&nbsp;',
-  );
-$form['f']['resp_dafor'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Responsable DAFOR'),
-    '#default_value' => $record->resp_dafor,
-    '#size' => 10,
-    '#maxlength' => 128,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>',
-  );
-$form['f']['divers'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Divers'),
-    '#default_value' => $record->divers,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
   );
 
+  $form['f']['satisMatos'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Matériel'),
+    '#default_value' => $r['satisMatos'],
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+$form['f']['commMatos'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $r['commMatos'],
+    '#size' => 40,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
+  );
 
   $form['f']['submit'] = array(
     '#type' => 'submit',
@@ -164,33 +156,267 @@ $form['f']['divers'] = array(
 /**
  * ----> Submit
  */
-function form_modif_formateur_submit($form, &$form_state) {
+function form_environnement_submit($form, &$form_state) {
 
 // Merge Queries : http://drupal.org/node/310085
-  db_merge('gbb_gresp_dafor')
-    ->key(array('co_resp'  => $form_state['values']['coresp'],
+  db_merge('gbb_evaluation')
+    ->key(array('co_degre' => $form_state['values']['co_degre'],
+                'co_modu'  => $form_state['values']['co_modu'],
+                'groupe'   => $form_state['values']['groupe'],
              ))
-    ->fields(array('nomu'   => $form_state['values']['nomu'],
-                   'prenom' => $form_state['values']['prenom'],
-                   'mel'    => $form_state['values']['mel'],
-                   'tel'    => $form_state['values']['tel'],
-                   'co_degre'    => $form_state['values']['codegre'],
-             ))
-    ->execute();
-  if ($form_state['values']['decharge']=='') $form_state['values']['decharge']='0.0';
-  db_merge('gbb_gresp_plus')
-    ->key(array('co_resp'  => $form_state['values']['coresp'],
-             ))
-    ->fields(array('discipline' => $form_state['values']['discipline'],
-                   'resp_dafor' => $form_state['values']['resp_dafor'],
-                   'decharge'   => $form_state['values']['decharge'],
-                   'grade'      => $form_state['values']['grade'],
-                   'divers'     => $form_state['values']['divers'],
+    ->fields(array('satisAccueil' => $form_state['values']['satisAccueil'],
+                   'commAccueil'  => $form_state['values']['commAccueil'],
+                   'satisSalle'   => $form_state['values']['satisSalle'],
+                   'commSalle'    => $form_state['values']['commSalle'],
+                   'satisMatos'   => $form_state['values']['satisMatos'],
+                   'commMatos'    => $form_state['values']['commMatos'],
              ))
     ->execute();
-
-  $url = url('formateur/' . $form_state['values']['coresp'],
-                            array('absolute' => TRUE));
-  $form_state['redirect'] = $url;
+  drupal_set_message(t('Enregistrement effectué.'));
 }
+
+/**
+ * Formulaire de saisie des conditions ** GROUPE DES PARTICIPANTS ** du stage
+*/
+function form_groupe_participants($form, &$form_state) {
+
+  if (arg(3)=='') return '';
+
+  $query = db_select('gbb_evaluation', 'e');
+  $query   ->condition('e.co_degre', arg(1), '=')
+           ->condition('e.co_modu', arg(2), '=')
+           ->condition('e.groupe', arg(3), '=')
+           ->fields('e', array('co_degre',
+                               'co_modu', 
+                               'groupe',
+                               'satisEffectif',
+                               'commEffectif',
+                               'satisAssiduite',
+                               'commAssiduite',
+                               'satisCooper',
+                               'commCooper',
+                               'satisPrerequis',
+                               'commPrerequis',
+                               ));
+  $r = $query->execute()->fetchAssoc();
+
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Satisfaction concernant le groupe des participants'),
+  );
+  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => $r['co_degre']);
+  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => $r['co_modu']);
+  $form['f']['groupe'] = array('#type' => 'hidden','#value' => $r['groupe']);
+  $form['f']['satisEffectif'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Effectif'),
+    '#default_value' => $r['satisEffectif'],
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  $form['f']['commEffectif'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Commentaire'),
+    '#default_value' => $r['commEffectif'],
+    '#size' => 40,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
+  );
+  $form['f']['satisAssiduite'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Assiduité'),
+    '#default_value' => $r['satisAssiduite'],
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  $form['f']['commAssiduite'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $r['commAssiduite'],
+    '#size' => 40,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
+  );
+  $form['f']['satisCooper'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Coopérations'),
+    '#default_value' => $r['satisCooper'],
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  $form['f']['commCooper'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $r['commCooper'],
+    '#size' => 40,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
+  );
+  $form['f']['satisPrerequis'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Prérequis'),
+    '#default_value' => $r['satisPrerequis'],
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  $form['f']['commPrerequis'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $r['commPrerequis'],
+    '#size' => 40,
+    '#maxlength' => 200,
+    '#prefix' => '&nbsp;<div class="inline">',
+    '#suffix' => '</div><br/>',
+  );
+
+  $form['f']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Enregistrer',
+  );
+
+  return $form;
+}
+
+/**
+ * ----> Submit
+ */
+function form_groupe_participants_submit($form, &$form_state) {
+
+// Merge Queries : http://drupal.org/node/310085
+  db_merge('gbb_evaluation')
+    ->key(array('co_degre' => $form_state['values']['co_degre'],
+                'co_modu'  => $form_state['values']['co_modu'],
+                'groupe'   => $form_state['values']['groupe'],
+             ))
+    ->fields(array('satisEffectif'  => $form_state['values']['satisEffectif'],
+                   'commEffectif'   => $form_state['values']['commEffectif'],
+                   'satisAssiduite' => $form_state['values']['satisAssiduite'],
+                   'commAssiduite'  => $form_state['values']['commAssiduite'],
+                   'satisCooper'    => $form_state['values']['satisCooper'],
+                   'commCooper'     => $form_state['values']['commCooper'],
+                   'satisPrerequis' => $form_state['values']['satisPrerequis'],
+                   'commPrerequis'  => $form_state['values']['commPrerequis'],
+             ))
+    ->execute();
+  drupal_set_message(t('Enregistrement effectué.'));
+}
+
+/**
+ * Formulaire de saisie des conditions générales de ** LA FORMATION **
+*/
+function form_formation($form, &$form_state) {
+
+  if (arg(3)=='') return '';
+
+  $query = db_select('gbb_evaluation', 'e');
+  $query   ->condition('e.co_degre', arg(1), '=')
+           ->condition('e.co_modu', arg(2), '=')
+           ->condition('e.groupe', arg(3), '=')
+           ->fields('e', array('co_degre',
+                               'co_modu', 
+                               'groupe',
+                               'satisObjectifs',
+                               'questionsTraitees',
+                               'pointsForts',
+                               'ameliorations',
+                               'genants',
+                               'besoinsParticip',
+                               'besoinsForm',
+                               ));
+  $r = $query->execute()->fetchAssoc();
+
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('La formation'),
+  );
+  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => $r['co_degre']);
+  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => $r['co_modu']);
+  $form['f']['groupe'] = array('#type' => 'hidden','#value' => $r['groupe']);
+  $form['f']['satisObjectifs'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Avez-vous atteint les objectifs prescrits ?'),
+    '#default_value' => $r['satisObjectifs'],
+  );
+  $form['f']['questionsTraitees'] = array(
+    '#type' => 'textarea',
+    '#title' => t('En cas d\'objectifs non atteints, contenu du stage / questions traitées :'),
+    '#default_value' => $r['questionsTraitees'],
+    '#size' => 40,
+    '#rows' => 3,
+    '#maxlength' => 1000,
+  );
+  $form['f']['pointsForts'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Quels ont été selon vous les points forts de la formation ?'),
+    '#default_value' => $r['pointsForts'],
+    '#size' => 40,
+    '#rows' => 3,
+    '#maxlength' => 1000,
+  );
+  $form['f']['ameliorations'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Quels ont été selon vous les points de la formation à améliorer ?'),
+    '#default_value' => $r['ameliorations'],
+    '#size' => 40,
+    '#rows' => 3,
+    '#maxlength' => 1000,
+  );
+  $form['f']['genants'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Indiquez ce qui éventuellement a gêné votre action :'),
+    '#default_value' => $r['genants'],
+    '#size' => 40,
+    '#rows' => 3,
+    '#maxlength' => 1000,
+  );
+  $form['f']['besoinsParticip'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Perspectives ou besoins exprimés par les participants :'),
+    '#default_value' => $r['besoinsParticip'],
+    '#size' => 40,
+    '#rows' => 3,
+    '#maxlength' => 1000,
+  );
+  $form['f']['besoinsForm'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Besoins identifiés par vous :'),
+    '#default_value' => $r['besoinsForm'],
+    '#size' => 40,
+    '#rows' => 3,
+    '#maxlength' => 1000,
+  );
+
+  $form['f']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Enregistrer',
+  );
+
+  return $form;
+}
+
+/**
+ * ----> Submit
+ */
+function form_formation_submit($form, &$form_state) {
+
+// Merge Queries : http://drupal.org/node/310085
+  db_merge('gbb_evaluation')
+    ->key(array('co_degre' => $form_state['values']['co_degre'],
+                'co_modu'  => $form_state['values']['co_modu'],
+                'groupe'   => $form_state['values']['groupe'],
+             ))
+    ->fields(array('satisObjectifs'  => $form_state['values']['satisObjectifs'],
+                   'questionsTraitees'   => $form_state['values']['questionsTraitees'],
+                   'pointsForts' => $form_state['values']['pointsForts'],
+                   'ameliorations'  => $form_state['values']['ameliorations'],
+                   'genants'    => $form_state['values']['genants'],
+                   'besoinsParticip'     => $form_state['values']['besoinsParticip'],
+                   'besoinsForm' => $form_state['values']['besoinsForm'],
+             ))
+    ->execute();
+  drupal_set_message(t('Enregistrement effectué.'));
+}
+
+
+
 

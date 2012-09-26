@@ -970,7 +970,7 @@ function form_edit_session($form, $form_state, $args) {
       currentText: "Aujourd\'hui",
       numberOfMonths: 3,
       dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
-      monthNames: ["Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Sepembre","Octobre","Novembre","Decembre"]
+      monthNames: ["Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"]
     });});', 'inline'); 
 
 
@@ -996,6 +996,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => t('Groupe'),
     '#default_value' => $r->groupe,
     '#size' => 1,
+    '#element_validate' => array('element_validate_integer_positive'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );
@@ -1005,6 +1006,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => t('Durée prévue'),
     '#default_value' => $r->dureeprevue,
     '#size' => 10,
+    '#element_validate' => array('element_validate_number'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );
@@ -1014,10 +1016,10 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => t('Duree à payer'),
     '#default_value' => $r->dureeapayer,
     '#size' => 10,
+    '#element_validate' => array('element_validate_number'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );
-
 
   $form['f']['typePaiement'] = array(
     '#type' => 'select',

@@ -183,6 +183,7 @@ $form['f']['decharge'] = array(
     '#title' => t('Décharge (h)'),
     '#default_value' => $record->decharge,
     '#size' => 10,
+    '#element_validate' => array('element_validate_number'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );

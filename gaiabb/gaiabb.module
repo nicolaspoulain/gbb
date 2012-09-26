@@ -23,6 +23,21 @@ function gaiabb_views_api() {
       return array('api' => 3.0);
 }
 
+/*
+function gaiabb_views_pre_execute(&$view) {
+  if($view->name=="test") {
+  // Décommenter pour voir à quoi ressemble la requête générée par Views
+    echo "<pre>"; var_dump($view->build_info['query']); exit();
+    //$view->build_info['query']=="
+    //   SELECT
+    //   node.nid AS nid,
+    //   node_revisions.title AS node_revisions_title,
+    //   users.uid AS users_uid,
+    //   users.name AS users_name
+    //   FROM bla bla bla";
+  }
+}
+*/
 
 /**
 * Implements hook_permission().

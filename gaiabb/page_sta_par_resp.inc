@@ -22,12 +22,9 @@ function sta_par_resp($args = 'NaN') {
   $build = array();
   drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   drupal_add_js(drupal_get_path('module', 'gaiabb') . '/jquery.dataTables.load.js', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
-  if (user_access('unstable gaiabb')) {
-    $build['recherche'] = render(drupal_get_form('recherche_form',$args));
-  }
-
+  //if (user_access('unstable gaiabb')) {
+  $build['recherche'] = render(drupal_get_form('recherche_form',$args));
   $build['form_choose'] = render(drupal_get_form('form_chooseBIS', $args));
-
   $build['liste_stages'] = liste_stagesBIS($args);
   return implode('', $build);
 }
@@ -467,7 +464,7 @@ function liste_stagesBIS($args) {
       $rows[] = array( 
                   'col0' => array('data' => 
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
-                                 '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">' . $r->id_disp . ' ' . t($r->libd) . '</span> '
+                                 '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">[' . strtoupper($paf_ou_fil) . "] " . $r->id_disp . ' ' . t($r->libd) . '</span> '
                   ),
                   'col1' => array('data' => 
                                   $attachement .

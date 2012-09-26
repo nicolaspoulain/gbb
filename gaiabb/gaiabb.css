@@ -1,22 +1,31 @@
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px;
+  padding: 0;
+}
 
 td.nowrap {
     whitespace:nowrap;
 }
 
-td.fil {
-  background: none repeat scroll 0 0 #AA99FF;
-  color : #FFF;
+.fil {
+  font-weight:bold;
+  color : #8B00A6;
 }
-td.paf {
-  background: none repeat scroll 0 0 #afc6d7;
+.paf {
+  font-weight:bold;
+  color : #004A78;
 }
 td.Ferme {
   text-decoration: line-through;
 }
 td.group {
-        background-color: #D1CFD0;
+        background-color: #EEE;
             border-bottom: 2px solid #A19B9E;
                 border-top: 2px solid #A19B9E;
+}
+
+#edit-da-date-depot-datepicker-popup-0 {
+    background-color : #FFF;
 }
 
 .foo {
@@ -152,12 +161,9 @@ ul.nope {
   -webkit-border-radius: 4px;
   border-radius: 4px;
  background : inherit;
- font-size:1.2em; 
+ font-size:1em; 
 }
 .recherchestage {
-    line-height : 1em;
- padding-top : 0px;
- padding-bottom : 0px;
 }
 .directfilter{
  font-size : 120%;
@@ -183,11 +189,12 @@ ul.nope {
   -webkit-border-radius: 4px;
   border-radius: 4px;
  background : inherit;
- font-size:1.5em; 
+ font-size:1.2em; 
 }
 
 #autocomplete {
   background : #FFF;
+  left:150px;
 }
 
 .block-user li{

@@ -96,6 +96,29 @@ function gaiabb_views_data() {
         'argument' => array('handler' => 'views_handler_argument_string'),
       ),
     ),
+
+    'gbb_gdisp' => array(
+      'table' => array(
+        'group' => t('Dispositif'),
+        'join' => array(
+          'gbb_gmodu' => array(
+            'left_field' => 'co_disp',
+            'field' => 'co_disp',
+          ),
+        ),
+      ),
+      'id_disp' => array(
+        'title' => t('id_disp'),
+        'help' => t('Numero du dispositif (gbb_gdisp.id_disp)'),
+        'field' => array(
+          'handler' => 'views_handler_field',
+          'click sortable' => TRUE,
+        ),
+        'sort' => array('handler' => 'views_handler_sort'),
+        'filter' => array('handler' => 'views_handler_filter_string'),
+        'argument' => array('handler' => 'views_handler_argument_string'),
+      ),
+    ),
   );
  
 

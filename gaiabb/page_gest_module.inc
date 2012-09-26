@@ -50,9 +50,8 @@ function gest_module($args = 'NaN') {
   $build['tableau_sessions']     = render(drupal_get_form('form_tableau_sessions', $args));
   $build['form_edit_session'] = render(drupal_get_form('form_edit_session', $args));
   $build['convoc'] = render(drupal_get_form('form_convoc', $args));
-  if (user_access('unstable gaiabb')) {
-    $build['bilan'] = render(drupal_get_form('bilan_form',$args));
-  }
+  //if (user_access('unstable gaiabb')) {
+  $build['bilan'] = render(drupal_get_form('bilan_form',$args));
 
   return implode('', $build);
 }

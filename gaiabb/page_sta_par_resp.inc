@@ -59,6 +59,22 @@ function form_chooseBIS($form, &$form_state, $args) {
   $rows['0'] = ' ** TOUS ** ';
   asort($rows);
 
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Recherche par conseiller'),
+    '#attributes' => array('class' => array('collapsible',)),
+  );
+
+
+  $active = array(0 => t('Tous («Vue Conseiller»)'), 1 => t('En demande de traitement («Vue Administratif»)'));
+  $form['f']['voir_encours'] = array(
+    '#type' => 'radios',
+    '#options' => $active,
+    '#default_value' => (isset($_GET['voir_encours']))? $_GET['voir_encours'] : ((user_access('gest_sessions gaiabb'))? 0 : 1) ,
+    '#prefix' => '<p><div class="flotteDroite">',
+    '#suffix' => '</div></p>',
+  );
+
   $degre = array(1 => 'Premier',
                  2 => 'Second' ,
                   );
@@ -82,7 +98,7 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#default_value' => arg(1),
     '#options' => $periode,
     '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>',
+    '#suffix' => '</div>&nbsp;&nbsp;',
   );
 
   $form['f']['voir_ferme'] = array(
@@ -92,16 +108,6 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br />',
   );
-
-  $active = array(0 => t('Tous («Vue Conseiller»)'), 1 => t('En demande de traitement («Vue Administratif»)'));
-  $form['f']['voir_encours'] = array(
-    '#type' => 'radios',
-    '#options' => $active,
-    '#default_value' => (isset($_GET['voir_encours']))? $_GET['voir_encours'] : ((user_access('gest_sessions gaiabb'))? 0 : 1) ,
-    '#prefix' => '<div class="inline">',
-    '#suffix' => '</div><br />',
-  );
-
   // ------------
   // Ici on récupère le co_resp par défaut si arg(4) est vide
   // cela pour caler le select sur le bon conseiller
@@ -133,8 +139,8 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#size' => 20,
     '#element_validate' => array('_choix_conseiller_validate'),
     '#autocomplete_path' => 'autocomp/responsable',
-    '#prefix' => '<br/><div class="inline"><div class="ajaxform">',
-    '#suffix' => '</div></div>&nbsp;',
+    '#prefix' => '<br/><div class="ajaxform inline">',
+    '#suffix' => '</div>&nbsp;',
   );
 
   $query = db_select('gbb_norie', 'o');
@@ -194,7 +200,7 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#value' => 'Envoyer',
   );
 
-  $form['f']['infos']['#markup']= '<div class="infos">' . t('Saisissez quelques lettres ou chiffres du stage pour réduire la liste.<br />Vous pouvez aussi utiliser les jokers : « paf* » ou « fil* » pour réduire à un type de stage, ou bien « ! » pour réduire aux stages prioritaires.') . '</div>';
+  $form['if']['infos']['#markup']= '<div class="infos">' . t('Saisissez quelques lettres ou chiffres du stage pour réduire la liste.<br />Vous pouvez aussi utiliser les jokers : « paf* » ou « fil* » pour réduire à un type de stage, ou bien « ! » pour réduire aux stages prioritaires.') . '</div>';
 
 
   return $form;

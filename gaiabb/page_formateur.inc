@@ -116,7 +116,9 @@ function form_modif_formateur($form, &$form_state) {
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Fiche formateur'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Fiche formateur (Nom, prénom, adresse, décharge etc...)'),
   );
   
 $form['f']['coresp'] = array(

@@ -82,6 +82,10 @@ fieldset.dossier {
   float:left;
   margin-right:11px;
 }
+.flotteDroite {
+  float:right;
+  margin-right:11px;
+}
 
 input.form-submit,
 a.button {

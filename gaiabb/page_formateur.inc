@@ -23,7 +23,7 @@ function formateur($args = 'NaN') {
                              'element' => array(
                                '#attributes' => array('class' => array('details')), 
                                '#children' => '',
-                               '#title' => t('Détails ...'),
+                               '#title' => t('Détail des formations'),
                                '#value' => infos_formateur($args),
                                )
                              )
@@ -262,6 +262,7 @@ function infos_formateur($args) {
           ->condition('id_disp', db_like('12') . '%', 'LIKE')
           ->fields('d', array('id_disp',))
           ->fields('m', array('co_modu',
+                              'co_degre',
                               'lib',
                                ))
           ->groupBy('co_modu')
@@ -271,19 +272,32 @@ function infos_formateur($args) {
   $result = $query->execute();
 
   $header = array(
-               'col0' => array('data' => "Code"), 
-               'col1' => array('data' => "Titre du module"), 
-               'col2' => array('data' => "Prévues"), 
-               'col3' => array('data' => "À payer"), 
+               'col0' => array('data' => t('Code')), 
+               'col1' => array('data' => t('Titre du module')), 
+               'col2' => array('data' => t('Prévues')), 
+               'col3' => array('data' => t('À payer')), 
+               'col4' => array('data' => t('Fiche d\'évaluation')), 
             );
 
-
   foreach ($result as $r) {
+    $query = db_select('gbb_session', 's');
+    $query  ->condition('s.co_modu', $r->co_modu, '=')
+            ->condition('s.co_degre', '2', '=')
+            ->fields('s', array('groupe'))
+            ->distinct();
+    $gr = $query->execute();
+    $items = array();
+    foreach ($gr as $g) {
+      $items[] = l(t('Groupe ') . $g->groupe,'evaluation/2/' . $r->co_modu . '/' . $g->groupe, array('attributes' => array('html' => FALSE)));
+    };
+    $groupes = theme('item_list', array('items' => $items));
+
     $rows[] = array( 
-                'col0' => array('data' => l($r->id_disp . '/' . $r->co_modu, 'gest_module/2/' . $r->co_modu, array('attributes' => array('html' => FALSE)))),
+                'col0' => array('data' => l($r->id_disp . ' / ' . $r->co_modu, 'gest_module/2/' . $r->co_modu, array('attributes' => array('html' => FALSE)))),
                 'col1' => array('data' => $r->lib),
                 'col2' => array('data' => $r->sumprevue),
                 'col3' => array('data' => $r->sumapayer),
+                'col4' => array('data' => $groupes),
               );
   }
   if (!isset($rows)) return $args;

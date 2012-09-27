@@ -119,7 +119,7 @@ function infos_gaia($args) {
 
   foreach ($result as $r) {
     $str .= $TRES[$r->co_tres] . " : ";
-    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/0/' . $r->co_resp, array('query' => array('voir_encours' => $voirEnCours))) ;
+    $str .= l($r->prenom . ' ' . $r->nomu, 'sta_par_resp/12/' . $r->co_degre . '/0/' . $r->nomu, array('query' => array('voir_encours' => $voirEnCours))) ;
     $str .= "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;";
   }
   $rows[] = array(array('data' => $str));
@@ -956,7 +956,7 @@ function form_edit_session($form, $form_state, $args) {
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Editer/Ajouter la session') . $r->sess_id . '<a name="edit_session_anchor"></a>' ,
+    '#title' => t('Editer/Ajouter la session n°') . $r->sess_id . '<a name="edit_session_anchor"></a>' ,
     '#attributes' => array('class' => array('eeditsession')),
   );
 
@@ -988,6 +988,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => 'Horaires',
     '#default_value' => $r->horaires,
     '#size' => 20,
+    '#maxlength' => 50,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );
@@ -996,6 +997,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => t('Groupe'),
     '#default_value' => $r->groupe,
     '#size' => 1,
+    '#maxlength' => 2,
     '#element_validate' => array('element_validate_integer_positive'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
@@ -1006,6 +1008,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => t('Durée prévue'),
     '#default_value' => $r->dureeprevue,
     '#size' => 10,
+    '#maxlength' => 6,
     '#element_validate' => array('element_validate_number'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
@@ -1016,6 +1019,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => t('Duree à payer'),
     '#default_value' => $r->dureeapayer,
     '#size' => 10,
+    '#maxlength' => 6,
     '#element_validate' => array('element_validate_number'),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
@@ -1025,14 +1029,15 @@ function form_edit_session($form, $form_state, $args) {
     '#type' => 'select',
     '#title' => t('Type de paiement'),
     '#options' => array(
+          'VAC' => t('VAC'),
           'CONV' => t('CONV'),
           'BDC' => t('BDC'),
           'DECH' => t('DECH'),
           'HSE' => t('HSE'),
           'SF' => t('SF'),
-          'VAC' => t('VAC'),
                     ),
     '#default_value' => $r->typePaiement,
+    '#maxlength' => 4,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
@@ -1113,6 +1118,7 @@ function form_edit_session($form, $form_state, $args) {
                                    array('attributes' =>  array('class' => 'anchor-class'), 'html' => TRUE)),
     '#default_value' => $r->denom_comp . ' (' . $r->sigle . ')',
     '#size' => 40,
+    '#maxlength' => 50,
     '#autocomplete_path' => 'autocomp/etablissement',
     '#prefix' => '<br/><div class="inline">',
     '#suffix' => '</div>&nbsp;',
@@ -1134,6 +1140,7 @@ function form_edit_session($form, $form_state, $args) {
     '#default_value' => $r->prenom . ' ' . $r->nomu,
     '#size' => 30,
     '#autocomplete_path' => 'autocomp/formateur',
+    '#maxlength' => 50,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );

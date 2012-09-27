@@ -131,6 +131,7 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#title' => t('Conseiller'),
     '#default_value' => $nomu,
     '#size' => 20,
+    '#element_validate' => array('_choix_conseiller_validate'),
     '#autocomplete_path' => 'autocomp/responsable',
     '#prefix' => '<br/><div class="inline"><div class="ajaxform">',
     '#suffix' => '</div></div>&nbsp;',
@@ -198,6 +199,18 @@ function form_chooseBIS($form, &$form_state, $args) {
 
   return $form;
 }
+
+function _choix_conseiller_validate($element, &$form_state) {
+  $query = db_select('gbb_gresp', 'r')
+    ->fields('r', array('nomu'))
+    ->condition('nomu', $element['#value'], '=')
+    ->distinct();
+  $num_rows = $query->countQuery()->execute()->fetchField();
+  if ($num_rows == 0) {
+    form_error($element, t('Le champ Conseiller ne peut être qu\'une des valeurs proposées, et que vous aurez cliquée.'));
+  }
+} 
+
 
 /**
  * ----> Submit

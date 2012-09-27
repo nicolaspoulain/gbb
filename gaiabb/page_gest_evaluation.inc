@@ -61,6 +61,11 @@ function infos_sessions($args) {
 
   $header = array('Formateur(s)', 'Date(s)');
   $rows = array();
+    $rows[] = array( 
+                array('data' => 'Groupe' . arg(3),
+                      'colspan' => '2',
+                )
+              );
   $rows[] = array($formateurs, $dates);
 
   return theme('table', array('header' => $header, 'rows' => $rows ));;

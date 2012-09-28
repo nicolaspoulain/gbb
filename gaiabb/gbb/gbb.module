@@ -1,0 +1,156 @@
+<?php
+
+/**
+ * @file
+ *
+ * Un module de gestion de stages GAIA
+ * des tables supplementaires sont ajoutees a la base de donnees Drupal
+ * - les tables issues de GAIA, préfixées par gbb (gbb_gdisp, gbb_gmodu, gbb_gdire...)
+ * - les tables propres au module (gbb_file, gbb_session...)
+ */
+
+/**
+* Implement hook_views_api().
+*
+* Charge le hook_views_data du fichier gbb.views.inc
+*/
+function gaiabb_views_api() {
+      return array('api' => 3.0);
+}
+
+/**
+* Implements hook_permission().
+*
+* Les accès aux pages définies par le module sont régis par des permissions 
+* spéciales définies ici.
+* Ces permissions pourront être attribuées à des rôles dans l'interface de gestion DRUPAL.
+*/
+
+function gaiabb_permission() {
+  return array(
+    'access gaiabb' => array(
+      'title' => t('Accéder à GaiaBB'), 
+      'description' => t('Gestion des modules, des formateurs et des établissements.'),
+      ),
+    'co_resp gaiabb' => array(
+      'title' => t('Sélectionner co_resp'), 
+      'description' => t('Afin de choisir le rôle (Interlocuteur, resp. orga. ou péda.) sur la page sta_par_resp d\'affichage de la liste des stages.'),
+      ),
+    'gest_sessions gaiabb' => array(
+      'title' => t('Gérer les sessions d\'un module'), 
+      'description' => t('Autorise à jouter, modifier, dupliquer ou supprimer des sessions.'),
+      ),
+    'gest_convocs gaiabb' => array(
+      'title' => t('Gérer les convocations d\'un module'), 
+      'description' => t('Autorise à marquer comme imprimées ou envoyées les convocations.'),
+      ),
+    'gest_etablissements gaiabb' => array(
+      'title' => t('Ajouter un établissement dans la base de données'), 
+      'description' => t('Permet aussi de modifier le RNE (l\'identifiant), le nom et le sigle. Les autres données sont modifiables par tous.'),
+      ),
+    'unstable gaiabb' => array(
+      'title' => t('UNSTABLE'), 
+      'description' => t('Donne accès aux fonctionnlités instables en cours de développement.'),
+      ),
+  );
+}
+
+/**
+ * Implements hook_menu
+ */
+
+function gaiabb_menu() {
+  $items = array();
+
+  // Etant donnés une année (09,10,11,12,...), un co_degré (1 ou 2) et un co_tres (1,2 ou 3)
+  // affichage de la liste des responsables des stages
+  //   exemple : sta_par_resp/12/2/1
+  // affichage de la liste des stages pour un co_resp donné
+  //   exemple : sta_par_resp/12/2/1/1495
+
+  $items['sta_par_resp'] = array(
+        'title' => '',
+        'page callback' => 'sta_par_resp',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Etant donné un co_degré (1 ou 2)
+  // Affiche la page de gestion du module co_modu
+  //   exemple : gest_module/2/26142
+
+  $items['gest_module'] = array(
+        'title' => '',
+        'page callback' => 'gest_module',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Etant donné un id (112 ou 2222)
+  // Affiche la page de gestion des formateurs
+  //   exemple : formateur/112
+
+  $items['formateur'] = array(
+        'title' => '',
+        'page callback' => 'formateur',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Etant donné un id (112 ou 2222)
+  // Affiche la page de gestion des établisssemnets
+  //   exemple : etablissement/112
+
+  $items['etablissement'] = array(
+        'title' => '',
+        'page callback' => 'etablissement',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK,
+  );
+
+// Etant donné un co_degre (1 ou 2),
+  // un co_modu (12345) et un groupe (4 ou 8)
+  // Affiche la page de gestion de évaluations de la formation
+  //   exemple : evaluation/2/12345/8
+
+  $items['evaluation'] = array(
+        'title' => '',
+        'page callback' => 'evaluation',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK,
+  );
+
+  // Pages pour autocomplete AJAX
+  $items['autocomp/etablissement'] = array(
+        'page callback' => '_gaiabb_autocompetab',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
+  $items['autocomp/formateur'] = array(
+        'page callback' => '_gaiabb_autocompform',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
+  $items['autocomp/formateur2'] = array(
+        'page callback' => '_gaiabb_autocompform2',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
+  $items['autocomp/responsable'] = array(
+        'page callback' => '_gaiabb_autocompresp',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
+  $items['autocomp/stage'] = array(
+        'page callback' => '_gaiabb_autocompstage',
+        'access arguments' => array('access gaiabb'),
+        'type' => MENU_CALLBACK
+  );
+  return $items;
+}
+
+module_load_include('inc', 'gaiabb', 'page_formateur');
+module_load_include('inc', 'gaiabb', 'page_sta_par_resp');
+module_load_include('inc', 'gaiabb', 'page_gest_module');
+module_load_include('inc', 'gaiabb', 'page_gest_etab');
+module_load_include('inc', 'gaiabb', 'page_gest_evaluation');

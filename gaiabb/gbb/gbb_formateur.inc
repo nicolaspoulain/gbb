@@ -136,7 +136,6 @@ $form['f']['nomu'] = array(
     '#size' => 40,
     '#maxlength' => 128,
     '#required' => TRUE,
-    '#disabled' => (($record->co_resp == "1")? TRUE : FALSE),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
@@ -147,7 +146,6 @@ $form['f']['prenom'] = array(
     '#size' => 40,
     '#maxlength' => 128,
     '#required' => TRUE,
-    '#disabled' => (($record->co_resp == "1")? TRUE : FALSE),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br/>',
   );

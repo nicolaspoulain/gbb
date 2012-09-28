@@ -200,7 +200,13 @@ function form_chooseBIS($form, &$form_state, $args) {
     '#value' => 'Envoyer',
   );
 
-  $form['if']['infos']['#markup']= '<div class="infos">' . t('Saisissez quelques lettres ou chiffres du stage pour réduire la liste.<br />Vous pouvez aussi utiliser les jokers : « paf* » ou « fil* » pour réduire à un type de stage, ou bien « ! » pour réduire aux stages prioritaires.') . '</div>';
+  $form['if']['infos']['#markup']= '<div class="infos">' . t('
+    Saisissez quelques lettres ou chiffres 
+    du stage pour réduire la liste.<br />
+    Vous pouvez aussi utiliser les jokers : « paf* » ou « fil* » pour réduire à un type de stage, 
+    ou bien « ! » pour réduire aux stages prioritaires.<br/>
+    <font color="red">NOUVEAU</font> : Entrez le nom d\'un formateur pour réduire aus seuls stages où il intervient.
+    ') . '</div>';
 
 
   return $form;
@@ -396,19 +402,19 @@ function liste_stagesBIS($args) {
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
       $session_alert = ($r->nb_sa >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_sa . '</span>'. '<span class="invisible">></span> '  : '';
 
-      $variables = array(
+      $play = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
         'alt' => 'session_alert',
         'title' => t('session en route'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_nea . '</span>'. '<span class="invisible">></span> '  : '';
+      $NOT_en_attente = ($r->nb_nea >0)? theme('image', $play) . '<span class="nb_sa">' . $r->nb_nea . '</span>'. '<span class="invisible">></span> '  : '';
 
-      $variables = array(
+      $pause = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
         'alt' => 'en_attente',
         'title' => t('En attente'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $en_attente = ($r->nb_ea >0)? theme('image', $variables) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
+      $en_attente = ($r->nb_ea >0)? theme('image', $pause) . '<span class="nb_sa">' . $r->nb_ea . '</span>' : '';
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.gif',
@@ -445,12 +451,17 @@ function liste_stagesBIS($args) {
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
       $attachement = ($r->nb_pj > 0)? theme('image', $variables) . '<span class="nb_pj">' . $r->nb_pj . '</span>' : '';
 
-      $variables = array(
+      $comments = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/comments.png',
-        'alt' => 'Organisation',
-        'title' => t('Organisation'),
+        'alt' => 'Organisation et dates de session',
+        'title' => t('Organisation et dates de session'),
         'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-      $plus = ($r->organisation == '')? '' : '&nbsp;' . theme('image', $variables);
+      $comment = array(
+        'path' => drupal_get_path('module', 'gaiabb') . '/images/comment.png',
+        'alt' => 'Dates de session',
+        'title' => t('Dates de session'),
+        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+      $plus  = ($r->organisation == '')? '' : '&nbsp;' . theme('image', $comments);
 
       $variables = array(
         'path' => drupal_get_path('module', 'gaiabb') . '/images/timer_green.png',
@@ -480,6 +491,40 @@ function liste_stagesBIS($args) {
           $dates ='';
       };
 
+$formateurs ='';
+  //if (user_access('unstable gaiabb')) {
+  $qf = db_select('gbb_session', 's');
+  $qf  ->leftjoin('gbb_gresp_dafor', 'r',  'r.co_resp = s.co_resp AND r.co_degre=s.co_degre');
+  $qf  ->condition('s.co_degre', arg(2), '=')
+       ->condition('s.co_modu', $r->co_modu, '=')
+       ->distinct()
+       ->fields('r', array('nomu', 'prenom'))
+       ->fields('s', array('date', 'en_attente'));
+  $fo = $qf->execute();
+  $items = array();
+  foreach ($fo as $f) {
+    $items[] = (($f->en_attente)?  theme('image', $pause) :  '' ) . ' ' .
+               $f->date . ' - ' . 
+               $f->prenom . ' ' . $f->nomu;
+  };
+  $formateurs = theme('item_list', array('items' => $items));
+//}
+
+/*$rows[] = array( 
+                  'col0' => array('data' => 
+                                 '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
+                                 '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">[' . strtoupper($paf_ou_fil) . "] " . $r->id_disp . ' ' . t($r->libd) . '</span> '
+                  ),
+                  'col1' => array('data' => "."
+                      ),
+                  'col2' => array('data' => "."
+                      ),
+                  'col3' => array('data' => "."
+                      ),
+                  'col4' => array('data' => "."
+                      ),
+            );
+*/
       $rows[] = array( 
                   'col0' => array('data' => 
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
@@ -500,7 +545,7 @@ function liste_stagesBIS($args) {
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
                                  '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . $plus . '</span> ',
                        ),
-                  'col3' => array('data' => nl2br($r->organisation),
+                  'col3' => array('data' => nl2br($r->organisation). $formateurs ,
                        ),
                   'col4' => array('data' => $dates,
                        ),

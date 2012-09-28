@@ -121,6 +121,39 @@ function gaiabb_views_data() {
     ),
   );
  
+  $data['gbb_gdisp']['table']['join']['gbb_session'] = array(
+    'left_table' => 'gbb_gmodu',
+    'left_field' => 'co_disp',
+    'field' => 'co_disp',
+  );
+  $data['gbb_gdisp']['id_disp'] = array(
+    'title' => t('id_disp'),
+    'help' => t('Numero du dispositif (gbb_gdisp.id_disp)'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array('handler' => 'views_handler_sort'),
+    'filter' => array('handler' => 'views_handler_filter_string'),
+    'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  $data['gbb_gresp']['table']['join']['gbb_gmodu'] = array(
+    'left_table' => 'gbb_gdire',
+    'left_field' => 'co_resp',
+    'field' => 'co_resp',
+  );
+  $data['gbb_gresp']['nomu'] = array(
+    'title' => t('nomu'),
+    'help' => t('Nom du conseiller (gbb_gresp.nomu)'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array('handler' => 'views_handler_sort'),
+    'filter' => array('handler' => 'views_handler_filter_string'),
+    'argument' => array('handler' => 'views_handler_argument_string'),
+  );
 
   return $data;
 }

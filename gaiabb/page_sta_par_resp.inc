@@ -497,7 +497,6 @@ $formateurs ='';
   $qf  ->leftjoin('gbb_gresp_dafor', 'r',  'r.co_resp = s.co_resp AND r.co_degre=s.co_degre');
   $qf  ->condition('s.co_degre', arg(2), '=')
        ->condition('s.co_modu', $r->co_modu, '=')
-       ->distinct()
        ->fields('r', array('nomu', 'prenom'))
        ->fields('s', array('date', 'en_attente'));
   $fo = $qf->execute();

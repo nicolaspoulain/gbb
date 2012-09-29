@@ -7,30 +7,6 @@ file=README && java -jar ../../asciiArt/plantuml.jar $file.md && pandoc-1.9.1.2 
 -->
 
 
-Git
-===
-
-Ajout d'un nouveau fichier
---------------------------
-
-Après ajout du nouveau fichier `FILE` dans le module gaiabb, on crée un lien
-matériel vers dropbox puis on l'ajoute dans git.
-
-`$ cd ~/Dropbox/gaiabb`
-`$ ln /var/www/drupal-7.14/sites/default/modules/gaiabb/FILE FILE`
-`$ git add FILE`
-
-
-Commmiter des changements
--------------------------
-
-le but est de créer un commit puis de 
-tranférer vers http://code.google.com/p/npoulain/source/browse/
-
-`$ git commit -a -m "Ajout du fichier FILE"` && git push google master`
-
-
-
 Le module GaiaBB
 ================
 Il est placé dans le dossier `sites/default/modules/`
@@ -147,7 +123,7 @@ gbb_session -- gbb_gmodu_plus
 gbb_session -- gbb_gresp_dafor
 gbb_session -- gbb_netab
 
-gbb_gresp_dafor .. gbb_gresp : idem
+gbb_gresp_dafor .. gbb_gresp
 gbb_gresp_dafor -- gbb_gresp_plus
 gbb_gresp -- gbb_gresp_plus
 
@@ -323,6 +299,8 @@ gbb_session << (+,Red) >>
 class gbb_session {
   {static} sess_id
   session_alert
+  en_attente
+  convoc_sent
   co_resp
   co_modu
   co_degre
@@ -360,25 +338,23 @@ gbb_gmodu_plus << (+,Red) >>
 class gbb_gmodu_plus {
   {static} co_modu
   {static} co_degre
-  en_attente
   module_alert
-  co_lieu
-  date_demande
-  date_premiere_session
-  date_derniere_session
+  prioritaire
+  module_printed
+  rne
+  date_session_modif
   organisation
   CDC_etat
   liste_stagiaires
   convoc_info_off
   convoc_info_on
   convoc_alert
-  convoc_printed
-  convoc_sent
   LE_etat
   LE_info
   DSF_etat
   DSF_info
   DA_info
+  DA_date_depot
 }
 
 gbb_file << (+,Red) >>

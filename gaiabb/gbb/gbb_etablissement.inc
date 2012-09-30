@@ -11,15 +11,15 @@
  * affichant une liste de responsables et les stages qui leur
  * associes
  */
-function etablissement($args = 'NaN') {
+function gbb_etablissement_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css',
+                 array('group' => CSS_DEFAULT, 'every_page' => TRUE)
+  );
   // Construction de la page
   $build = array();
-  $build['choix_etab'] = render(drupal_get_form('form_choix_etab' , $args));
-  $build['modif_etab'] = render(drupal_get_form('form_modif_etab' , $args));
-  
+  $build['filtre'] = render(drupal_get_form('gbb_etablissement_filtre', $args));
+  $build['fiche']  = render(drupal_get_form('gbb_etablissement_fiche' , $args));
 
   return implode('', $build);
 }
@@ -27,21 +27,24 @@ function etablissement($args = 'NaN') {
 /**
  * Formulaire de ** CHOIX ** de l'établissement à éditer
  */
-function form_choix_etab($form, &$form_state) {
+
+function gbb_etablissement_filtre($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_netab', 'e')
-           ->fields('e', array('co_lieu', 'denom_comp', 'sigle'));
+         ->fields('e', array('co_lieu',
+                             'denom_comp',
+                             'sigle'));
   $result = $query->execute();
 
   foreach ($result as $r) {
     $rows[$r->co_lieu] = $r->denom_comp . ' (' . $r->sigle . ')';
   }
   unset($rows['']);
-if (user_access('gest_etablissements gaiabb')) {
-  $rows['add'] = '  ** AJOUTER UN ETABLISSEMENT **';
-};
-asort($rows);
+  if (user_access('gest_etablissements gaiabb')) {
+    $rows['add'] = '  ** AJOUTER UN ETABLISSEMENT **';
+  };
+  asort($rows);
 
   $form['f'] = array(
     '#type' => 'fieldset',
@@ -52,9 +55,6 @@ asort($rows);
     '#type' => 'select',
     '#default_value' => arg(1),
     '#options' => $rows,
-    '#attributes' => array(//'onChange' => "this.form.submit();",
-                           //'class' => array("flottant")
-                          ),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
@@ -72,7 +72,7 @@ asort($rows);
 /**
  * ----> Submit
  */
-function form_choix_etab_submit($form, &$form_state) {
+function gbb_etablissement_filtre_submit($form, &$form_state) {
 
   $url = url('etablissement/' . $form_state['values']['colieu'],
                             array('absolute' => TRUE));
@@ -83,13 +83,21 @@ function form_choix_etab_submit($form, &$form_state) {
 /**
  * Formulaire de ** MODIFICATION ** de la fiche formateur
 */
-function form_modif_etab($form, &$form_state) {
+function gbb_etablissement_fiche($form, &$form_state) {
 
   if (arg(1)=='') return '';
 
   $query = db_select('gbb_netab', 'e');
-  $query   ->condition('e.co_lieu', arg(1), '=')
-           ->fields('e', array('co_lieu', 'denom_comp', 'sigle', 'adr', 'cp', 'tel', 'fax', 'mel'));
+  $query ->condition('e.co_lieu', arg(1), '=')
+         ->fields('e', array('co_lieu', 
+                             'denom_comp',
+                             'sigle',
+                             'adr',
+                             'cp',
+                             'tel',
+                             'fax',
+                             'mel',
+             ));
   $record = $query->execute()->fetchObject();
 
   if (arg(1)=='add'){
@@ -104,11 +112,11 @@ function form_modif_etab($form, &$form_state) {
   }
 
   $form['f'] = array(
-    '#type' => 'fieldset',
+    '#type'  => 'fieldset',
     '#title' => t('Fiche établissement'),
   );
-  
-$form['f']['colieu'] = array(
+
+  $form['f']['colieu'] = array(
     '#type' => 'textfield',
     '#title' => t('RNE (non modifiable)'),
     '#description' => t('Pour ajout ou modification de fiche,'),
@@ -119,19 +127,20 @@ $form['f']['colieu'] = array(
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['sigle'] = array(
+  $form['f']['sigle'] = array(
     '#type' => 'select',
     '#title' => t('Sigle'),
     '#description' => t('contacter'),
     '#default_value' => $record->sigle,
     '#disabled' => TRUE,
-    '#options' => drupal_map_assoc(array(
-'','CLG','LP', 'LYC', 'CIO', 'LPO', 'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 'SEP', 'EXT', 'LYC_METIER'
+    '#options' => drupal_map_assoc(array('', 'CLG', 'LP', 'LYC', 'CIO', 'LPO', 
+                                         'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 
+                                         'SEP', 'EXT', 'LYC_METIER',
     )),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
   );
-$form['f']['denomcomp'] = array(
+  $form['f']['denomcomp'] = array(
     '#type' => 'textfield',
     '#title' => t('Nom (non modifiable)'),
     '#description' => t('Catherine Laigle ou Christian Muir'),
@@ -142,25 +151,25 @@ $form['f']['denomcomp'] = array(
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-if (user_access('gest_etablissements gaiabb')) {
-  $form['f']['colieu']['#title' ] = t('RNE');
-  $form['f']['colieu']['#disabled' ] = FALSE;
-  $form['f']['colieu']['#required' ] = TRUE;
-  $form['f']['sigle']['#title' ] = t('Sigle');
-  $form['f']['sigle']['#disabled' ] = FALSE;
-  $form['f']['sigle']['#required' ] = TRUE;
-  $form['f']['denomcomp']['#title' ] = t('Nom');
-  $form['f']['denomcomp']['#disabled' ] = FALSE;
-  $form['f']['denomcomp']['#required' ] = TRUE;
-}
-$form['f']['adr'] = array(
+  if (user_access('gest_etablissements gaiabb')) {
+    $form['f']['colieu']['#title' ] = t('RNE');
+    $form['f']['colieu']['#disabled' ] = FALSE;
+    $form['f']['colieu']['#required' ] = TRUE;
+    $form['f']['sigle']['#title' ] = t('Sigle');
+    $form['f']['sigle']['#disabled' ] = FALSE;
+    $form['f']['sigle']['#required' ] = TRUE;
+    $form['f']['denomcomp']['#title' ] = t('Nom');
+    $form['f']['denomcomp']['#disabled' ] = FALSE;
+    $form['f']['denomcomp']['#required' ] = TRUE;
+  }
+  $form['f']['adr'] = array(
     '#type' => 'textfield',
     '#title' => t('Adresse'),
     '#default_value' => $record->adr,
     '#size' => 40,
     '#maxlength' => 128,
   );
-$form['f']['mel'] = array(
+  $form['f']['mel'] = array(
     '#type' => 'textfield',
     '#title' => t('email'),
     '#default_value' => $record->mel,
@@ -169,7 +178,7 @@ $form['f']['mel'] = array(
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['tel'] = array(
+  $form['f']['tel'] = array(
     '#type' => 'textfield',
     '#title' => t('Téléphone'),
     '#default_value' => $record->tel,
@@ -178,7 +187,7 @@ $form['f']['tel'] = array(
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
-$form['f']['fax'] = array(
+  $form['f']['fax'] = array(
     '#type' => 'textfield',
     '#title' => t('Fax'),
     '#default_value' => $record->fax,
@@ -198,9 +207,9 @@ $form['f']['fax'] = array(
 /**
  * ----> Submit
  */
-function form_modif_etab_submit($form, &$form_state) {
+function gbb_etablissement_fiche_submit($form, &$form_state) {
 
-// Merge Queries : http://drupal.org/node/310085
+  // Merge Queries : http://drupal.org/node/310085
   db_merge('gbb_netab')
     ->key(array('co_lieu'  => $form_state['values']['colieu'],
              ))
@@ -218,5 +227,3 @@ function form_modif_etab_submit($form, &$form_state) {
                             array('absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
-
-

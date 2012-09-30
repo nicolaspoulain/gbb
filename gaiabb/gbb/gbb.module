@@ -72,7 +72,7 @@ function gbb_menu() {
 
   $items['liste_stages'] = array(
         'title' => '',
-        'page callback' => 'liste_stages',
+        'page callback' => 'gbb_liste_stages_view',
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK,
   );
@@ -83,7 +83,7 @@ function gbb_menu() {
 
   $items['module'] = array(
         'title' => '',
-        'page callback' => 'module',
+        'page callback' => 'gbb_module_view',
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK,
   );
@@ -94,7 +94,7 @@ function gbb_menu() {
 
   $items['formateur'] = array(
         'title' => '',
-        'page callback' => 'formateur',
+        'page callback' => 'gbb_formateur_view',
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK,
   );
@@ -105,7 +105,7 @@ function gbb_menu() {
 
   $items['etablissement'] = array(
         'title' => '',
-        'page callback' => 'etablissement',
+        'page callback' => 'gbb_etablissement_view',
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK,
   );
@@ -117,32 +117,37 @@ function gbb_menu() {
 
   $items['evaluation'] = array(
         'title' => '',
-        'page callback' => 'evaluation',
+        'page callback' => 'gbb_evaluation_view',
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK,
   );
 
   // Pages pour autocomplete AJAX
+  // TODO : décrire
   $items['autocomp/etablissement'] = array(
         'page callback' => '_gbb_autocompetab',
         'access arguments' => array('access gbb'),
         'type' => MENU_CALLBACK
   );
+  // TODO : décrire
   $items['autocomp/formateur'] = array(
         'page callback' => '_gbb_autocompform',
         'access arguments' => array('access gbb'),
         'type' => MENU_CALLBACK
   );
+  // TODO : décrire
   $items['autocomp/formateur2'] = array(
         'page callback' => '_gbb_autocompform2',
         'access arguments' => array('access gbb'),
         'type' => MENU_CALLBACK
   );
+  // TODO : décrire
   $items['autocomp/responsable'] = array(
         'page callback' => '_gbb_autocompresp',
         'access arguments' => array('access gbb'),
         'type' => MENU_CALLBACK
   );
+  // TODO : décrire
   $items['autocomp/stage'] = array(
         'page callback' => '_gbb_autocompstage',
         'access arguments' => array('access gbb'),
@@ -151,8 +156,8 @@ function gbb_menu() {
   return $items;
 }
 
-module_load_include('inc', 'gbb', 'page_formateur');
-module_load_include('inc', 'gbb', 'page_sta_par_resp');
-module_load_include('inc', 'gbb', 'page_gest_module');
-module_load_include('inc', 'gbb', 'page_gest_etab');
-module_load_include('inc', 'gbb', 'page_gest_evaluation');
+module_load_include('inc', 'gbb', 'gbb_liste_stages');
+module_load_include('inc', 'gbb', 'gbb_module');
+module_load_include('inc', 'gbb', 'gbb_formateur');
+module_load_include('inc', 'gbb', 'gbb_etablisement');
+module_load_include('inc', 'gbb', 'gbb_evaluation');

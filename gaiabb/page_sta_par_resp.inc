@@ -205,7 +205,7 @@ function form_chooseBIS($form, &$form_state, $args) {
     du stage pour réduire la liste.<br />
     Vous pouvez aussi utiliser les jokers : « paf* » ou « fil* » pour réduire à un type de stage, 
     ou bien « ! » pour réduire aux stages prioritaires.<br/>
-    <font color="red">NOUVEAU</font> : Entrez le nom d\'un formateur pour réduire aus seuls stages où il intervient.
+    <font color="red">NOUVEAU</font> : Entrez le nom d\'un formateur pour réduire aux seuls stages où il intervient.
     ') . '</div>';
 
 
@@ -218,7 +218,7 @@ function _choix_conseiller_validate($element, &$form_state) {
     ->condition('nomu', $element['#value'], '=')
     ->distinct();
   $num_rows = $query->countQuery()->execute()->fetchField();
-  if ($num_rows == 0) {
+  if ($num_rows == 0 && $element['#value'] != 'TOUS') {
     form_error($element, t('Le champ Conseiller ne peut être qu\'une des valeurs proposées, et que vous aurez cliquée.'));
   }
 } 
@@ -527,7 +527,7 @@ $formateurs ='';
       $rows[] = array( 
                   'col0' => array('data' => 
                                  '<span class="invisible">' . $paf_ou_fil . '*' . '</span> ' .
-                                 '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">[' . strtoupper($paf_ou_fil) . "] " . $r->id_disp . ' ' . t($r->libd) . '</span> '
+                                 '<span class="' .$paf_ou_fil . ' ' . $d_ouvert_ou_ferme . '">[' . strtoupper($paf_ou_fil) . '' . $d_ouvert_ou_ferme . "] " . $r->id_disp . ' ' . t($r->libd) . '</span> '
                   ),
                   'col1' => array('data' => 
                                   $attachement .
@@ -542,7 +542,7 @@ $formateurs ='';
                        ),
                   'col2' => array('data' =>
                                  l($r->co_modu, 'gest_module/' . arg(2) . '/' . $r->co_modu, $options_comodu) . ' ' .
-                                 '<span class="' . $m_ouvert_ou_ferme . '">' . t($r->libm) . $plus . '</span> ',
+                                 '<span class="' . $m_ouvert_ou_ferme . '">' . $d_ouvert_ou_ferme . ' ' . t($r->libm) . $plus . '</span> ',
                        ),
                   'col3' => array('data' => nl2br($r->organisation). $formateurs ,
                        ),

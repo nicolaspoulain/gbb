@@ -979,6 +979,7 @@ function form_edit_session($form, $form_state, $args) {
     '#title' => 'Date',
     '#default_value' => $r->date,
     '#size' => 10,
+    '#required' => TRUE,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
     '#attributes' => array('class' => array('pickadate')),

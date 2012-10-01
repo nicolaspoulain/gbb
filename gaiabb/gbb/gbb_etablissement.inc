@@ -13,7 +13,7 @@
  */
 function gbb_etablissement_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css',
+  drupal_add_css(drupal_get_path('module', 'gaiabb') . 'css/gaiabb.css',
                  array('group' => CSS_DEFAULT, 'every_page' => TRUE)
   );
   // Construction de la page
@@ -135,7 +135,7 @@ function gbb_etablissement_fiche($form, &$form_state) {
     '#disabled' => TRUE,
     '#options' => drupal_map_assoc(array('', 'CLG', 'LP', 'LYC', 'CIO', 'LPO', 
                                          'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 
-                                         'SEP', 'EXT', 'LYC_METIER',
+                                         'SEP', 'EXT', 'LYC_METIER', 'CRDP',
     )),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',

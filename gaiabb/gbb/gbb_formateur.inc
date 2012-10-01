@@ -14,7 +14,7 @@
 
 function gbb_formateur_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css',
+  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/css/gaiabb.css',
                  array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE)
   );
   // Construction de la page
@@ -40,7 +40,7 @@ function gbb_formateur_view($args = 'NaN') {
  * Formulaire de ** CHOIX ** du formateur à éditer
  */
 
-function gbb_formateur_view($form, &$form_state) {
+function gbb_formateur_filtre($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gresp_dafor', 'r')
@@ -80,7 +80,7 @@ function gbb_formateur_view($form, &$form_state) {
 /**
  * ----> Submit
  */
-function gbb_formateur_view_submit($form, &$form_state) {
+function gbb_formateur_filtre_submit($form, &$form_state) {
 
   $url = url('formateur/' . $form_state['values']['coresp'],
                             array('absolute' => TRUE));
@@ -109,22 +109,13 @@ function gbb_formateur_fiche($form, &$form_state) {
                               'decharge',
                               'grade',
                               'divers'));
-  $record = $query->execute()->fetchObject();
+  $record = $query->execute()->fetchAssoc();
 
-  if (arg(1)=='add'){
-    $record->co_resp = db_query("SELECT MAX(co_resp)+1 as max_id FROM gbb_gresp_dafor")
-                     ->fetchField();
-    $record->nomu = '';
-    $record->prenom = '';
-    $record->mel = '';
-    $record->tel = '';
-    $record->discipline = '';
-    $record->resp_dafor = '';
-    $record->decharge = '';
-    $record->grade = '';
-    $record->divers = '';
+  if (arg(1)=='add'){ //TODO : reprendre cette ligne !!
+    $record['co_resp'] = db_query("SELECT MAX(co_resp)+1 as max_id FROM gbb_gresp_dafor")
+                         ->fetchField();
   }
-  $record->co_degre = '2';
+  $record['co_degre'] = '2';
 
   $form['f'] = array(
     '#type' => 'fieldset',
@@ -135,38 +126,38 @@ function gbb_formateur_fiche($form, &$form_state) {
 
   $form['f']['coresp'] = array(
     '#type' => 'hidden',
-    '#value' => $record->co_resp,
+    '#value' => $record['co_resp'],
   );
   $form['f']['codegre'] = array(
     '#type' => 'hidden',
-    '#value' => $record->co_degre,
+    '#value' => $record['co_degre'],
   );
   $form['f']['nomu'] = array(
     '#type' => 'textfield',
     '#title' => t('Nom'),
-    '#default_value' => $record->nomu,
+    '#default_value' => $record['nomu'],
     '#size' => 40,
     '#maxlength' => 128,
     '#required' => TRUE,
-    '#disabled' => (($record->co_resp == "1")? TRUE : FALSE),
+    '#disabled' => (($record['co_resp'] == "1")? TRUE : FALSE),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['prenom'] = array(
     '#type' => 'textfield',
     '#title' => t('Prénom'),
-    '#default_value' => $record->prenom,
+    '#default_value' => $record['prenom'],
     '#size' => 40,
     '#maxlength' => 128,
     '#required' => TRUE,
-    '#disabled' => (($record->co_resp == "1")? TRUE : FALSE),
+    '#disabled' => (($record['co_resp'] == "1")? TRUE : FALSE),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br/>',
   );
   $form['f']['mel'] = array(
     '#type' => 'textfield',
     '#title' => t('email'),
-    '#default_value' => $record->mel,
+    '#default_value' => $record['mel'],
     '#size' => 40,
     '#maxlength' => 128,
     '#prefix' => '<div class="inline">',
@@ -175,7 +166,7 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f']['tel'] = array(
     '#type' => 'textfield',
     '#title' => t('Téléphone'),
-    '#default_value' => $record->tel,
+    '#default_value' => $record['tel'],
     '#size' => 40,
     '#maxlength' => 128,
     '#prefix' => '<div class="inline">',
@@ -184,14 +175,14 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f']['discipline'] = array(
     '#type' => 'textfield',
     '#title' => t('Discipline'),
-    '#default_value' => $record->discipline,
+    '#default_value' => $record['discipline'],
     '#size' => 40,
     '#maxlength' => 128,
   );
   $form['f']['grade'] = array(
     '#type' => 'select',
     '#title' => t('Grade'),
-    '#default_value' => $record->grade,
+    '#default_value' => $record['grade'],
     '#options' => drupal_map_assoc(array(
                     '', 'NOMENCLATURE', 'VACATAIRE', 'CONTRACTUEL', 'MA',
                     'PEGC', 'PLP', 'CERTIFIE', 'AGREGE', 'INST', 'PE', 'COP',
@@ -206,7 +197,7 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f']['decharge'] = array(
     '#type' => 'textfield',
     '#title' => t('Décharge (h)'),
-    '#default_value' => $record->decharge,
+    '#default_value' => $record['decharge'],
     '#size' => 10,
     '#element_validate' => array('element_validate_number'),
     '#prefix' => '<div class="inline">',
@@ -215,7 +206,7 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f']['resp_dafor'] = array(
     '#type' => 'textfield',
     '#title' => t('Responsable DAFOR'),
-    '#default_value' => $record->resp_dafor,
+    '#default_value' => $record['resp_dafor'],
     '#size' => 10,
     '#maxlength' => 128,
     '#prefix' => '<div class="inline">',
@@ -224,7 +215,7 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f']['divers'] = array(
     '#type' => 'textarea',
     '#title' => t('Divers'),
-    '#default_value' => $record->divers,
+    '#default_value' => $record['divers'],
   );
 
   $form['f']['submit'] = array(
@@ -244,11 +235,11 @@ function gbb_formateur_fiche_submit($form, &$form_state) {
   db_merge('gbb_gresp_dafor')
     ->key(array('co_resp'  => $form_state['values']['coresp'],
              ))
-    ->fields(array('nomu'   => $form_state['values']['nomu'],
-                   'prenom' => $form_state['values']['prenom'],
-                   'mel'    => $form_state['values']['mel'],
-                   'tel'    => $form_state['values']['tel'],
-                   'co_degre'    => $form_state['values']['codegre'],
+    ->fields(array('nomu'     => $form_state['values']['nomu'],
+                   'prenom'   => $form_state['values']['prenom'],
+                   'mel'      => $form_state['values']['mel'],
+                   'tel'      => $form_state['values']['tel'],
+                   'co_degre' => $form_state['values']['codegre'],
              ))
     ->execute();
   if ($form_state['values']['decharge']=='') {
@@ -276,7 +267,7 @@ function gbb_formateur_fiche_submit($form, &$form_state) {
  */
 function gbb_formateur_stages($args) {
 
-  if ($args == 'NaN') return "";
+  if ($args == 'NaN') return "Vide";
   $liste = array();
 
   $query = db_select('gbb_session', 's');
@@ -325,6 +316,7 @@ function gbb_formateur_stages($args) {
     };
     $groupes = theme('item_list', array('items' => $items));
 
+    $rows = array();
     $rows[] = array( 
                 'col0' => array('data' => l( $r->id_disp . ' / ' . $r->co_modu,
                                              'gest_module/2/' . $r->co_modu,
@@ -337,7 +329,7 @@ function gbb_formateur_stages($args) {
                 'col4' => array('data' => $groupes),
               );
   }
-  if (!isset($rows)) return $args;
+  if (!isset($rows)) return "Pas de stage";
 
   $query = db_select('gbb_session', 's');
   $query ->leftjoin('gbb_gmodu', 'm', 
@@ -358,33 +350,33 @@ function gbb_formateur_stages($args) {
 
   //http://code.google.com/p/drupal-chart-api/wiki/Examples
   //http://code.google.com/p/drupal-chart-api/wiki/PublicAPI
+  if (isset($r)) {
+    $dech = 27*$r->decharge;
+    $chart = array(
+           '#chart_id' => 'test_chart',
+           '#title' => t('Répartition'),
+           '#type' => CHART_TYPE_BAR_H,
+           // taille adaptative mais limitée à 900px :
+           '#size' => chart_size(min(900,max(200,2*$dech,2*$r->sumprevue)), 130), 
+        );
+    $chart['#data']['dech'] = $dech;
+    $chart['#data']['prevue'] = $r->sumprevue;
+    $chart['#data']['apayer'] = $r->sumapayer;
 
-  $dech = 27*$r->decharge;
-  $chart = array(
-         '#chart_id' => 'test_chart',
-         '#title' => t('Répartition'),
-         '#type' => CHART_TYPE_BAR_H,
-         // taille adaptative mais limitée à 900px :
-         '#size' => chart_size(min(900,max(200,2*$dech,2*$r->sumprevue)), 130), 
-      );
-  $chart['#data']['dech'] = $dech;
-  $chart['#data']['prevue'] = $r->sumprevue;
-  $chart['#data']['apayer'] = $r->sumapayer;
+    $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
+      chart_mixed_axis_label(t('0'));
+    $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
+      chart_mixed_axis_label(max($dech,$r->sumprevue));
 
-  $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
-    chart_mixed_axis_label(t('0'));
-  $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
-    chart_mixed_axis_label(max($dech,$r->sumprevue));
+    $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
+      chart_mixed_axis_label(t('Fait ('.$r->sumapayer.'h)'));
+    $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
+      chart_mixed_axis_label(t('Prév.('.$r->sumprevue.'h)'));
+    $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
+      chart_mixed_axis_label(t('Déch.('.$dech.'h)'));
 
-  $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-    chart_mixed_axis_label(t('Fait ('.$r->sumapayer.'h)'));
-  $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-    chart_mixed_axis_label(t('Prév.('.$r->sumprevue.'h)'));
-  $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-    chart_mixed_axis_label(t('Déch.('.$dech.'h)'));
-
-  return theme('chart', array('chart' => $chart)) . 
-         theme('table', array('header' => $header, 'rows' => $rows));
-
+    return theme('chart', array('chart' => $chart)) . 
+           theme('table', array('header' => $header, 'rows' => $rows));
+  };
 }
 

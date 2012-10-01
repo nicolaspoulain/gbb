@@ -15,7 +15,7 @@ td.nowrap {
   font-weight:bold;
   color : #004A78;
 }
-td.Ferme {
+.Ferme {
   text-decoration: line-through;
 }
 td.group {
@@ -85,6 +85,10 @@ fieldset.dossier {
 .flotteDroite {
   float:right;
   margin-right:11px;
+}
+
+.view-grouping-content {
+    margin-left : 50px;
 }
 
 input.form-submit,

@@ -126,7 +126,7 @@ $form['f']['sigle'] = array(
     '#default_value' => $record->sigle,
     '#disabled' => TRUE,
     '#options' => drupal_map_assoc(array(
-'','CLG','LP', 'LYC', 'CIO', 'LPO', 'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 'SEP', 'EXT', 'LYC_METIER'
+'','CLG','LP', 'LYC', 'CIO', 'LPO', 'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 'CRDP', 'SEP', 'EXT', 'LYC_METIER'
     )),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
@@ -136,8 +136,8 @@ $form['f']['denomcomp'] = array(
     '#title' => t('Nom (non modifiable)'),
     '#description' => t('Catherine Laigle ou Christian Muir'),
     '#default_value' => $record->denom_comp,
-    '#size' => 40,
-    '#maxlength' => 128,
+    '#size' => 30,
+    '#maxlength' => 30,
     '#disabled' => TRUE,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',

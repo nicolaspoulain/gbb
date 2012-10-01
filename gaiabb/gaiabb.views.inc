@@ -34,6 +34,17 @@ function gaiabb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_numeric'),
             'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
+  $data['gbb_gmodu']['co_degre'] = array(
+            'title' => t('co_degre'),
+            'help' => t('Code degré du module'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
   $data['gbb_gmodu']['lib'] = array(
             'title' => t('lib'),
             'help' => t('Libellé du module'),
@@ -199,6 +210,18 @@ function gaiabb_views_data() {
               ),
             ),
   );
+  $data['gbb_gdire']['co_tres'] = array(
+            'title' => t('co_tres'),
+            'help' => t('Code trésorerie'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
 
   // --------------------------------------------------------
   // gbb_gresp
@@ -215,7 +238,6 @@ function gaiabb_views_data() {
               ),
             ),
   );
-
   $data['gbb_gresp']['nomu'] = array(
             'title' => t('nomu'),
             'help' => t('Nom du responsable'),

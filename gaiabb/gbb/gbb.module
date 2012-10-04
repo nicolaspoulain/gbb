@@ -62,6 +62,7 @@ function gbb_permission() {
  */
 
 function gbb_menu() {
+
   $items = array();
 
   // Etant donnés une année (09,10,11,12,...), un co_degré (1 ou 2) et un co_tres (1,2 ou 3)
@@ -141,11 +142,52 @@ function gbb_menu() {
         'access arguments' => array('access gbb'),
         'type' => MENU_CALLBACK
   );
+
   return $items;
+
 }
+
+variable_set('_gbb_session_alert_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/flag_red.png',
+  'alt' => 'session_alert',
+  'title' => t('Alerte sur session : le service administratif est prévenu d\'un changement important.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_not_en_attente_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/control_play_blue.png',
+  'alt' => 'en attente',
+  'title' => t('Demande de préparation des convocations.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_en_attente_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/control_pause.png',
+  'alt' => 'en attente',
+  'title' => t('En attente : ne pas préparer les convocations pour le moment.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_convoc_sent_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/convoc_sent.png',
+  'alt' => 'Convoc envoyée',
+  'title' => t('La convocation pour cette session a été envoyée.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_user_edit_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/user_edit.png',
+  'alt' => 'user_edit',
+  'title' => t('Voir la fiche.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_etab_edit_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/building.png',
+  'alt' => 'etab_edit',
+  'title' => t('Voir la fiche.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+
 
 //module_load_include('inc', 'gbb', 'gbb_liste');
 module_load_include('inc', 'gbb', 'gbb_module');
 module_load_include('inc', 'gbb', 'gbb_formateur');
 module_load_include('inc', 'gbb', 'gbb_etablisement');
 //module_load_include('inc', 'gbb', 'gbb_evaluation');
+

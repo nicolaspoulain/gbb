@@ -33,7 +33,6 @@ function gbb_module_view($args = 'NaN') {
                                     )
                                   )
                             );
-
   if (user_access('gest_sessions gbb')) {
       $build['organis_form'] = render(drupal_get_form('gbb_organis_form', $args));
   }
@@ -54,9 +53,9 @@ function gbb_module_view($args = 'NaN') {
                                        )
                                      )
                                );
-/*
   $build['attachements'] = render(drupal_get_form('gbb_attachements', $args));
   $build['sess_formatr'] = render(drupal_get_form('gbb_sess_formatr', $args));
+/*
   $build['sess_edition'] = render(drupal_get_form('gbb_sess_edition', $args));
   $build['convoc_form']  = render(drupal_get_form('gbb_convoc_form', $args));
   $build['bilan_form']   = render(drupal_get_form('gbb_bilan_form',$args));
@@ -301,8 +300,8 @@ function gbb_sess_stagiaire($args) {
   $query ->condition('m.co_modu', arg(2), '=')
          ->condition('m.co_degre', arg(1), '=')
          ->condition('m.en_attente', 1, '<>')
-         ->leftJoin('gbb_netab', 'e', 'e.co_lieu = m.co_lieu')
-         ->fields('m', array('date',
+         ->leftJoin('gbb_netab', 'e', 'e.co_lieu = m.co_lieu');
+  $query ->fields('m', array('date',
                              'groupe',
                              'horaires',
                              'co_lieu',
@@ -318,14 +317,12 @@ function gbb_sess_stagiaire($args) {
   $query ->orderBy('groupe', 'ASC');
   $query ->orderBy('date', 'ASC');
   $result = $query->execute();
-
   $header = array('date' => t('Date'),
                   'horaires' => t('Horaires'),
                   'groupe' => t('Gr'),
                   'etab' => t('Établissement'),
                   'co_lieu' => t('RNE'),
   );
-
   setlocale(LC_TIME, 'fr_FR');
   foreach ($result as $r) {
     $rows[] = array( 
@@ -338,14 +335,14 @@ function gbb_sess_stagiaire($args) {
                 array('data' => $r->co_lieu),
     );
   }
-  if (!isset($rows)) return $args;
+  if (!isset($rows)) return t('Pas de convocation à traiter pour des stagiaires');
   return theme('table', array('rows' => $rows, 'header' => $header));
 }
 
 /**
  * Formulaire des ** ATTACHEMENTS **
  */
-function form_attachements($form, &$form_state, $args) {
+function gbb_attachements($form, &$form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Fichiers joints'),
@@ -361,34 +358,40 @@ function form_attachements($form, &$form_state, $args) {
        AND status = 1
      ", array(':codegre' => arg(1),
               ':comodu'  => arg(2)) );
-  $icon_directory = variable_get('file_icon_directory', drupal_get_path('module', 'file') . '/icons');
-  $file_list = array();
+  $icon_directory = variable_get('file_icon_directory', 
+                                 drupal_get_path('module', 'file') . '/icons');
+  $flist = array();
   foreach ($files as $f) {
-    $icon = theme_file_icon(array('file' => $f, 'icon_directory' =>  $icon_directory));
+    $icon = theme_file_icon(array('file' => $f, 
+                            'icon_directory' =>  $icon_directory));
     $date = strftime('%d/%m/%Y à %X', $f->timestamp);
-    $file_list[$f->fid] = $icon . l($f->filename, file_create_url($f->uri), array('attributes' => array('title' => $date)));
+    $flist[$f->fid] = $icon . l($f->filename, 
+                                file_create_url($f->uri), 
+                                array('attributes' => array('title' => $date)));
   }
 
-  if ( count($file_list)>0 ) {
+  if ( count($flist) > 0 ) {
     $form['f']['files'] = array(
       '#type' => 'radios',
-      '#options' => $file_list,
+      '#options' => $flist,
     );
-  $form['f']['supprimer_file'] = array(
-    '#type' => 'submit',
-    '#value' => t('Supprimer'),
-  );
+    $form['f']['supprimer_file'] = array(
+      '#type' => 'submit',
+      '#value' => t('Supprimer'),
+    );
   }
 
+  // Seules les extensions suivantes sont autorisées :
+  $extensions = 'jpg jpeg gif png txt rtf doc docx odt xls xlsx ods pdf zip';
   $form['f']['Myfile'] = array(
     '#title' => t('Joindre un fichier à cette page'),
     '#type'  => 'managed_file',
     '#upload_location' => 'public://',
-    '#process' => array('form_attachment_process')
-//    '#upload_validators'['file_validate_extensions'][0] = 'png jpg gif pdf';
+    '#process' => array('gbb_attachements_process'),
+    '#upload_validators' => array(
+      'file_validate_extensions' => array( $extensions )
+    ),
   );
-
-$form['f']['Myfile']['#upload_validators']['file_validate_extensions'][0] = 'jpg jpeg gif png txt rtf doc docx odt xls xlsx ods pdf zip rar';
 
   $form['f']['comodu'] = array(
     '#type' => 'hidden',
@@ -411,7 +414,7 @@ $form['f']['Myfile']['#upload_validators']['file_validate_extensions'][0] = 'jpg
 /**
  * ----> modifie le comportement du formulaire d'attachement
  */
-function form_attachment_process($element, &$form_state, $form) {
+function gbb_attachements_process($element, &$form_state, $form) {
 
   $element = file_managed_file_process($element, $form_state, $form);
   $element['upload_button']['#access'] = FALSE;
@@ -421,28 +424,30 @@ function form_attachment_process($element, &$form_state, $form) {
 /**
  * ----> Submit
  */
-function form_attachements_submit($form, &$form_state) {
+function gbb_attachements_submit($form, &$form_state) {
 
-  // TODO : actuellement on écrit dans public:// il faudrait écrire dans le dir ci_dessous :
-  //$dir = drupal_get_path('module', 'gaiabb') . '/files';
+  // TODO : actuellement on écrit dans public:// 
+  // il faudrait écrire dans le dir ci_dessous :
+  // $dir = drupal_get_path('module', 'gaiabb') . '/files';
 
-  //if ( !file_prepare_directory($dir) ) {
-  //  drupal_set_message( t('WARNING: Server DIR is not accessible.'), 'status' );
-  //}
+  //  if ( !file_prepare_directory($dir) ) {
+  //    drupal_set_message( t('WARNING: Server DIR not accessible.'), 'status');
+  //  }
   if ( isset($form_state['values']['files']) ) {
     $file = file_load($form_state['values']['files']);
     $file->status |= 'FILE_STATUS_TEMPORARY';
     $file = file_save($file);
-    drupal_set_message( t('Le fichier n°@num a été archivé.', array('@num' => $form_state['values']['files']) ),
+    drupal_set_message( t('Le fichier n°@num a été archivé.', 
+                        array('@num' => $form_state['values']['files']) ),
                         'warning' );
   } 
   elseif ( $form_state['values']['Myfile'] == '' ) {
-    drupal_set_message( t('Echec. Veillez à remplir les champs avant de valider une action.'), 'warning' );
+    drupal_set_message( t('Echec. Veuillez remplir les champs avant de valider.'),
+                        'warning' );
   } 
   else {
     // Load the file via file.fid.
     $file = file_load($form_state['values']['Myfile']);
-    //file_validate_extensions($file, "jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp docx rtf");
     // Change status to permanent.
     $file->status = FILE_STATUS_PERMANENT;
     // Save.
@@ -454,14 +459,18 @@ function form_attachements_submit($form, &$form_state) {
       ->execute();
     drupal_set_message( t('Le nouveau fichier a été enregistré.') );
   }
-  $form_state['redirect'] = "gest_module/" . $form_state['values']['codegre'] . '/' . $form_state['values']['comodu'];
 }
 
 /**
  * Formulaire du ** TABLEAU DES SESSIONS **
  */
-function form_tableau_sessions($form, $form_state, $args) {
-  global $user;
+function gbb_sess_formatr($form, $form_state, $args) {
+  global $_gbb_session_alert_icon,
+         $_gbb_not_en_attente_icon,
+         $_gbb_en_attente_icon,
+         $_gbb_convoc_sent_icon,
+         $_gbb_user_edit_icon,
+         $_gbb_etab_edit_icon;
 
   $header = array(
     'date' => t('Date'),
@@ -475,62 +484,35 @@ function form_tableau_sessions($form, $form_state, $args) {
     'TypePaiement' => t('Type pmt'),
   );
 
-  // La requête avec une condition suppléméntaire pour ceux qui ne sont pas conseillers
-  // afin que les stages en attente ne leur apparaissent pas.
   $query = db_select('gbb_session', 's');
-  $query  ->leftjoin('gbb_gmodu_plus', 'mp', 'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
-  $query  ->leftjoin('gbb_gresp_dafor', 'r', 'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
-  $query  ->leftjoin('gbb_netab', 'e', 'e.co_lieu = s.co_lieu');
-  $query  ->orderBy('groupe', 'ASC');
-  $query  ->orderBy('date', 'ASC');
-  $query  ->orderBy('nomu', 'ASC');
-  $query  ->condition('mp.co_modu', arg(2), '=')
-          ->condition('mp.co_degre', arg(1), '=')
-          ->fields('s', array('sess_id', 'date', 'dureeprevue', 'dureeapayer', 'typePaiement',
-                              'en_attente', 'convoc_sent', 'session_alert',
-                              'horaires', 'co_lieu', 'co_resp', 'groupe'))
-          ->fields('mp', array('date_session_modif'))
-          ->fields('r', array('prenom', 'nomu', 'co_resp'))
-          ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
-  if (!in_array("DAFOR_conseiller", $user->roles) ) {
-    $query  ->condition('s.en_attente', 0, '=');
+  $query ->leftjoin('gbb_gmodu_plus', 'mp', 
+                    'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
+  $query ->leftjoin('gbb_gresp_dafor', 'r', 
+                    'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
+  $query ->leftjoin('gbb_netab', 'e', 
+                    'e.co_lieu = s.co_lieu');
+  $query ->orderBy('groupe', 'ASC');
+  $query ->orderBy('date', 'ASC');
+  $query ->orderBy('nomu', 'ASC');
+  $query ->condition('mp.co_modu', arg(2), '=')
+         ->condition('mp.co_degre', arg(1), '=')
+         ->fields('s', array('sess_id', 'date', 'dureeprevue', 
+                             'dureeapayer', 'typePaiement',
+                             'en_attente', 'convoc_sent', 'session_alert',
+                             'horaires', 'co_lieu', 'co_resp', 'groupe'))
+         ->fields('mp', array('date_session_modif'))
+         ->fields('r', array('prenom', 'nomu', 'co_resp'))
+         ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
+  // Une condition supplémentaire pour les administratifs
+  // afin que les stages en attente ne leur apparaissent pas.
+  if (user_access('gest_convocs gbb') && !user_access('gest_sessions gbb')) {
+    $query->condition('s.en_attente', 0, '=');
   }
   $result = $query->execute();
 
   $default = (isset($_GET['sess_id']))? $_GET['sess_id'] : 0;
   $date_session_modif = '1970-01-01';
 
-  $session_alert_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/flag_red.png',
-        'alt' => 'session_alert',
-        'title' => t('Alerte sur session : le service administratif est prévenu d\'un changement important.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $NOT_en_attente_icon = array(
-        //'path' => drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/control_play_blue.png',
-        'alt' => 'en attente',
-        'title' => t('Demande de préparation des convocations.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $en_attente_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/control_pause.png',
-        'alt' => 'en attente',
-        'title' => t('En attente : ne pas préparer les convocations pour le moment.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $convoc_sent_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/convoc_sent.png',
-        'alt' => 'Convoc envoyée',
-        'title' => t('La convocation pour cette session a été envoyée.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $user_edit_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/user_edit.png',
-        'alt' => 'user_edit',
-        'title' => t('Voir la fiche.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
-  $etab_edit_icon = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/building.png',
-        'alt' => 'etab_edit',
-        'title' => t('Voir la fiche.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
 
   $row = array();
   setlocale(LC_TIME, 'fr_FR');
@@ -538,29 +520,43 @@ function form_tableau_sessions($form, $form_state, $args) {
   foreach ($result as $r) {
     $visibilite = ($r->en_attente)? 'grisclair' : '';
     if ($r->en_attente) {
-      $icon = theme('image', $en_attente_icon);
+      $icon = theme('image', variable_get('_gbb_en_attente_icon'));
     } 
     elseif ($r->session_alert) {
-      $icon = theme('image', $session_alert_icon);
+      $icon = theme('image', variable_get('_gbb_session_alert_icon'));
     } 
     elseif ($r->convoc_sent) {
-      $icon = theme('image', $convoc_sent_icon);
+      $icon = theme('image', variable_get('_gbb_convoc_sent_icon'));
     } 
     else {
-      $icon = theme('image', $NOT_en_attente_icon);
+      $icon = theme('image', variable_get('_gbb_not_en_attente_icon'));
     };
     $row[$r->sess_id] = array(
-                       'date' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date))),
-                       'icone' => $icon,
-                       'horaires' => $r->horaires,
-                       'lieu' => $r->denom_princ . ' ' . $r->denom_comp . ' (' . $r->sigle . ')' . '&nbsp;'.l(theme('image',$etab_edit_icon),'etablissement/'.$r->co_lieu,array('attributes' => array('class' => 'anchor-class'), 'html' => TRUE)),
-                       'groupe' => $r->groupe,
-                       'formateur' => $r->prenom . ' ' . $r->nomu.'&nbsp;'.l(theme('image',$user_edit_icon),'formateur/'.$r->co_resp,array('attributes' => array('class' => 'anchor-class'), 'html' => TRUE)),
-                       'dureeprevue' => $r->dureeprevue . "h",
-                       'dureeapayer' => $r->dureeapayer . "h",
-                       'TypePaiement' => $r->typePaiement,
-                       '#attributes'  => array('class' => array($visibilite)),
-                     );
+      'date' => utf8_encode(strftime('%a %e %h %Y ', 
+                            strtotime($r->date))),
+      'icone' => $icon,
+      'horaires' => $r->horaires,
+      'lieu' => $r->denom_princ . ' ' . $r->denom_comp .
+                ' (' . $r->sigle . ')' . '&nbsp;' .
+                l( theme('image', variable_get('_gbb_etab_edit_icon')),
+                   'etablissement/' . $r->co_lieu,
+                   array('attributes' => array('class' => 'anchor-class'), 
+                         'html' => TRUE
+                   )
+                ),
+      'groupe' => $r->groupe,
+      'formateur' => $r->prenom . ' ' . $r->nomu . '&nbsp;' .
+                l( theme('image', variable_get('_gbb_user_edit_icon')),
+                   'formateur/' . $r->co_resp,
+                   array('attributes' => array('class' => 'anchor-class'), 
+                         'html' => TRUE
+                   )
+                ),
+      'dureeprevue' => $r->dureeprevue . "h",
+      'dureeapayer' => $r->dureeapayer . "h",
+      'TypePaiement' => $r->typePaiement,
+      '#attributes'  => array('class' => array($visibilite)),
+    );
     $date_session_modif = $r->date_session_modif;
   }
 

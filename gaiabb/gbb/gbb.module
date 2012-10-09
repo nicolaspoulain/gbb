@@ -153,6 +153,12 @@ variable_set('_gbb_session_alert_icon', array(
   'title' => t('Alerte sur session : le service administratif est prévenu d\'un changement important.'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
+variable_set('_gbb_module_alert_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/flag_red.png',
+  'alt' => 'module_alert',
+  'title' => t('Alerte sur le module : le service administratif est prévenu d\'un changement important.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
 variable_set('_gbb_not_en_attente_icon', array(
   'path' => drupal_get_path('module', 'gbb') . '/images/control_play_blue.png',
   'alt' => 'en attente',
@@ -183,6 +189,37 @@ variable_set('_gbb_etab_edit_icon', array(
   'title' => t('Voir la fiche.'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
+variable_set('_gbb_etab_add_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/building_add.png',
+  'alt' => 'etab_add',
+  'title' => t('Ajouter un établissement manquant.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_user_add_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/user_add.png',
+  'alt' => 'user_add',
+  'title' => t('Ajouter un formateur manquant.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_prioritaire_icon', array(
+  'path'  => drupal_get_path('module', 'gbb') . '/images/prioritaire.png',
+  'alt'   => 'prioritaire',
+  'title' => t('Prioritaire'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_disk_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/disk.png',
+  'alt' => 'enregistrer',
+  'title' => t('Enregistrer.'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_print_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/convoc_printed.gif',
+  'alt' => 'module_printed',
+  'title' => t('Imprimé'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+
 
 
 //module_load_include('inc', 'gbb', 'gbb_liste');

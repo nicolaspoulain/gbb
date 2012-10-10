@@ -57,9 +57,7 @@ function gbb_module_view($args = 'NaN') {
     $build['sess_edition'] = render(drupal_get_form('gbb_sess_edition', $args));
   };
   $build['convoc_form']  = render(drupal_get_form('gbb_convoc_form', $args));
-  /*
   $build['bilan_form']   = render(drupal_get_form('gbb_bilan_form',$args));
-*/
   return implode('', $build);
 }
 
@@ -746,11 +744,6 @@ function gbb_sess_edition($form, $form_state, $args) {
     '#default_value' => $r->typePaiement,
     '#maxlength' => 4,
     '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>',
-  );
-
-  $default_value = ($r->convoc_sent)? 1 : $r->session_alert;
-  $form['f']['session_alert'] = array(
     '#type' => 'checkbox',
     '#title' => t('Alerte'),
     '#default_value' => $default_value,
@@ -788,11 +781,6 @@ function gbb_sess_edition($form, $form_state, $args) {
       '#default_value' => $r->convoc_sent,
       '#prefix' => '<div class="inline">',
       '#suffix' => '</div>&nbsp;',
-      '#states' => array(    // This #states rule limits visibility
-        'visible' => array(  // action to take.
-           ':input[name="session_alert"]' => array('checked' => FALSE),
-           ':input[name="en_attente"]' => array('checked' => FALSE)    ),
-      ),
     );
   } 
   else {
@@ -821,7 +809,7 @@ function gbb_sess_edition($form, $form_state, $args) {
 
   $form['f']['formateur'] = array(
     '#type' => 'textfield',
-    '#title' => t('Lieu&nbsp;' . 
+    '#title' => t('Formateur&nbsp;' . 
                   l( theme('image',variable_get('_gbb_user_add_icon')),
                      'formateur/',
                      array('attributes' => array('class' => 'anchor-class'),
@@ -902,10 +890,8 @@ function gbb_convoc_form($form, &$form_state) {
     '#attributes' => array('class' => array('collapsible', 'convoc')),
   );
 
-  $form['f']['envoyer']['#markup']= 
-    '<div class="flright">' . 
-    theme('image', variable_get('_gbb_disk_icon')) . 
-    '</div>';
+  $form['f']['envoyer']['#markup']= '<div class="flright">' . 
+    theme('image', variable_get('_gbb_disk_icon')) . '</div>';
 
         //'path' => ($r->module_printed)? 
         //drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.gif' : 
@@ -921,7 +907,7 @@ function gbb_convoc_form($form, &$form_state) {
       '#prefix' => '<div class="inline">',
       '#suffix' => '</div>',
       '#ajax' => array(
-        'callback' => 'form_module_printed_submit',
+        'callback' => 'gbb_convoc_form_module_printed_submit',
         'progress' => array('type' => 'throbber', 
                             'message' => 'Enregistrement...')),
     );
@@ -937,7 +923,7 @@ function gbb_convoc_form($form, &$form_state) {
                 t('Alerte'),
     '#default_value' => $r['module_alert'],
     '#ajax' => array(
-      'callback' => 'form_module_alert_submit',
+      'callback' => 'gbb_convoc_form_module_alert_submit',
       'progress' => array('type' => 'throbber', 
                           'message' => 'Enregistrement...')),
   );
@@ -952,7 +938,7 @@ function gbb_convoc_form($form, &$form_state) {
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
     '#ajax' => array(
-      'callback' => 'form_convoc_info_off_submit',
+      'callback' => 'gbb_convoc_form_convoc_info_off_submit',
       'progress' => array('type' => 'throbber', 
                           'message' => 'Enregistrement...')),
   );
@@ -967,7 +953,7 @@ function gbb_convoc_form($form, &$form_state) {
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
     '#ajax' => array(
-      'callback' => 'form_convoc_info_on_submit',
+      'callback' => 'gbb_convoc_form_convoc_info_on_submit',
       'progress' => array('type' => 'throbber', 
                           'message' => 'Enregistrement...')),
   );
@@ -1000,28 +986,28 @@ function gbb_convoc_form($form, &$form_state) {
 /**
  * ----> Submit
  */
-function form_convoc_info_off_submit(&$form, &$form_state) {
+function gbb_convoc_form_convoc_info_off_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
     ->fields(array('convoc_info_off' => $form_state['values']['convoc_info_off']))
     ->execute();
 }
-function form_convoc_info_on_submit(&$form, &$form_state) {
+function gbb_convoc_form_convoc_info_on_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
     ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on']))
     ->execute();
 }
-function form_module_alert_submit(&$form, &$form_state) {
+function gbb_convoc_form_module_alert_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
     ->fields(array('module_alert' => $form_state['values']['module_alert'],))
     ->execute();
 }
-function form_module_printed_submit(&$form, &$form_state) {
+function gbb_convoc_form_module_printed_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
@@ -1033,39 +1019,32 @@ function form_module_printed_submit(&$form, &$form_state) {
 /**
  * Formulaire de ** BILANS INFOS ** Listes d'émargement, bilans etc.
  */
-function bilan_form($form, &$form_state) {
-
-  global $user;
-  $r->convoc_info_off = '';
-  $r->convoc_info_on = '';
-  $r->module_printed = 0;
-  $r->module_alert = 0;
+function gbb_bilan_form($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
-  $query  ->rightjoin('gbb_gmodu', 'm', 'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
-  $query  ->condition('m.co_modu', arg(2), '=')
-          ->condition('m.co_degre', arg(1), '=')
-          ->fields('mp', array('LE_etat', 'LE_info', 
-                               'DSF_etat', 'DSF_info',
-                               'DA_date_depot'));
-  $r = $query->execute()->fetchObject();
-  $Go = array(
-        'path' => drupal_get_path('module', 'gaiabb') . '/images/disk.png',
-        'alt' => 'enregistrer',
-        'title' => t('Enregistrer.'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+  $query ->rightjoin('gbb_gmodu', 'm', 
+                     'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
+  $query ->condition('m.co_modu', arg(2), '=')
+         ->condition('m.co_degre', arg(1), '=')
+         ->fields('mp', array('LE_etat', 'LE_info', 
+                              'DSF_etat', 'DSF_info',
+                              'DA_date_depot'));
+  $r = $query->execute()->fetchAssoc();
  
   $form['f'] = array(
     '#type' => 'fieldset',
     '#title' => t('Dossier'),
-    '#attributes' => array('class' => array('dossier', 'collapsible', 'convoc')),
+    '#attributes' => array('class' => array('dossier', 
+                                            'collapsible', 
+                                            'convoc')),
   );
 
-  $form['f']['envoyer']['#markup']= '<div class="flright">' . theme('image', $Go)  . '</div>';
+  $form['f']['envoyer']['#markup']= '<div class="flright">' . 
+    theme('image', variable_get('_gbb_disk_icon')) . '</div>';
 
-  $html = $r->LE_info;
-  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
+  $html = $r['LE_info'];
+  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html);  //ce <? est une ASTUCE 
   $form['f']['LE_info'] = array(
     '#type' => 'textarea',
     '#title' => t('Listes d\'émargement rendues au conseiller'),
@@ -1074,56 +1053,50 @@ function bilan_form($form, &$form_state) {
     '#rows' => 2,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
-    '#ajax' => array
-    (
-      'callback' => 'LE_info_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
-    ),
+    '#ajax' => array(
+      'callback' => 'gbb_LE_info_form_submit',
+      'progress' => array('type' => 'throbber', 
+                          'message' => 'Enregistrement...')),
   );
+
   $form['f']['LE_etat_part'] = array(
     '#type' => 'checkbox',
     '#title' => t('Partiellement'),
-    '#default_value' => (($r->LE_etat == 1)? 1 : 0),
+    '#default_value' => (($r['LE_etat'] == 1)? 1 : 0),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
-    '#ajax' => array
-    (
-      'callback' => 'LE_etat_part_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
-    ),
+    '#ajax' => array(
+      'callback' => 'gbb_LE_etat_part_form_submit',
+      'progress' => array('type' => 'throbber', 
+                          'message' => 'Enregistrement...')),
    // This #states rule limits visibility to when the $form['f']['en_attente']
    // checkbox is not checked."
     '#states' => array(
       'visible' => array(  // action to take.
-         ':input[name="LE_etat_total"]' => array('checked' => FALSE),
-      ),
-    ),
+         ':input[name="LE_etat_total"]' => array('checked' => FALSE) )),
    );
 
   $form['f']['LE_etat_total'] = array(
     '#type' => 'checkbox',
     '#title' => t('En totalité'),
-    '#default_value' => (($r->LE_etat == 2)? 1 : 0),
+    '#default_value' => (($r['LE_etat'] == 2)? 1 : 0),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
-    '#ajax' => array
-    (
-      'callback' => 'LE_etat_total_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
-    ),
+    '#ajax' => array(
+      'callback' => 'gbb_LE_etat_total_form_submit',
+      'progress' => array('type' => 'throbber', 
+                          'message' => 'Enregistrement...')),
    // This #states rule limits visibility to when the $form['f']['en_attente']
    // checkbox is not checked."
     '#states' => array(
       'visible' => array(  // action to take.
-         ':input[name="LE_etat_part"]' => array('checked' => FALSE),
-      ),
-    ),
+         ':input[name="LE_etat_part"]' => array('checked' => FALSE) )),
    );
 
   $form['f']['BR']['#markup']= '<br/>';
 
-  $html = $r->DSF_info;
-  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html); //<? #### ASTUCE coloration syntaxique 
+  $html = $r['DSF_info'];
+  $txtOff = preg_replace('#<br\s*/?>#i', "\n", $html); //ce <? est une ASTUCE.
   $form['f']['DSF_info'] = array(
     '#type' => 'textarea',
     '#title' => t('Déclarations de service fait rendues au conseiller'),
@@ -1132,41 +1105,38 @@ function bilan_form($form, &$form_state) {
     '#rows' => 2,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
-    '#ajax' => array
-    (
-      'callback' => 'DSF_info_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
-    ),
+    '#ajax' => array(
+      'callback' => 'gbb_DSF_info_form_submit',
+      'progress' => array('type' => 'throbber', 
+                          'message' => 'Enregistrement...')),
   );
+
   $form['f']['DSF_etat_part'] = array(
     '#type' => 'checkbox',
     '#title' => t('Partiellement'),
-    '#default_value' => (($r->DSF_etat == 1)? 1 : 0),
+    '#default_value' => (($r['DSF_etat'] == 1)? 1 : 0),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
-    '#ajax' => array
-    (
-      'callback' => 'DSF_etat_part_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
-    ),
+    '#ajax' => array(
+      'callback' => 'gbb_DSF_etat_part_form_submit',
+      'progress' => array('type' => 'throbber', 
+                          'message' => 'Enregistrement...')),
    // This #states rule limits visibility to when the $form['f']['en_attente']
    // checkbox is not checked."
     '#states' => array(
       'visible' => array(  // action to take.
-         ':input[name="DSF_etat_total"]' => array('checked' => FALSE),
-      ),
-    ),
+         ':input[name="DSF_etat_total"]' => array('checked' => FALSE) )),
    );
 
   $form['f']['DSF_etat_total'] = array(
     '#type' => 'checkbox',
     '#title' => t('En totalité'),
-    '#default_value' => (($r->DSF_etat == 2)? 1 : 0),
+    '#default_value' => (($r['DSF_etat'] == 2)? 1 : 0),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
     '#ajax' => array
     (
-      'callback' => 'DSF_etat_total_form_submit',
+      'callback' => 'gbb_DSF_etat_total_form_submit',
       'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
     ),
    // This #states rule limits visibility to when the $form['f']['en_attente']
@@ -1180,112 +1150,93 @@ function bilan_form($form, &$form_state) {
 
   $form['f']['BR']['#markup']= '<br/>';
 
-  //$date = strftime('%F');  //$date = '2008-12-31 00:00:00';
-
-  // Provide a format using regular PHP format parts (see documentation on php.net).
-  // If you're using a date_select, the format will control the order of the date parts in the selector,
-  // rearrange them any way you like. Parts left out of the format will not be displayed to the user.
-  $format = 'Y-m-d';
+  $ddpt = ($r['DA_date_depot'] == '1970-01-01 00:00:00')? '' : $r['DA_date_depot'];
 
   $form['f']['DA_date_depot'] = array(
-     '#type' => 'date_popup', // types 'date_popup', 'date_text' and 'date_timezone' are also supported. See .inc file.
-     '#title' => t('Date de dépôt du dossier'),
-     '#default_value' => (($r->DA_date_depot == '1970-01-01 00:00:00')? '' : $r->DA_date_depot),
-     '#date_format' => $format,
-     '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-     '#date_year_range' => '-1:+1', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
-    '#ajax' => array
-    (
-      'callback' => 'DA_date_depot_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => 'Enregistrement...'),
-    ),
+    '#type' => 'date_popup', 
+    '#title' => t('Date de dépôt du dossier'),
+    '#default_value' => $ddpt,
+    '#date_format' => 'Y-m-d',
+    '#date_label_position' => 'within', 
+    '#date_year_range' => '-1:+1', 
+    '#ajax' => array(
+      'callback' => 'gbb_DA_date_depot_form_submit',
+      'progress' => array('type' => 'throbber', 
+                          'message' => 'Enregistrement...')),
   );
 
-  $comodu = isset($form_state['values']['comodu'])? $form_state['values']['comodu'] : arg(2);
-  $form['f']['comodu'] = array(
-    '#type' => 'hidden',
-    '#value' => $comodu,
-  );
+  $comodu = isset($form_state['values']['comodu'])? 
+              $form_state['values']['comodu'] : arg(2);
+  $form['f']['comodu'] = array('#type' => 'hidden',
+                               '#value' => $comodu  );
 
-  $codegre = isset($form_state['values']['codegre'])? $form_state['values']['codegre'] : arg(1);
-  $form['f']['codegre'] = array(
-    '#type' => 'hidden',
-    '#value' => $codegre,
-  );
-
+  $codegre = isset($form_state['values']['codegre'])? 
+               $form_state['values']['codegre'] : arg(1);
+  $form['f']['codegre'] = array('#type' => 'hidden',
+                                '#value' => $codegre  );
  return $form;
 }
+
 /**
  * ----> Submit
  */
-function LE_etat_part_form_submit(&$form, &$form_state) {
+function gbb_LE_etat_part_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('LE_etat' => $form_state['values']['LE_etat_part'],))
     ->execute();
 }
-function LE_etat_total_form_submit(&$form, &$form_state) {
+function gbb_LE_etat_total_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('LE_etat' => $form_state['values']['LE_etat_total'] * 2,))
     ->execute();
 }
-/**
- * ----> Submit
- */
-function LE_info_form_submit(&$form, &$form_state) {
+function gbb_LE_info_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('LE_info' => $form_state['values']['LE_info'],))
     ->execute();
 }
-/**
- * ----> Submit
- */
-function DSF_etat_part_form_submit(&$form, &$form_state) {
+function gbb_DSF_etat_part_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('DSF_etat' => $form_state['values']['DSF_etat_part'],))
     ->execute();
 }
-function DSF_etat_total_form_submit(&$form, &$form_state) {
+function gbb_DSF_etat_total_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('DSF_etat' => $form_state['values']['DSF_etat_total'] *2,))
     ->execute();
 }
-/**
- * ----> Submit
- */
-function DSF_info_form_submit(&$form, &$form_state) {
+function gbb_DSF_info_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
     ->fields(array('DSF_info' => $form_state['values']['DSF_info'],))
     ->execute();
 }
-/**
- * ----> Submit
- */
-function DA_date_depot_form_submit(&$form, &$form_state) {
+function gbb_DA_date_depot_form_submit(&$form, &$form_state) {
+  $ddpt = $form_state['values']['DA_date_depot'];
+  if ($ddpt =='') $ddpt = '1970-01-01 00:00:00'; // 01/01/70 si pas de date
+
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'],))
-    ->fields(array('DA_date_depot' => $form_state['values']['DA_date_depot'],))
+    ->fields(array('DA_date_depot' => $ddpt ))
     ->execute();
 }
-
-
 
 /**
  * Fonctions d' ** AUTOCOMPLETE AJAX ETABLISSEMENTS **
  */
-function _gaiabb_autocompetab($string) {
+function _gbb_autocompetab($string) {
 
   $matches = array();
   $result = db_select('gbb_netab', 'c')
@@ -1294,7 +1245,7 @@ function _gaiabb_autocompetab($string) {
     ->range(0, 10)
     ->execute();
   foreach ($result as $r) {
-    $etab = $r->denom_comp . ' (' . $r->sigle . ')';
+    $etab = $r->denom_comp . ' ' . $r->sigle . ' (rne:' . $r->co_lieu . ')';
     $matches[$etab] = $etab;
   }
   $count = $result->rowCount();
@@ -1305,7 +1256,7 @@ function _gaiabb_autocompetab($string) {
 /**
  * Fonctions d' ** AUTOCOMPLETE AJAX FORMATEURS **
  */
-function _gaiabb_autocompform($string) {
+function _gbb_autocompform($string) {
 
   $matches = array();
   $result = db_select('gbb_gresp_dafor', 'c')
@@ -1314,7 +1265,8 @@ function _gaiabb_autocompform($string) {
     ->range(0, 10)
     ->execute();
   foreach ($result as $r) {
-    $matches[$r->prenom . ' ' . $r->nomu] = $r->prenom . ' ' . $r->nomu;
+    $formatr = $r->prenom . ' ' . $r->nomu . ' (id:' . $r->co_resp . ')';
+    $matches[$formatr] = $formatr;
   }
   $count = $result->rowCount();
   if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';

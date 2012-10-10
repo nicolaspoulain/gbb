@@ -60,16 +60,16 @@ function gbb_permission() {
 /**
  * Implements hook_menu
  */
-
 function gbb_menu() {
 
   $items = array();
 
-  // Etant donnés une année (09,10,11,12,...), un co_degré (1 ou 2) et un co_tres (1,2 ou 3)
+  // Etant donnés une année (09,10,11,12,...), 
+  // un co_degré (1 ou 2) et un co_tres (1,2 ou 3)
   // affichage de la liste des responsables des stages
-  //   exemple : liste_stages/12/2/1
+  //   exemple : liste/12/2/1
   // affichage de la liste des stages pour un conseiller (DENISE ou ARGO) donné
-  //   exemple : liste_stages/12/2/1/DENISE
+  //   exemple : liste/12/2/1/DENISE
 
   $items['liste'] = array(
         'title' => '',
@@ -90,7 +90,7 @@ function gbb_menu() {
   );
 
   // Etant donné un id (112 ou 2222)
-  // Affiche la page de gestion des formateurs
+  // Affiche la page de gestion d'un formateur
   //   exemple : formateur/112
 
   $items['formateur'] = array(
@@ -101,7 +101,7 @@ function gbb_menu() {
   );
 
   // Etant donné un id (112 ou 2222)
-  // Affiche la page de gestion des établisssemnets
+  // Affiche la page de gestion d'un établisssement
   //   exemple : etablissement/112
 
   $items['etablissement'] = array(
@@ -126,7 +126,7 @@ function gbb_menu() {
   );
   // TODO : décrire
   $items['autocomp/formateur2'] = array(
-        'page callback' => '_gbb_autocompform2',
+        'page callback' => '_gbb_autocompformatr2',
         'access arguments' => array('access gbb'),
         'type' => MENU_CALLBACK
   );
@@ -150,18 +150,20 @@ function gbb_menu() {
 variable_set('_gbb_session_alert_icon', array(
   'path' => drupal_get_path('module', 'gbb') . '/images/flag_red.png',
   'alt' => 'session_alert',
-  'title' => t('Alerte sur session : le service administratif est prévenu d\'un changement important.'),
+  'title' => t('Alerte sur session : le service administratif est 
+                                     prévenu d\'un changement important.'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
 variable_set('_gbb_module_alert_icon', array(
   'path' => drupal_get_path('module', 'gbb') . '/images/flag_red.png',
   'alt' => 'module_alert',
-  'title' => t('Alerte sur le module : le service administratif est prévenu d\'un changement important.'),
+  'title' => t('Alerte sur le module : le service administratif est 
+                                       prévenu d\'un changement important.'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
 variable_set('_gbb_not_en_attente_icon', array(
   'path' => drupal_get_path('module', 'gbb') . '/images/control_play_blue.png',
-  'alt' => 'en attente',
+  'alt' => 'en cours',
   'title' => t('Demande de préparation des convocations.'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
@@ -219,10 +221,28 @@ variable_set('_gbb_print_icon', array(
   'title' => t('Imprimé'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
+variable_set('_gbb_prioritaire_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/prioritaire.png',
+  'alt' => 'prioritaire',
+  'title' => t('Prioritaire'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_attachement_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/attachement.gif',
+  'alt' => 'convoc_sent',
+  'title' => t('Fichier(s) attaché(s)'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+variable_set('_gbb_comment_icon', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/comments.png',
+  'alt' => 'Organisation et dates de session',
+  'title' => t('Organisation et dates de session'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
+  
 
 
-
-//module_load_include('inc', 'gbb', 'gbb_liste');
+module_load_include('inc', 'gbb', 'gbb_liste_stages');
 module_load_include('inc', 'gbb', 'gbb_module');
 module_load_include('inc', 'gbb', 'gbb_formateur');
 module_load_include('inc', 'gbb', 'gbb_etablisement');

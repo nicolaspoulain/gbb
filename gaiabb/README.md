@@ -27,7 +27,7 @@ de données :
 ------------
   
 Création du fichier `FILE.SQL` depuis `FILE.unl` possédant N champs. 
-Le fichier est converti de UTF-8 vers ISO-8859-15 puis
+Le fichier sera converti de UTF-8 vers ISO-8859-15 puis
 nettoyé, les sauts de ligne sont supprimés. Le fichier SQL est créé.
 
 `root@ks:# ./unl2sql FILE N`

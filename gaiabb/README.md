@@ -17,7 +17,7 @@ Le dossier `sites/default/modules/gaiabb` contient notamment
 * `gaiabb.module`
 
 Scripts de mise à jour de la base de données
-============================================
+=============================================
 
 Le dossier unl_mysql contenu dans le dossier gaiabb
 contient les scripts relatifs à la mise à jour de la base

@@ -104,6 +104,43 @@ Il n'y a plus de paramètre
 ~~~
 
 
+Descriptif des tables
+=====================
+
+GBB\_GDISP
+
+  **Colonne**        **Type**      **Null**   **Défaut**   **Commentaires**
+  ------------------ ------------- ---------- ------------ -------------------------------------------------------------------------
+  ***co\_disp***     int(11)       Non                     Code interne du dispositif
+  id\_disp           char(10)      Non                     Identifiant du dispositif
+  lib                char(50)      Oui        NULL         Libellé
+  libl               char(250)     Oui        NULL         Libellé long
+  co\_objt           char(2)       Oui        NULL         Code de l objectif de formation
+  co\_init           char(2)       Oui        NULL         Code du niveau d initiative
+  co\_tcan           char(1)       Oui        NULL         Code du type de candidature
+  nb\_place\_prev    smallint(6)   Oui        NULL         Nombre de places prévues
+  duree\_prev        smallint(6)   Oui        NULL         Durée moyenne estimée par personne
+  nb\_mod\_prev      smallint(6)   Oui        NULL         Nombre de modules prévus
+  co\_chap           char(4)       Oui        NULL         Code du chapitre de prévision
+  co\_art            char(2)       Oui        NULL         Code article de prévision
+  dt\_crea           date          Oui        NULL         date de création
+  ty\_crea           char(1)       Oui        NULL         Type de création
+  co\_camp           char(2)       Oui        NULL         Code de la campagne
+  co\_them           char(2)       Oui        NULL         Code du thème du dispositif
+  co\_andi           char(2)       Oui        NULL         Code du type d annulation du dispositif
+  lobjt              text          Oui        NULL         Objectif littéral
+  co\_orga           int(11)       Oui        NULL         Code de l organisme
+  co\_offre          int(11)       Oui        NULL         Code interne de l offre
+  co\_orie           char(4)       Oui        NULL         Code nomenclature locale d orientation créé dans la table NORIE de gaia
+  gestionnaire       char(50)      Oui        NULL         Gestionnaire en charge du dispositif
+  co\_tpla           char(1)       Oui        NULL         Code type de plan
+  co\_offreur        char(8)       Oui        NULL         Code offreur
+  code\_om\_stag     char(2)       Oui        NULL         Code du modèle choisi pour l OM stagiaire
+  code\_remu         char(2)       Oui        NULL         code du modèle choisi pour la fiche de rémunération
+  code\_om\_interv   char(2)       Oui        NULL         code du modèle choisi pou l OM intervenant
+  ***co\_degre***    smallint(6)   Non        2            Code du degré
+
+
 Tables ajoutées à la base de données drupal
 ===========================================
 

@@ -428,7 +428,7 @@ from gbb_gresp_dafor
 ~~~i
 
 
-
+tables
 
 
 TABLE_NAME  	COLUMN_NAME	    DATA_TYPE	Max	Null    Key	Default	Comment

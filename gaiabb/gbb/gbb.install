@@ -219,7 +219,7 @@ $schema['gbb_gdisp'] = array(
       'type' => 'int',
       'size' => 'small',
       'not null' => TRUE,
-      'default' => '2',
+      'default' => 2,
     ),
   ),
   'primary key' => array('co_disp', 'co_degre'),
@@ -889,8 +889,7 @@ $schema['gbb_norie'] = array(
   'description' => 'Copie conforme de la table GAIA norie',
   'fields' => array(
     'co_orie' => array(
-      'description' => 'Code nomenclature locale d orientation créé dans la 
-table NORIE de gaia',
+      'description' => 'Code nomenclature locale d orientation créé dans la  table NORIE de gaia',
       'type' => 'char',
       'length' => '4',
       'not null' => TRUE,
@@ -977,7 +976,7 @@ $schema['gbb_session'] = array(
       'type' => 'int',
       'size' => 'small',
       'not null' => TRUE,
-      'default' => '2',
+      'default' => 2,
     ),
     'co_lieu' => array(
       'description' => 'Code lieu',
@@ -1081,7 +1080,7 @@ $schema['gbb_gmodu_plus'] = array(
       'type' => 'int',
       'size' => 'small',
       'not null' => TRUE,
-      'default' => '2',
+      'default' => 2,
     ),
     'module_alert' => array(
       'description' => 'Alerte sur le module : le service administratif est prévenu d un changement important.',
@@ -1434,6 +1433,35 @@ $schema['gbb_gresp_dafor'] = array(
     ),
   ),
   'primary key' => array('co_resp', 'co_degre'),
+);
+
+// ---------------------------------------------------------------------------
+// FILE (non gaia)
+// ---------------------------------------------------------------------------
+$schema['gbb_file'] = array(
+  'description' => 'Association de fichiers à un module',
+  'fields' => array(
+    'co_modu' => array(
+     'description' => 'Code du module pour un dispositif donné',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'co_degre' => array(
+     'description' => 'Code du degré',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+      'default' => 2,
+    ),
+     'fid' => array(
+     'description' => 'Clé étrangère avec table file_managed',
+      'type' => 'int',
+      'size' => 'small',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ),
+  ),
 );
 
  return $schema;

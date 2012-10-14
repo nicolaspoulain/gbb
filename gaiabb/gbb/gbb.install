@@ -1,3 +1,52 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+
+function gbb_schema() {
+
+  $schema = array();
+
+// ---------------------------------------------------------------------------
+// GDIRE
+// ---------------------------------------------------------------------------
+$schema['gbb_gdire'] = array(
+  'description' => 'Copie conforme de la table GAIA gdire',
+  'fields' => array(
+    'co_disp' => array(
+      'description' => 'Code interne du dispositif',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_resp' => array(
+      'description' => 'Code responsable',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_tres' => array(
+      'description' => 'code du type de responsable',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => TRUE,
+    ),
+    'co_modu' => array(
+     'description' => 'Code du module pour un dispositif donné',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'co_degre' => array(
+     'description' => 'Code du degré',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+      'default' => 2,
+    ),
+  ),
+  'primary key' => array('co_disp', 'co_modu', 'co_degre', 'co_resp', 'co_tres'),
+);
+
 // ---------------------------------------------------------------------------
 // GDISP
 // ---------------------------------------------------------------------------
@@ -28,13 +77,13 @@ $schema['gbb_gdisp'] = array(
       'not null' => FALSE,
     ),
     'co_objt' => array(
-      'description' => 'Code de l'objectif de formation',
+      'description' => 'Code de l objectif de formation',
       'type' => 'char',
       'length' => '2',
       'not null' => FALSE,
     ),
     'co_init' => array(
-      'description' => 'Code du niveau d'initiative',
+      'description' => 'Code du niveau d initiative',
       'type' => 'char',
       'length' => '2',
       'not null' => FALSE,
@@ -77,7 +126,11 @@ $schema['gbb_gdisp'] = array(
     ),
     'dt_crea' => array(
       'description' => 'date de création',
-      'type' => 'date',
+      'type' => 'varchar',
+      'mysql_type' => 'date',
+      'pgsql_type' => 'timestamp without time zone',
+      'sqlite_type' => 'VARCHAR',
+      'sqlsrv_type' => 'smalldatetime',
       'not null' => FALSE,
     ),
     'ty_crea' => array(
@@ -99,7 +152,7 @@ $schema['gbb_gdisp'] = array(
       'not null' => FALSE,
     ),
     'co_andi' => array(
-      'description' => 'Code du type d'annulation du dispositif',
+      'description' => 'Code du type d annulation du dispositif',
       'type' => 'char',
       'length' => '2',
       'not null' => FALSE,
@@ -110,18 +163,17 @@ $schema['gbb_gdisp'] = array(
       'not null' => FALSE,
     ),
     'co_orga' => array(
-      'description' => 'Code de l'organisme',
+      'description' => 'Code de l organisme',
       'type' => 'int',
       'not null' => FALSE,
     ),
     'co_offre' => array(
-      'description' => 'Code interne de l'offre',
+      'description' => 'Code interne de l offre',
       'type' => 'int',
       'not null' => FALSE,
     ),
     'co_orie' => array(
-      'description' => 'Code nomenclature locale d'orientation créé dans la 
-table NORIE de gaia',
+      'description' => 'Code nomenclature locale d orientation créé dans la table NORIE de gaia',
       'type' => 'char',
       'length' => '4',
       'not null' => FALSE,
@@ -145,7 +197,7 @@ table NORIE de gaia',
       'not null' => FALSE,
     ),
     'code_om_stag' => array(
-      'description' => 'Code du modèle choisi pour l'OM stagiaire',
+      'description' => 'Code du modèle choisi pour l OM stagiaire',
       'type' => 'char',
       'length' => '2',
       'not null' => FALSE,
@@ -157,7 +209,7 @@ table NORIE de gaia',
       'not null' => FALSE,
     ),
     'code_om_interv' => array(
-      'description' => 'code du modèle choisi pou l'OM intervenant',
+      'description' => 'code du modèle choisi pou l OM intervenant',
       'type' => 'char',
       'length' => '2',
       'not null' => FALSE,
@@ -172,7 +224,7 @@ table NORIE de gaia',
   ),
   'primary key' => array('co_disp', 'co_degre'),
   'indexes' => array(
-    'idx_gdisp_id_disp' => array('id_disp', 3),
+    'idx_gdisp_id_disp' => array(array('id_disp', 3)),
   ),
 );
 
@@ -247,13 +299,13 @@ $schema['gbb_gmodu'] = array(
       'not null' => FALSE,
     ),
     'nb_interv' => array(
-      'description' => 'Nombre d'intervenant',
+      'description' => 'Nombre d intervenant',
       'type' => 'int',
       'size' => 'small',
       'not null' => FALSE,
     ),
     'nb_h_interv' => array(
-      'description' => 'Nombre d'heures d'intervention',
+      'description' => 'Nombre d heures d intervention',
       'type' => 'int',
       'size' => 'small',
       'not null' => FALSE,
@@ -290,7 +342,11 @@ $schema['gbb_gmodu'] = array(
     ),
     'dt_crea' => array(
       'description' => 'date de création',
-      'type' => 'date',
+      'type' => 'varchar',
+      'mysql_type' => 'date',
+      'pgsql_type' => 'timestamp without time zone',
+      'sqlite_type' => 'VARCHAR',
+      'sqlsrv_type' => 'smalldatetime',
       'not null' => FALSE,
     ),
     'cumul' => array(
@@ -301,30 +357,26 @@ $schema['gbb_gmodu'] = array(
     ),
     'lcont' => array(
       'description' => 'Contenu littéral',
-      'type' => 'char',
-      'length' => '1000',
+      'type' => 'text',
       'not null' => FALSE,
     ),
     'lmoda' => array(
       'description' => 'modalité littérale',
-      'type' => 'char',
-      'length' => '500',
+      'type' => 'text',
       'not null' => FALSE,
     ),
     'lcibl' => array(
       'description' => 'Cible littérale',
-      'type' => 'char',
-      'length' => '500',
+      'type' => 'text',
       'not null' => FALSE,
     ),
     'lautre' => array(
       'description' => 'Autre zone littérale',
-      'type' => 'char',
-      'length' => '1000',
+      'type' => 'text',
       'not null' => FALSE,
     ),
     'co_anmo' => array(
-      'description' => 'Code du type d'annulation des modules',
+      'description' => 'Code du type d annulation des modules',
       'type' => 'char',
       'length' => '2',
       'not null' => FALSE,
@@ -336,12 +388,12 @@ $schema['gbb_gmodu'] = array(
       'not null' => FALSE,
     ),
     'co_omodu' => array(
-      'description' => 'code du module de l'offre',
+      'description' => 'code du module de l offre',
       'type' => 'int',
       'not null' => FALSE,
     ),
     'lpeda' => array(
-      'description' => 'Descriptif de l'objectif pédagogique',
+      'description' => 'Descriptif de l objectif pédagogique',
       'type' => 'char',
       'length' => '250',
       'not null' => FALSE,
@@ -399,7 +451,7 @@ arborescence plan (O/N)',
       'not null' => FALSE,
     ),
     'co_etab_dem' => array(
-      'description' => 'Code de l'établissement demandeur',
+      'description' => 'Code de l établissement demandeur',
       'type' => 'char',
       'length' => '8',
       'not null' => FALSE,
@@ -415,7 +467,7 @@ arborescence plan (O/N)',
       'type' => 'int',
       'size' => 'small',
       'not null' => TRUE,
-      'default' => '2',
+      'default' => 2,
     ),
   ),
   'primary key' => array('co_modu', 'co_degre'),
@@ -425,44 +477,8 @@ arborescence plan (O/N)',
 );
 
 // ---------------------------------------------------------------------------
-// GDIRE
+// NETAB
 // ---------------------------------------------------------------------------
-$schema['gbb_gdire'] = array(
-  'description' => 'Copie conforme de la table GAIA gdire',
-  'fields' => array(
-    'co_disp' => array(
-      'description' => 'Code interne du dispositif',
-      'type' => 'int',
-      'not null' => TRUE,
-    ),
-    'co_resp' => array(
-      'description' => 'Code responsable',
-      'type' => 'int',
-      'not null' => TRUE,
-    ),
-    'co_tres' => array(
-      'description' => 'code du type de responsable',
-      'type' => 'char',
-      'length' => '1',
-      'not null' => TRUE,
-    ),
-    'co_modu' => array(
-      'description' => 'Code du module pour un dispositif donné',
-      'type' => 'int',
-      'not null' => TRUE,
-      'default' => 0,
-    ),
-    'co_degre' => array(
-      'description' => 'Code du degré',
-      'type' => 'int',
-      'size' => 'small',
-      'not null' => TRUE,
-      'default' => '2',
-    ),
-  ),
-  'primary key' => array('co_disp', 'co_modu', 'co_degre', 'co_resp', 'co_tres'),
-);
-
 $schema['gbb_netab'] = array(
   'description' => 'Copie conforme de la table GAIA netab',
   'fields' => array(
@@ -479,7 +495,7 @@ $schema['gbb_netab'] = array(
       'not null' => FALSE,
     ),
     'co_cate' => array(
-      'description' => 'Code catégori',
+      'description' => 'Code catégorie',
       'type' => 'char',
       'length' => '4',
       'not null' => FALSE,
@@ -491,7 +507,7 @@ $schema['gbb_netab'] = array(
       'not null' => FALSE,
     ),
     'sigle' => array(
-      'description' => 'Sigle de l'établissement',
+      'description' => 'Sigle de l établissement',
       'type' => 'char',
       'length' => '6',
       'not null' => FALSE,
@@ -575,7 +591,7 @@ $schema['gbb_netab'] = array(
       'not null' => FALSE,
     ),
     'co_acad' => array(
-      'description' => 'Code de l'académie',
+      'description' => 'Code de l académie',
       'type' => 'char',
       'length' => '3',
       'not null' => FALSE,
@@ -699,7 +715,7 @@ $schema['gbb_gresp'] = array(
       'not null' => FALSE,
     ),
     'nomu' => array(
-      'description' => 'Nom d'usage',
+      'description' => 'Nom d usage',
       'type' => 'char',
       'length' => '20',
       'not null' => FALSE,
@@ -721,7 +737,7 @@ $schema['gbb_gresp'] = array(
       'type' => 'int',
       'size' => 'small',
       'not null' => TRUE,
-      'default' => '2',
+      'default' => 2,
     ),
   ),
   'primary key' => array('co_resp', 'co_degre'),
@@ -751,7 +767,7 @@ $schema['gbb_gresp_plus'] = array(
       'not null' => TRUE,
     ),
     'decharge' => array(
-      'description' => 'Nombre d'heures de décharge',
+      'description' => 'Nombre d heures de décharge',
       'type' => 'numeric',
       'not null' => TRUE,
       'default' => 0,
@@ -760,7 +776,8 @@ $schema['gbb_gresp_plus'] = array(
     ),
     'grade' => array(
       'description' => 'Certifié, agrégé,...',
-      'type' => 'set',
+      'type' => 'varchar',
+      'length' => '100',
       'not null' => TRUE,
     ),
     'divers' => array(
@@ -800,7 +817,7 @@ $schema['gbb_ncont'] = array(
     'dt_deb' => array(
       'description' => 'Date de début',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -809,7 +826,7 @@ $schema['gbb_ncont'] = array(
     'dt_fin' => array(
       'description' => 'Date de fin',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -846,7 +863,7 @@ $schema['gbb_ntcan'] = array(
     'dt_deb' => array(
       'description' => 'Date de début',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -855,7 +872,7 @@ $schema['gbb_ntcan'] = array(
     'dt_fin' => array(
       'description' => 'Date de fin',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -872,7 +889,7 @@ $schema['gbb_norie'] = array(
   'description' => 'Copie conforme de la table GAIA norie',
   'fields' => array(
     'co_orie' => array(
-      'description' => 'Code nomenclature locale d'orientation créé dans la 
+      'description' => 'Code nomenclature locale d orientation créé dans la 
 table NORIE de gaia',
       'type' => 'char',
       'length' => '4',
@@ -893,7 +910,7 @@ table NORIE de gaia',
     'dt_deb' => array(
       'description' => 'Date de début',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -902,7 +919,7 @@ table NORIE de gaia',
     'dt_fin' => array(
       'description' => 'Date de fin',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -925,16 +942,14 @@ $schema['gbb_session'] = array(
       'not null' => TRUE,
     ),
     'session_alert' => array(
-      'description' => 'Alerte sur la session, le service administratif est
-prévenu d un changement important. 0/1',
+      'description' => 'Alerte sur la session, le service administratif est prévenu d un changement important. 0/1',
       'type' => 'int',
       'size' => 'tiny',
       'not null' => FALSE,
       'default' => 0,
     ),
     'en_attente' => array(
-      'description' => 'O:stage en attente, ne pas préparer la convocation pour
-cette session- 1:Demande de prépartion de la convocation pour cette session',
+      'description' => 'O:stage en attente, ne pas préparer la convocation pour cette session- 1:Demande de prépartion de la convocation pour cette session',
       'type' => 'int',
       'size' => 'tiny',
       'not null' => FALSE,
@@ -980,23 +995,20 @@ cette session- 1:Demande de prépartion de la convocation pour cette session',
     'date' => array(
       'description' => 'Date de la session format YYYY-MM-DD',
       'type' => 'varchar',
-      'mysql_type' => 'DATE',
+      'mysql_type' => 'date',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
       'not null' => FALSE,
-      'default' => '0000-00-00',
     ),
     'date_ts' => array(
-      'description' => 'Date de la session format nb de secondes 
-depuis 01/01/1970',
+      'description' => 'Date de la session format nb de secondes depuis 01/01/1970',
       'type' => 'int',
-      'mysql_type' => 'TIMESTAMP',
+      'mysql_type' => 'timestamp',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
       'not null' => FALSE,
-      'default' => 0,
     ),
     'horaires' => array(
       'description' => 'Horaires de la session',
@@ -1013,7 +1025,7 @@ depuis 01/01/1970',
       'default' => 'VAC',
     ),
     'duree_a_payer' => array(
-      'description' => 'Nombre d'heures à payer',
+      'description' => 'Nombre d heures à payer',
       'type' => 'numeric',
       'not null' => FALSE,
       'default' => 0,
@@ -1021,7 +1033,7 @@ depuis 01/01/1970',
       'scale' => '2',
     ),
     'duree_prevue' => array(
-      'description' => 'Nombre d'heures prévues',
+      'description' => 'Nombre d heures prévues',
       'type' => 'numeric',
       'not null' => FALSE,
       'default' => 0,
@@ -1037,7 +1049,7 @@ depuis 01/01/1970',
     'date_modif' => array(
       'description' => 'Date de dernière modification',
       'type' => 'varchar',
-      'mysql_type' => 'DATETIME',
+      'mysql_type' => 'datetime',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -1072,8 +1084,7 @@ $schema['gbb_gmodu_plus'] = array(
       'default' => '2',
     ),
     'module_alert' => array(
-      'description' => 'Alerte sur le module : le service administratif est
-prévenu d un changement important.',
+      'description' => 'Alerte sur le module : le service administratif est prévenu d un changement important.',
       'type' => 'int',
       'size' => 'tiny',
       'not null' => FALSE,
@@ -1147,7 +1158,7 @@ prévenu d un changement important.',
     'DA_date_depot' => array(
       'description' => 'Date de dépot du dossier administratif',
       'type' => 'varchar',
-      'mysql_type' => 'DATETIME',
+      'mysql_type' => 'datetime',
       'pgsql_type' => 'timestamp without time zone',
       'sqlite_type' => 'VARCHAR',
       'sqlsrv_type' => 'smalldatetime',
@@ -1177,7 +1188,7 @@ $schema['gbb_netab_dafor'] = array(
       'not null' => FALSE,
     ),
     'co_cate' => array(
-      'description' => 'Code catégori',
+      'description' => 'Code catégorie',
       'type' => 'char',
       'length' => '4',
       'not null' => FALSE,
@@ -1189,7 +1200,7 @@ $schema['gbb_netab_dafor'] = array(
       'not null' => FALSE,
     ),
     'sigle' => array(
-      'description' => 'Sigle de l'établissement',
+      'description' => 'Sigle de l établissement',
       'type' => 'char',
       'length' => '6',
       'not null' => FALSE,
@@ -1273,7 +1284,7 @@ $schema['gbb_netab_dafor'] = array(
       'not null' => FALSE,
     ),
     'co_acad' => array(
-      'description' => 'Code de l'académie',
+      'description' => 'Code de l académie',
       'type' => 'char',
       'length' => '3',
       'not null' => FALSE,
@@ -1397,7 +1408,7 @@ $schema['gbb_gresp_dafor'] = array(
       'not null' => FALSE,
     ),
     'nomu' => array(
-      'description' => 'Nom d'usage',
+      'description' => 'Nom d usage',
       'type' => 'char',
       'length' => '20',
       'not null' => FALSE,
@@ -1419,9 +1430,11 @@ $schema['gbb_gresp_dafor'] = array(
       'type' => 'int',
       'size' => 'small',
       'not null' => TRUE,
-      'default' => '2',
+      'default' => 2,
     ),
   ),
   'primary key' => array('co_resp', 'co_degre'),
 );
 
+ return $schema;
+}

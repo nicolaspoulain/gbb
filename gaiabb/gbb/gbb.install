@@ -1000,15 +1000,6 @@ $schema['gbb_session'] = array(
       'sqlsrv_type' => 'smalldatetime',
       'not null' => FALSE,
     ),
-    'date_ts' => array(
-      'description' => 'Date de la session format nb de secondes depuis 01/01/1970',
-      'type' => 'int',
-      'mysql_type' => 'timestamp',
-      'pgsql_type' => 'timestamp without time zone',
-      'sqlite_type' => 'VARCHAR',
-      'sqlsrv_type' => 'smalldatetime',
-      'not null' => FALSE,
-    ),
     'horaires' => array(
       'description' => 'Horaires de la session',
       'type' => 'varchar',

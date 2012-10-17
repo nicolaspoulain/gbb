@@ -1004,11 +1004,7 @@ $schema['gbb_session'] = array(
     ),
      'date_ts' => array(
       'description' => 'Date de la session format TIMESTAMP',
-      'type' => 'varchar',
-      'mysql_type' => 'timestamp',
-      'pgsql_type' => 'timestamp without time zone',
-      'sqlite_type' => 'VARCHAR',
-      'sqlsrv_type' => 'smalldatetime',
+      'type' => 'int',
       'not null' => FALSE,
     ),
     'horaires' => array(
@@ -1062,6 +1058,7 @@ $schema['gbb_session'] = array(
     'idx_session_co_modu_degre' => array('co_modu', 'co_degre'),
     'idx_session_co_resp' => array('co_resp'),
     'idx_session_date' => array('date'),
+    'idx_session_date_ts' => array('date_ts'),
   ),
 );
 

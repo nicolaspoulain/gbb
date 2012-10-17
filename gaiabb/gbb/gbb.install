@@ -952,7 +952,7 @@ $schema['gbb_session'] = array(
       'type' => 'int',
       'size' => 'tiny',
       'not null' => FALSE,
-      'default' => 0,
+      'default' => 1,
     ),
     'convoc_sent' => array(
       'description' => 'La convocation pour cette session a été envoyée. 0/1',
@@ -965,6 +965,7 @@ $schema['gbb_session'] = array(
       'description' => 'Code responsable',
       'type' => 'int',
       'not null' => TRUE,
+      'default' => 1,
     ),
     'co_modu' => array(
       'description' => 'Code du module pour un dispositif donné',
@@ -983,6 +984,7 @@ $schema['gbb_session'] = array(
       'type' => 'char',
       'length' => '8',
       'not null' => TRUE,
+      'default' => 0,
     ),
     'groupe' => array(
       'description' => 'Numéro du groupe',
@@ -1005,7 +1007,7 @@ $schema['gbb_session'] = array(
       'type' => 'varchar',
       'length' => '50',
       'not null' => FALSE,
-      'default' => '0',
+      'default' => '9h-17h',
     ),
     'type_paiement' => array(
       'description' => 'type de paiement du formateur',
@@ -1051,7 +1053,6 @@ $schema['gbb_session'] = array(
     'idx_session_co_modu_degre' => array('co_modu', 'co_degre'),
     'idx_session_co_resp' => array('co_resp'),
     'idx_session_date' => array('date'),
-    'idx_session_date_ts' => array('date_ts'),
   ),
 );
 

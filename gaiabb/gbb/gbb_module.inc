@@ -11,22 +11,22 @@
  */
 function gbb_module_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css', 
+  drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css',
                  array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
   drupal_add_library('system', 'drupal.collapse');
 
   // Construction de la page
   $build = array();
   $build['infos_general'] = gbb_infos_general($args);
-  $build['infos_detail']  = theme('fieldset', 
+  $build['infos_detail']  = theme('fieldset',
                                   array(
                                     'element' => array(
                                       '#attributes' => array(
-                                        'class' => array('details', 
-                                                         'collapsible', 
+                                        'class' => array('details',
+                                                         'collapsible',
                                                          'collapsed',
                                         ),
-                                      ), 
+                                      ),
                                       '#children' => '',
                                       '#title' => t('Détails ...'),
                                       '#value' => gbb_infos_detail($args),
@@ -53,7 +53,7 @@ function gbb_module_view($args = 'NaN') {
                                );
   $build['attachements'] = render(drupal_get_form('gbb_attachements', $args));
   $build['sess_formatr'] = render(drupal_get_form('gbb_sess_formatr', $args));
-  if (isset($_GET['sess_id']) && $_GET['sess_id'] != 0 ) {
+  if (isset($_GET['sess_id'])) {
     $build['sess_edition'] = render(drupal_get_form('gbb_sess_edition', $args));
   };
   $build['convoc_form']  = render(drupal_get_form('gbb_convoc_form', $args));
@@ -257,19 +257,19 @@ function gbb_sess_stagiaire($args) {
   $query ->condition('m.co_modu',  arg(2), '=')
          ->condition('m.co_degre', arg(1), '=')
          ->condition('m.en_attente', 1, '<>')
-         ->leftJoin('gbb_netab', 'e', 'e.co_lieu = m.co_lieu');
-  $query ->fields('m', array('date_ts', 'groupe',
+         ->leftJoin('gbb_netab_dafor', 'e', 'e.co_lieu = m.co_lieu');
+  $query ->fields('m', array('date', 'groupe',
                              'horaires', 'co_lieu' ))
          ->fields('e', array('denom_princ', 'denom_comp',
                              'sigle' ));
   $query ->groupBy('co_lieu');
-  $query ->groupBy('date_ts');
+  $query ->groupBy('date');
   $query ->groupBy('groupe');
   $query ->groupBy('horaires');
   $query ->orderBy('groupe', 'ASC');
-  $query ->orderBy('date_ts', 'ASC');
+  $query ->orderBy('date', 'ASC');
   $result = $query->execute();
-  $header = array('date_ts'  => t('Date'),
+  $header = array('date'  => t('Date'),
                   'horaires' => t('Horaires'),
                   'groupe'   => t('Gr'),
                   'etab'     => t('Établissement'),
@@ -278,7 +278,7 @@ function gbb_sess_stagiaire($args) {
   setlocale(LC_TIME, 'fr_FR');
   foreach ($result as $r) {
     $rows[] = array( 
-                array('data' => utf8_encode(strftime('%a %e %h %Y ', $r->date_ts))),
+                array('data' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date) ))),
                 array('data' => $r->horaires),
                 array('data' => $r->groupe),
                 array('data' => $r->denom_princ . ' ' . 
@@ -408,14 +408,14 @@ function gbb_attachements_submit($form, &$form_state) {
 function gbb_sess_formatr($form, $form_state, $args) {
 
   $header = array(
-    'date_ts' => t('Date'),
+    'date' => t('Date'),
     'icone' => '',
     'horaires' => t('Horaires'),
     'lieu' => t('Lieu'),
     'groupe' => t('Gr'),
     'formateur' => t('Formateur'),
-    'dureeprevue' => t('Prévues'),
-    'dureeapayer' => t('À payer'),
+    'duree_prevue' => t('Prévues'),
+    'duree_a_payer' => t('À payer'),
     'TypePaiement' => t('Type pmt'),
   );
 
@@ -424,19 +424,22 @@ function gbb_sess_formatr($form, $form_state, $args) {
                     'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
   $query ->leftjoin('gbb_gresp_dafor', 'r', 
                     'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
-  $query ->leftjoin('gbb_netab', 'e', 
+  $query ->leftjoin('gbb_netab_dafor', 'e',
                     'e.co_lieu = s.co_lieu');
+  $query ->leftjoin('users', 'u',
+                    'u.uid = s.uid');
   $query ->orderBy('groupe', 'ASC');
-  $query ->orderBy('date_ts', 'ASC');
+  $query ->orderBy('date', 'ASC');
   $query ->orderBy('nomu', 'ASC');
   $query ->condition('mp.co_modu', arg(2), '=')
          ->condition('mp.co_degre', arg(1), '=')
-         ->fields('s', array('sess_id', 'date_ts', 'dureeprevue', 
-                             'dureeapayer', 'typePaiement',
+         ->fields('s', array('sess_id', 'date',
+                             'duree_prevue','duree_a_payer', 'type_paiement',
                              'en_attente', 'convoc_sent', 'session_alert',
-                             'horaires', 'co_lieu', 'co_resp', 'groupe'))
-         ->fields('mp', array('date_modif_ts'))
+                             'horaires', 'co_lieu', 'co_resp', 'groupe',
+                             'date_modif'))
          ->fields('r', array('prenom', 'nomu', 'co_resp'))
+         ->fields('u', array('name'))
          ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
   // Une condition supplémentaire pour les administratifs
   // afin que les stages en attente ne leur apparaissent pas.
@@ -444,12 +447,14 @@ function gbb_sess_formatr($form, $form_state, $args) {
     $query->condition('s.en_attente', 0, '=');
   }
   $result = $query->execute();
-  if (($result->rowCount() == 0)) return 'Aucun';
+  $nb_sessions = $result->rowCount();
 
   $default = (isset($_GET['sess_id']))? $_GET['sess_id'] : 0;
 
   $row = array();
   setlocale(LC_TIME, 'fr_FR');
+  $date_modif_ts = 0;
+  $name = '';
 
   foreach ($result as $r) {
     $visibilite = ($r->en_attente)? 'grisclair' : '';
@@ -463,79 +468,102 @@ function gbb_sess_formatr($form, $form_state, $args) {
           $icon = theme('image', variable_get('_gbb_not_en_attente_icon'));
     };
     $row[$r->sess_id] = array(
-      'date_ts' => utf8_encode(strftime('%a %e %h %Y ', $r->date_ts)),
+      'date' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date))),
       'icone' => $icon,
       'horaires' => $r->horaires,
       'lieu' => $r->denom_princ . ' ' . $r->denom_comp .
                 ' (' . $r->sigle . ')' . '&nbsp;' .
                 l( theme('image', variable_get('_gbb_etab_edit_icon')),
                    'etablissement/' . $r->co_lieu,
-                   array('attributes' => array('class' => 'anchor-class'), 
+                   array('attributes' => array('class' => 'anchor-class'),
                          'html' => TRUE )
                 ),
       'groupe' => $r->groupe,
       'formateur' => $r->prenom . ' ' . $r->nomu . '&nbsp;' .
                 l( theme('image', variable_get('_gbb_user_edit_icon')),
                    'formateur/' . $r->co_resp,
-                   array('attributes' => array('class' => 'anchor-class'), 
+                   array('attributes' => array('class' => 'anchor-class'),
                          'html' => TRUE )
                 ),
-      'dureeprevue' => $r->dureeprevue . "h",
-      'dureeapayer' => $r->dureeapayer . "h",
-      'TypePaiement' => $r->typePaiement,
+      'duree_prevue' => $r->duree_prevue . "h",
+      'duree_a_payer' => $r->duree_a_payer . "h",
+      'TypePaiement' => $r->type_paiement,
       '#attributes'  => array('class' => array($visibilite)),
     );
-    $date_modif_ts = $r->date_modif_ts;
+    if ($date_modif_ts < strtotime($r->date_modif)) {
+        $date_modif_ts = strtotime($r->date_modif);
+        $name = $r->name;
+    }
   }
 
   setlocale(LC_TIME, 'fr_FR');
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Sessions - Dernière modifcation : ' . 
-         utf8_encode(strftime('%A %e %B %Y %T', $date_modif_ts)) ),
+    '#title' => t('Sessions - Dernière modifcation : ' .
+         utf8_encode(strftime('%A %e %B %Y %T', $date_modif_ts)) . ' par ' . $name),
     '#attributes' => array('class' => array('sessions', 'collapsible')),
   );
 
+  if ($nb_sessions > 0) { // s'il n'y a aucune session, pas de tableau
 
-
-  $form['f']['table'] = array
-  (
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#multiple' => FALSE,
-    '#options' => $row,
-    '#default_value' => ((isset($_GET['sess_id']))? $_GET['sess_id'] : 0),
-    '#empty' => t('Aucune session. cliquez sur Ajouter pour en créer.'),
-  );
-  if (user_access('gest_convocs gbb') && !user_access('gest_sessions gbb')) {
-    $form['f']['table']['#multiple'] = TRUE;
-    $form['f']['table']['#default_value'] = array();
-  }
-  $form['f']['comodu'] = array(  '#type' => 'hidden',
-                                '#value' => arg(2)   );
-  $form['f']['codegre'] = array( '#type' => 'hidden',
-                                '#value' => arg(1)   );
-
+    $form['f']['table'] = array(
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#multiple' => TRUE,
+      '#options' => $row,
+      '#default_value' => ((isset($_GET['sess_id']))? $_GET['sess_id'] : array()),
+      '#empty' => t('Aucune session. cliquez sur Ajouter pour en créer.'),
+    );
+    $form['f']['comodu'] = array(  '#type' => 'hidden',
+                                  '#value' => arg(2)   );
+    $form['f']['codegre'] = array( '#type' => 'hidden',
+                                  '#value' => arg(1)   );
+  };
   if (user_access('gest_sessions gbb')) {
     $form['f']['ajouter'] = array(
       '#type' => 'submit',
       '#value' => t('Ajouter'),
       '#submit' => array('gbb_sess_formatr_ajouter_submit'),
-);
+    );
     $form['f']['modifier'] = array(
       '#type' => 'submit',
       '#value' => t('Modifier'),
       '#submit' => array('gbb_sess_formatr_modifier_submit'),
     );
-    $form['f']['dupliquer'] = array( 
+    $form['f']['plus'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Plus'),
+      '#default_value' => 0,
+      '#prefix' => '<a name="edit_session_anchor"></a><div class="inline">',
+      '#suffix' => '</div>&nbsp;',
+    );
+
+    $form['f']['bascule_en_attente'] = array(
+      '#type' => 'submit',
+      '#value' => t('Attente Y/N'),
+      '#submit' => array('gbb_sess_formatr_bascule_en_attente_submit'),
+      '#states' => array(    // This #states rule limits visibility
+        'visible' => array(  // action to take.
+          ':input[name="plus"]' => array('checked' => TRUE),),
+      ),
+    );
+    $form['f']['dupliquer'] = array(
       '#type' => 'submit',
       '#value' => t('Dupliquer'),
       '#submit' => array('gbb_sess_formatr_dupliquer_submit'),
+      '#states' => array(    // This #states rule limits visibility
+        'visible' => array(  // action to take.
+          ':input[name="plus"]' => array('checked' => TRUE),),
+      ),
     );
     $form['f']['supprimer'] = array(
       '#type' => 'submit',
       '#value' => t('*Supprimer*'),
       '#submit' => array('gbb_sess_formatr_supprimer_submit'),
+      '#states' => array(    // This #states rule limits visibility
+        'visible' => array(  // action to take.
+          ':input[name="plus"]' => array('checked' => TRUE),),
+      ),
     );
   }
 
@@ -559,14 +587,8 @@ function gbb_sess_formatr_supprimer_submit($form, &$form_state) {
     return;
  }
   db_delete('gbb_session') // supprime la session
-      ->condition('sess_id', $form_state['values']['table'])
+      ->condition('sess_id', $form_state['values']['table'], 'IN')
       ->execute();
-
-  db_merge('gbb_gmodu_plus')
-      ->key(array('co_modu'  => $form_state['values']['comodu'],
-                  'co_degre' => $form_state['values']['codegre']))
-      ->fields(array('date_modif_ts' => time()))
-      ->execute(); // met à jour la date de modification des sessions
 
   drupal_set_message(t('La session a été supprimée.'));
 }
@@ -578,11 +600,14 @@ function gbb_sess_formatr_dupliquer_submit($form, &$form_state) {
     return;
  }
   $query = db_select('gbb_session', 's') // récupère la session à cloner
-         ->fields('s',array('session_alert', 'co_resp', 'co_modu',
-                            'co_degre', 'co_lieu', 'date_ts', 'groupe',
-                            'horaires', 'typePaiement', 
-                            'dureeapayer', 'dureeprevue'))
-         ->condition('s.sess_id', $form_state['values']['table'], '=');
+         ->fields('s',array('co_resp', 'co_modu',
+                            'co_degre', 'co_lieu', 'date', 'groupe',
+                            'horaires', 'type_paiement', 
+                            'duree_a_payer', 'duree_prevue'))
+         ->condition('s.sess_id', $form_state['values']['table'], 'IN');
+  global $user;
+  $query ->addExpression($user->uid,'uid');
+  $query ->addExpression("'".date('Y-m-d H:i:s')."'",'date_modif');
 
   db_insert('gbb_session')->from($query)->execute(); // clone la session
 
@@ -590,82 +615,131 @@ function gbb_sess_formatr_dupliquer_submit($form, &$form_state) {
   $query ->addExpression('MAX(sess_id)', 'newid');
   $result = $query->execute()->fetchAssoc(); // recupère l'id du clone
   drupal_set_message(t('La session a été dupliquée.'.$query));
-  
+
   $url = url('module/' . $form_state['values']['codegre'] .
                    '/' . $form_state['values']['comodu'],
              array('fragment' => 'edit_session_anchor',
-                   'query'    => array('sess_id'  => $result['newid']), 
-                                       'absolute' => TRUE));
+                   'query'    => array('sess_id[' . $result['newid'] . ']'  =>
+                                                             $result['newid']),
+                   'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
 function gbb_sess_formatr_ajouter_submit($form, &$form_state) {
+  global $user;
   db_insert('gbb_session')
       ->fields(array( 'co_modu' => arg(2),
                       'co_degre' => arg(1),
-                      'date_ts' => time()  ))
+                      'uid' => $user->uid,
+                      'date_modif' => date('Y-m-d H:i:s'),
+                      'date' => date('Y-m-d H:i:s'),
+                      ))
       ->execute(); // ajoute une session toute neuve
 
   $query = db_select('gbb_session', 's');
   $query ->addExpression('MAX(sess_id)', 'newid');
   $result = $query->execute()->fetchAssoc(); // recupère l'id du clone
 
-  drupal_set_message(t('La session a été créée.'.$query));
+  drupal_set_message(t('Une nouvelle session a été créée. Vous pouvez l\'éditer'));
 
   $url = url('module/' . $form_state['values']['codegre'] .
                    '/' . $form_state['values']['comodu'],
              array('fragment' => 'edit_session_anchor',
-                   'query'    => array('sess_id'  => $result['newid']), 
-                                       'absolute' => TRUE));
+                   'query'    => array('sess_id[' . $result['newid'] . ']'  =>
+                                                             $result['newid']),
+                   'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
 function gbb_sess_formatr_modifier_submit($form, &$form_state) {
-  if (!isset($form_state['values']['table']) 
-        || $form_state['values']['table'] == 0) {
-    drupal_set_message(t('Choisissez la session à modifier.'),'error');
+  $nb_sess = 0;
+  foreach ($form_state['values']['table'] as $i) {
+    if ($i != 0) {
+        $nb_sess = $nb_sess + 1;
+        $id = $i;
+    };
+  };
+  if ($nb_sess != 1) {
+    drupal_set_message(t('Choisissez une unique session à modifier.'),'error');
     return;
  }
   $url = url('module/' . $form_state['values']['codegre'] .
                    '/' . $form_state['values']['comodu'],
              array('fragment' => 'edit_session_anchor',
                    'query' => array('sess_id' => $form_state['values']['table']),
-                                   'absolute' => TRUE));
+                   'absolute' => TRUE));
   $form_state['redirect'] = $url;
 }
 
 function gbb_sess_formatr_convoc_submit($form, &$form_state) {
-  if (is_array($form_state['values']['table'])) {
-    foreach ($form_state['values']['table'] as $i) {
+  foreach ($form_state['values']['table'] as $i) {
+    if ($i != 0 ) {
       db_merge('gbb_session') // Marque comme envoyée chaque session cochée
         ->key(array('sess_id'  => $i))
         ->fields(array('convoc_sent' => 1,
                        'session_alert' => 0))
         ->execute();
     }
-  } else {                    // boutons radion au lieu des cases à cocher
-      db_merge('gbb_session') // Marque comme envoyée la session choisie
-        ->key(array('sess_id'  => $form_state['values']['table']))
-        ->fields(array('convoc_sent' => 1,
-                       'session_alert' => 0))
-        ->execute();
   }
   drupal_set_message(t('Les convocs ont été marquées comme envoyées.'));
 }
+
+function gbb_sess_formatr_bascule_en_attente_submit($form, &$form_state) {
+  $url_query= array();
+  foreach ($form_state['values']['table'] as $i) {
+    if ($i != 0 ) { // on traite seulement les cases cochées
+      $query = db_select('gbb_session', 's')
+             ->condition('sess_id', $i)
+             ->fields('s', array('en_attente','convoc_sent','session_alert'));
+      $r = $query->execute()->fetchAssoc(); // recupère les infos de la session
+      if ($r['convoc_sent'] != 1  && $r['session_alert'] != 1) {
+          // Modifie le statut en_attente SSI convoc_sent = 0 = session_alert
+        db_merge('gbb_session')
+          ->key(array('sess_id'  => $i))
+          ->fields(array('en_attente' => ( ($r['en_attente'])? 0 : 1 ) ))
+          ->execute();
+      }
+    }
+    $url_query['sess_id[' . $i . ']'] =  $i;
+  };
+  drupal_set_message(t('Les convocs ont été basculées enAttente <-> enCours.'));
+  $url = url('module/' . $form_state['values']['codegre'] .
+                   '/' . $form_state['values']['comodu'],
+             array('fragment' => 'edit_session_anchor',
+                   'query' => $url_query,
+                   'absolute' => TRUE));
+  $form_state['redirect'] = $url;
+}
+
+
+
+
 
 /**
  * Formulaire de ** MODIF D'UNE SESSION ** particulière
  */
 function gbb_sess_edition($form, $form_state, $args) {
 
+  foreach ($_GET['sess_id'] as $i) { if ($i != 0) $id = $i; };
+
+  if ($id == 0) {
+    $form['f'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('PROBLEME(S) AVEC LA(LES) SESSION(S) CHOISIE(S)' .
+                  $r->sess_id ),
+      '#attributes' => array('class' => array('eeditsession')),
+    );
+  return $form;
+  }
+
   // On récupère les valeurs associées à la session pour peupler le formulaire
   $query = db_select('gbb_session', 's');
   $query ->leftjoin('gbb_gresp_dafor', 'r', 
                      'r.co_resp=s.co_resp AND r.co_degre=s.co_degre');
-  $query ->leftjoin('gbb_netab', 'e', 'e.co_lieu=s.co_lieu');
-  $query ->condition('sess_id', $_GET['sess_id'], '=')
-         ->fields('s', array('sess_id', 'date_ts', 'horaires', 'groupe',
-                             'dureeprevue', 'dureeapayer', 'typePaiement',
+  $query ->leftjoin('gbb_netab_dafor', 'e', 'e.co_lieu=s.co_lieu');
+  $query ->condition('sess_id', $id, '=')
+         ->fields('s', array('sess_id', 'date', 'horaires', 'groupe',
+                             'duree_prevue', 'duree_a_payer', 'type_paiement',
                              'session_alert', 'en_attente', 'convoc_sent'))
          ->fields('r', array('co_resp', 'nomu', 'prenom'))
          ->fields('e', array('co_lieu', 'denom_comp', 'sigle'));
@@ -673,21 +747,47 @@ function gbb_sess_edition($form, $form_state, $args) {
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Editer/Ajouter la session n°' . $r->sess_id . 
-                  '<a name="edit_session_anchor"></a>'),
+    '#title' => t('Editer/Ajouter la session n°' . $r->sess_id),
     '#attributes' => array('class' => array('eeditsession')),
   );
 
-  $form['f']['date_ts'] = array(
+/*
+  $form['f']['date'] = array(
     '#type' => 'date_popup', 
     '#title' => t('Date'),
-    '#default_value' => strftime('%Y-%m-%d %T', $r->date_ts),
+    '#default_value' => strftime('%Y-%m-%d %T', strtotime($r->date)),
     '#date_format' => 'y-m-d',
     '#date_label_position' => 'within', // see date_api_elements.inc
     '#date_year_range' => '-1:+1', // Optional, (-3:+3 years is the default).
     '#size' => 10,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',
+*/
+
+  drupal_add_library('system', 'ui.datepicker');
+  drupal_add_js('
+    jQuery(document).ready(function(){
+      jQuery( ".pickadate" ).datepicker({
+        dateFormat: "yy-mm-dd",
+        autoSize: true,
+        showButtonPanel: true,
+        firstDay: 1,
+        closeText: "Fermer",
+        currentText: "Aujourd\'hui",
+        numberOfMonths: 3,
+        dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
+        monthNames: ["Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"]
+      });
+    });', 'inline');
+  $form['f']['date'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Date',
+    '#default_value' => $r->date,
+    '#size' => 10,
+    '#required' => TRUE,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>&nbsp;',
+    '#attributes' => array('class' => array('pickadate')),
   );
 
   $form['f']['horaires'] = array(
@@ -710,10 +810,10 @@ function gbb_sess_edition($form, $form_state, $args) {
     '#suffix' => '</div>&nbsp;',
   );
 
-  $form['f']['dureeprevue'] = array(
+  $form['f']['duree_prevue'] = array(
     '#type' => 'textfield',
     '#title' => t('Durée prévue'),
-    '#default_value' => $r->dureeprevue,
+    '#default_value' => $r->duree_prevue,
     '#size' => 10,
     '#maxlength' => 6,
     '#element_validate' => array('element_validate_number'),
@@ -721,10 +821,10 @@ function gbb_sess_edition($form, $form_state, $args) {
     '#suffix' => '</div>&nbsp;',
   );
 
-  $form['f']['dureeapayer'] = array(
+  $form['f']['duree_a_payer'] = array(
     '#type' => 'textfield',
     '#title' => t('Duree à payer'),
-    '#default_value' => $r->dureeapayer,
+    '#default_value' => $r->duree_a_payer,
     '#size' => 10,
     '#maxlength' => 6,
     '#element_validate' => array('element_validate_number'),
@@ -732,7 +832,7 @@ function gbb_sess_edition($form, $form_state, $args) {
     '#suffix' => '</div>&nbsp;',
   );
 
-  $form['f']['typePaiement'] = array(
+  $form['f']['type_paiement'] = array(
     '#type' => 'select',
     '#title' => t('Type de paiement'),
     '#options' => array( 'VAC'  => t('VAC'),
@@ -741,24 +841,33 @@ function gbb_sess_edition($form, $form_state, $args) {
                          'DECH' => t('DECH'),
                          'HSE'  => t('HSE'),
                          'SF'   => t('SF'),  ),
-    '#default_value' => $r->typePaiement,
+    '#default_value' => $r->type_paiement,
     '#maxlength' => 4,
     '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+
+  // $default_value = ($r->convoc_sent)? 1 : $r->session_alert;
+  // mal compris par les conseillers
+  $form['f']['session_alert'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Alerte'),
-    '#default_value' => $default_value,
+    '#title' => theme('image', variable_get('_gbb_session_alert_icon')) .
+                t('Alerte'),
+    '#default_value' => $r->session_alert,
     '#prefix' => '<div class="inline">',
-    '#suffix' => '</div>&nbsp;',
-    '#states' => array(    // This #states rule limits visibility
-      'visible' => array(  // action to take.
-         ':input[name="en_attente"]' => array('checked' => FALSE),
-          ':input[name="convoc_sent"]' => array('checked' => FALSE), ),
+    '#suffix' => '</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+    '#states' => array(
+      'visible' => array( // action to take.
+        ':input[name="en_attente"]' => array('checked' => FALSE),
+      ),
     ),
   );
+
   if ($r->convoc_sent != 1 || user_access('gest_sessions gbb') ) {
     $form['f']['en_attente'] = array(
       '#type' => 'checkbox',
-      '#title' => t('En attente'),
+      '#title' => theme('image', variable_get('_gbb_en_attente_icon')) .
+                  t('En attente'),
       '#default_value' => $r->en_attente,
       '#prefix' => '<div class="inline">',
       '#suffix' => '</div>&nbsp;',
@@ -845,28 +954,37 @@ function gbb_sess_edition_submit($form, &$form_state) {
   $pattern = array ('/.*\(id:(.*)\)/');
   $co_resp = preg_replace($pattern, $replace,
                           $form_state['values']['formateur']);
+  $sess_id = $form_state['values']['sess_id'];
+  global $user;
   db_merge('gbb_session')
-      ->key(array('sess_id'  => $form_state['values']['sess_id'] ))
+      ->key(array('sess_id'  => $sess_id ))
       ->fields(array(
                      'co_modu'       => $form_state['values']['co_modu'],
+                     'co_degre'      => $form_state['values']['co_degre'],
                      'groupe'        => $form_state['values']['groupe'],
                      'convoc_sent'   => $form_state['values']['convoc_sent'],
                      'en_attente'    => $form_state['values']['en_attente'],
                      'session_alert' => $form_state['values']['session_alert'],
                      'horaires'      => $form_state['values']['horaires'],
-                     'dureeprevue'   => $form_state['values']['dureeprevue'],
-                     'dureeapayer'   => $form_state['values']['dureeapayer'],
-                     'typePaiement'  => $form_state['values']['typePaiement'],
+                     'duree_prevue'  => $form_state['values']['duree_prevue'],
+                     'duree_a_payer' => $form_state['values']['duree_a_payer'],
+                     'type_paiement' => $form_state['values']['type_paiement'],
+                     'date'          => $form_state['values']['date'],
                      'co_lieu'       => $co_lieu,
-                     'co_resp'       => $co_resp))
+                     'co_resp'       => $co_resp,
+                     'uid' => $user->uid,
+                     'date_modif' => date('Y-m-d H:i:s'),
+                     ))
       ->execute(); // met à jour la session
-  db_merge('gbb_gmodu_plus')
-      ->key(array('co_modu'  => $form_state['values']['co_modu'],
-                  'co_degre' => $form_state['values']['co_degre'] ))
-      ->fields(array('date_modif_ts' => time()))
-      ->execute(); // met à jour la date de modification des sessions
 
   drupal_set_message(t("Les modifications ont été prises en compte."));
+
+  $url = url('module/' . $form_state['values']['co_degre'] .
+                   '/' . $form_state['values']['co_modu'],
+             array('fragment' => 'edit_session_anchor',
+                   'query'    => array('sess_id[' . $sess_id . ']' => $sess_id),
+                   'absolute' => TRUE));
+  $form_state['redirect'] = $url;
 }
 
 /**
@@ -876,11 +994,11 @@ function gbb_convoc_form($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
   $query = db_select('gbb_gmodu_plus', 'mp');
-  $query ->rightjoin('gbb_gmodu', 'm', 
+  $query ->rightjoin('gbb_gmodu', 'm',
                      'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query ->condition('m.co_modu', arg(2), '=')
          ->condition('m.co_degre', arg(1), '=')
-         ->fields('mp', array('convoc_info_off', 'convoc_info_on', 
+         ->fields('mp', array('convoc_info_off', 'convoc_info_on',
                               'module_printed', 'module_alert'    ));
   $r = $query->execute()->fetchAssoc();
 
@@ -890,25 +1008,20 @@ function gbb_convoc_form($form, &$form_state) {
     '#attributes' => array('class' => array('collapsible', 'convoc')),
   );
 
-  $form['f']['envoyer']['#markup']= '<div class="flright">' . 
+  $form['f']['envoyer']['#markup']= '<div class="flright">' .
     theme('image', variable_get('_gbb_disk_icon')) . '</div>';
-
-        //'path' => ($r->module_printed)? 
-        //drupal_get_path('module', 'gaiabb') . '/images/convoc_printed.gif' : 
-        //drupal_get_path('module', 'gaiabb') . '/images/blank.gif',
-
 
   if (user_access('gest_convocs gbb')) {
     $form['f']['module_printed'] = array(
       '#type' => 'checkbox',
-      '#title' => theme('image', variable_get('_gbb_print_icon')) . 
+      '#title' => theme('image', variable_get('_gbb_print_icon')) .
                   t('Imprimé'),
       '#default_value' => $r['module_printed'],
       '#prefix' => '<div class="inline">',
       '#suffix' => '</div>',
       '#ajax' => array(
         'callback' => 'gbb_convoc_form_module_printed_submit',
-        'progress' => array('type' => 'throbber', 
+        'progress' => array('type' => 'throbber',
                             'message' => 'Enregistrement...')),
     );
   }
@@ -919,12 +1032,12 @@ function gbb_convoc_form($form, &$form_state) {
 
   $form['f']['module_alert'] = array(
     '#type' => 'checkbox',
-    '#title' => theme('image', variable_get('_gbb_module_alert_icon')) . 
+    '#title' => theme('image', variable_get('_gbb_module_alert_icon')) .
                 t('Alerte'),
     '#default_value' => $r['module_alert'],
     '#ajax' => array(
       'callback' => 'gbb_convoc_form_module_alert_submit',
-      'progress' => array('type' => 'throbber', 
+      'progress' => array('type' => 'throbber',
                           'message' => 'Enregistrement...')),
   );
 
@@ -1239,7 +1352,7 @@ function gbb_DA_date_depot_form_submit(&$form, &$form_state) {
 function _gbb_autocompetab($string) {
 
   $matches = array();
-  $result = db_select('gbb_netab', 'c')
+  $result = db_select('gbb_netab_dafor', 'c')
     ->fields('c', array('co_lieu', 'denom_comp', 'sigle'))
     ->condition('denom_comp', '%' . db_like($string) . '%', 'LIKE')
     ->range(0, 10)

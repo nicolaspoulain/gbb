@@ -115,31 +115,31 @@ function gbb_menu() {
   // TODO : décrire
   $items['autocomp/etablissement'] = array(
         'page callback' => '_gbb_autocompetab',
-        'access arguments' => array('access gbb'),
+        'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK
   );
   // TODO : décrire
   $items['autocomp/formateur'] = array(
         'page callback' => '_gbb_autocompform',
-        'access arguments' => array('access gbb'),
+        'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK
   );
   // TODO : décrire
   $items['autocomp/formateur2'] = array(
         'page callback' => '_gbb_autocompformatr2',
-        'access arguments' => array('access gbb'),
+        'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK
   );
   // TODO : décrire
   $items['autocomp/responsable'] = array(
         'page callback' => '_gbb_autocompresp',
-        'access arguments' => array('access gbb'),
+        'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK
   );
   // TODO : décrire
   $items['autocomp/stage'] = array(
         'page callback' => '_gbb_autocompstage',
-        'access arguments' => array('access gbb'),
+        'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK
   );
 

@@ -113,7 +113,8 @@ function gbb_infos_general($args) {
   $paf_ou_fil = ($r->co_camp == 'BS')? 'fil' : 'paf';
   $ouvert_ou_ferme = ($r->co_andi == 'Fe')? 'Ferme' : '';
   $rows[] = array( 
-              array('data' => $r->id_disp . ' ' . $r->libd,
+              array('data' => strtoupper($paf_ou_fil) . '&nbsp;-&nbsp;' . 
+                              $r->id_disp . ' ' . $r->libd,
                     'class' => array($paf_ou_fil, $ouvert_ou_ferme),
                     'colspan' => '2')
             );

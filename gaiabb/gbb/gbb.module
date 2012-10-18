@@ -111,6 +111,16 @@ function gbb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+  // Conteneur pour le affichages de views
+  // dans un quicktab
+
+  $items['vue_rapports'] = array(
+        'title' => '',
+        'page callback' => 'gbb_rapports_view',
+        'access arguments' => array('stable gbb'),
+        'type' => MENU_CALLBACK,
+  );
+
   // Pages pour autocomplete AJAX
   // TODO : décrire
   $items['autocomp/etablissement'] = array(
@@ -146,6 +156,11 @@ function gbb_menu() {
   return $items;
 
 }
+
+function gbb_rapports_view($args = 'NaN') {
+  return render(t(""));
+}
+
 
 variable_set('_gbb_session_alert_icon', array(
   'path' => drupal_get_path('module', 'gbb') . '/images/flag_red.png',

@@ -267,7 +267,7 @@ function gbb_views_data() {
   );
   $data['gbb_gresp_dafor']['nomu'] = array(
             'title' => t('nomu'),
-            'help' => t('Nom du responsable'),
+            'help' => t('Nom du formateur'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,
@@ -278,7 +278,29 @@ function gbb_views_data() {
   );
   $data['gbb_gresp_dafor']['prenom'] = array(
             'title' => t('prenom'),
-            'help' => t('Prénom du responsable'),
+            'help' => t('Prénom du formateur'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gresp_dafor']['tel'] = array(
+            'title' => t('tel'),
+            'help' => t('Télephone du formateur'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gresp_dafor']['mel'] = array(
+            'title' => t('mel'),
+            'help' => t('Mail du formateur'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,

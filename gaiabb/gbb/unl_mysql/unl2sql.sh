@@ -2,7 +2,7 @@
 # usage : $ ./UNLcleaner FILE N
 # Creation du fichier FILE.SQL depuis FILE.unl possedant N champs
 
-HOME="/var/www/drupal-7.14/sites/default/modules/gaiabb/unl_mysql"
+HOME="/var/www/gbbdr/sites/default/modules/gbb/unl_mysql"
 
 # Conversion UTF8 -> latin1
 cd $HOME && iconv -f UTF-8 -t ISO-8859-15 $1.unl -o $1.unl_cleaned

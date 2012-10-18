@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 opt=`getopt :nspgmre: $*`; statut=$?
 # Si une option invalide a été trouvée
 echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-p Put FTP des sauvegardes] [-g getFPT] [-m mysqlInjections] [-r rapport par email]"
 
-HOME="/var/www/drupal-7.14/sites/default/modules/gaiabb/unl_mysql"
-BACKUPANDMIGRATE="/var/www/drupal-7.14/sites/default/files/private/backup_migrate/*"
-BDD="drup"
+HOME="/var/www/gbbdr/sites/default/modules/gbb/unl_mysql"
+BACKUPANDMIGRATE="/var/www/gbbdr/sites/default/files/private/backup_migrate/*"
+BDD="gbbdr"
 source $HOME/BB-include.sh
 
 GDISP="gdisp"
@@ -38,7 +38,7 @@ case "$1" in
   -s) ## **S**auvegardes locales (drupal-jour.tgz est un backup complet)
 	echo "S_auvegardes"
 	/usr/bin/mysqldump --user=root --password=$BDDPW $BDD > $HOME/../$BDD-$jour.sql
-	/bin/tar czfv $HOME/drupal-$jour.tgz /var/www/drupal-7.14/ --exclude=$HOME --exclude=$BACKUPANDMIGRATE > /dev/null
+	/bin/tar czfv $HOME/drupal-$jour.tgz $DIR --exclude=$HOME --exclude=$BACKUPANDMIGRATE > /dev/null
 	mv $HOME/../$BDD-$jour.sql $HOME/
     shift;;
   -p) ## upload par ftp**P**ut du backup quotidien, et hebdo

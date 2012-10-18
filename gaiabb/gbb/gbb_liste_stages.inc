@@ -438,7 +438,7 @@ function gbb_liste_stages_liste($args) {
     $nb_pj = $qpj->execute()->rowCount();
 
     $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
-    $options_co_modu = array('attributes' => 
+    $options_co_modu = array('attributes' =>
                                 array('class' => array($m_ouvert_ou_ferme),
                                       'id' => 'cool-id'         ),
                              'html' => FALSE,
@@ -448,50 +448,43 @@ function gbb_liste_stages_liste($args) {
     $libd_class = ($r->co_camp == 'BS')? 'fil' : 'paf';
     $libd_class = ($r->libd == $libd_precedent)? "gris" : $libd_class;
     // Les icônes à afficher
-    $session_alert = ($nb_sa == 0)? '' : 
+    $session_alert = ($nb_sa == 0)? '' :
         theme('image', variable_get('_gbb_session_alert_icon')) .
                        '<span class="nb_sa">' . $nb_sa . '</span>'.
                        '<span class="invisible">></span> ';
     $NOT_en_attente = ($nb_nea == 0)? '' :
-        theme('image', variable_get('_gbb_not_en_attente_icon')) . 
+        theme('image', variable_get('_gbb_not_en_attente_icon')) .
                        '<span class="nb_sa">' . $nb_nea . '</span>'.
                        '<span class="invisible">></span> ';
     $en_attente = ($nb_ea == 0)? '' :
-        theme('image', variable_get('_gbb_en_attente_icon')) . 
+        theme('image', variable_get('_gbb_en_attente_icon')) .
                        '<span class="nb_sa">' . $nb_ea . '</span>';
-    $voirEnCours = (isset($_GET['voir_encours']))? (($_GET['voir_encours']==1)? TRUE : FALSE) : FALSE;
-    $module_printed = ($r->module_printed && $voirEnCours)? 
+    $voirEnCours = (isset($_GET['voir_encours']))?
+                       (($_GET['voir_encours']==1)? TRUE : FALSE) : FALSE;
+    $module_printed = ($r->module_printed && $voirEnCours)?
         theme('image', variable_get('_gbb_print_icon')) . ' ' : '';
     $prioritaire = (!$r->prioritaire)? '' :
-        theme('image', variable_get('_gbb_prioritaire_icon')) . 
+        theme('image', variable_get('_gbb_prioritaire_icon')) .
                        '<span class="invisible">!</span> ';
     $convoc_sent = ($nb_s == 0)? '' :
-        theme('image', variable_get('_gbb_convoc_sent_icon')) . 
+        theme('image', variable_get('_gbb_convoc_sent_icon')) .
                        '<span class="nb_sa">' . $nb_s . '</span>';
     $attachement = ($nb_pj ==0)? '' :
-        theme('image', variable_get('_gbb_attachement_icon')) . 
+        theme('image', variable_get('_gbb_attachement_icon')) .
                        '<span class="nb_pj">' . $nb_pj . '</span>';
-    $plus  = ($r->organisation == '')? '' : 
-        '&nbsp;' . 
+    $plus  = ($r->organisation == '')? '' :
+        '&nbsp;' .
         theme('image', variable_get('_gbb_comment_icon'));
 
-    $variables = array(
-        'path' => drupal_get_path('module', 'gbb') . '/images/timer_green.png',
-        'alt' => 'Timer',
-        'title' => t('Première date dans plus de 15 jours'),
-        'attributes' => array('class' => 'some-img', 'id' => 'my-img'));
+    $timer = theme('image', variable_get('_gbb_timer_green_icon'));
     if (strtotime($dateD) < time()) { // le premier jour dépassé
-          $variables['path']=drupal_get_path('module', 'gbb') . '/images/timer_red.png';
-          $variables['title']=t('Première date dépassée');
+      $timer = theme('image', variable_get('_gbb_timer_red_icon'));
     } elseif(strtotime($dateD) < time() + 1296000) { // le premier jour est dans moins de 15 jours.
-          $variables['path']=drupal_get_path('module', 'gbb') . '/images/timer_orange.png';
-          $variables['title']=t('Première date dans moins de 15 jours');
+      $timer = theme('image', variable_get('_gbb_timer_orange_icon'));
     };
     if (strtotime($dateF) < time()) { // le dernier jour jour dépassé donc formation finie
-        $variables['path']=drupal_get_path('module', 'gaiabb') . '/images/timer_end.png';
-        $variables['title']=t('Formation terminée');
+      $timer = theme('image', variable_get('_gbb_timer_end_icon'));
     }
-    $timer = theme('image', $variables);
 
     if ($dateD > 0) {
       if ($dateD==$dateF) {

@@ -237,7 +237,7 @@ function gbb_organis_form($form, &$form_state) {
 
 /**
  * ----> Submit
- */
+*/
 function gbb_organis_form_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
@@ -249,7 +249,7 @@ function gbb_organis_form_submit(&$form, &$form_state) {
 
 /**
  * Tableau ** CONVOCATIONS STAGIAIRES ** pour le service adiministratif
- */
+*/
 function gbb_sess_stagiaire($args) {
 
   if ($args == 'NaN') return "";
@@ -278,11 +278,12 @@ function gbb_sess_stagiaire($args) {
   );
   setlocale(LC_TIME, 'fr_FR');
   foreach ($result as $r) {
-    $rows[] = array( 
-                array('data' => utf8_encode(strftime('%a %e %h %Y ', strtotime($r->date) ))),
+    $rows[] = array(
+                array('data' => utf8_encode(strftime('%a %e %h %Y ',
+                                            strtotime($r->date) ))  ),
                 array('data' => $r->horaires),
                 array('data' => $r->groupe),
-                array('data' => $r->denom_princ . ' ' . 
+                array('data' => $r->denom_princ . ' ' .
                                 $r->denom_comp . ' (' . $r->sigle . ')'),
                 array('data' => $r->co_lieu),
     );
@@ -293,7 +294,7 @@ function gbb_sess_stagiaire($args) {
 
 /**
  * Formulaire des ** ATTACHEMENTS **
- */
+*/
 function gbb_attachements($form, &$form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
@@ -582,7 +583,7 @@ function gbb_sess_formatr($form, $form_state, $args) {
  * ----> Submit
  */
 function gbb_sess_formatr_supprimer_submit($form, &$form_state) {
-  if (!isset($form_state['values']['table']) 
+  if (!isset($form_state['values']['table'])
         || $form_state['values']['table'] == 0) {
     drupal_set_message(t('Choisissez la session à supprimer.'),'error');
     return;
@@ -595,15 +596,15 @@ function gbb_sess_formatr_supprimer_submit($form, &$form_state) {
 }
 
 function gbb_sess_formatr_dupliquer_submit($form, &$form_state) {
-  if (!isset($form_state['values']['table']) 
+  if (!isset($form_state['values']['table'])
         || $form_state['values']['table'] == 0) {
     drupal_set_message(t('Choisissez la session à dupliquer.'),'error');
     return;
  }
   $query = db_select('gbb_session', 's') // récupère la session à cloner
          ->fields('s',array('co_resp', 'co_modu',
-                            'co_degre', 'co_lieu', 'date', 'groupe',
-                            'horaires', 'type_paiement', 
+                            'co_degre', 'co_lieu', 'date', 'date_ts',
+                            'groupe', 'horaires', 'type_paiement',
                             'duree_a_payer', 'duree_prevue'))
          ->condition('s.sess_id', $form_state['values']['table'], 'IN');
   global $user;
@@ -634,6 +635,7 @@ function gbb_sess_formatr_ajouter_submit($form, &$form_state) {
                       'uid' => $user->uid,
                       'date_modif' => date('Y-m-d H:i:s'),
                       'date' => date('Y-m-d H:i:s'),
+                      'date_ts' => strtotime(date('Y-m-d H:i:s')),
                       ))
       ->execute(); // ajoute une session toute neuve
 
@@ -960,22 +962,23 @@ function gbb_sess_edition_submit($form, &$form_state) {
   db_merge('gbb_session')
       ->key(array('sess_id'  => $sess_id ))
       ->fields(array(
-                     'co_modu'       => $form_state['values']['co_modu'],
-                     'co_degre'      => $form_state['values']['co_degre'],
-                     'groupe'        => $form_state['values']['groupe'],
-                     'convoc_sent'   => $form_state['values']['convoc_sent'],
-                     'en_attente'    => $form_state['values']['en_attente'],
-                     'session_alert' => $form_state['values']['session_alert'],
-                     'horaires'      => $form_state['values']['horaires'],
-                     'duree_prevue'  => $form_state['values']['duree_prevue'],
-                     'duree_a_payer' => $form_state['values']['duree_a_payer'],
-                     'type_paiement' => $form_state['values']['type_paiement'],
-                     'date'          => $form_state['values']['date'],
-                     'co_lieu'       => $co_lieu,
-                     'co_resp'       => $co_resp,
-                     'uid' => $user->uid,
-                     'date_modif' => date('Y-m-d H:i:s'),
-                     ))
+                   'co_modu'       => $form_state['values']['co_modu'],
+                   'co_degre'      => $form_state['values']['co_degre'],
+                   'groupe'        => $form_state['values']['groupe'],
+                   'convoc_sent'   => $form_state['values']['convoc_sent'],
+                   'en_attente'    => $form_state['values']['en_attente'],
+                   'session_alert' => $form_state['values']['session_alert'],
+                   'horaires'      => $form_state['values']['horaires'],
+                   'duree_prevue'  => $form_state['values']['duree_prevue'],
+                   'duree_a_payer' => $form_state['values']['duree_a_payer'],
+                   'type_paiement' => $form_state['values']['type_paiement'],
+                   'date'          => $form_state['values']['date'],
+                   'date_ts'       => strtotime($form_state['values']['date']),
+                   'co_lieu'       => $co_lieu,
+                   'co_resp'       => $co_resp,
+                   'uid' => $user->uid,
+                   'date_modif' => date('Y-m-d H:i:s'),
+                  ))
       ->execute(); // met à jour la session
 
   drupal_set_message(t("Les modifications ont été prises en compte."));

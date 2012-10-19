@@ -268,68 +268,6 @@ function gbb_formateur_fiche_submit($form, &$form_state) {
 function gbb_formateur_stages($args) {
 
   if ($args == 'NaN') return "Vide";
-  $liste = array();
-
-  $query = db_select('gbb_session', 's');
-  $query ->leftjoin('gbb_gresp_dafor', 'r',  'r.co_resp = s.co_resp');
-  $query ->leftjoin('gbb_gmodu', 'm', 
-                    'm.co_modu = s.co_modu AND m.co_degre = s.co_degre'
-           );
-  $query ->leftjoin('gbb_gdisp', 'd', 
-                    'd.co_disp = m.co_disp AND d.co_degre = s.co_degre'
-           );
-  $query ->condition('s.co_resp', arg(1), '=')
-         ->condition('s.co_degre', '2', '=')
-         ->condition('id_disp', db_like('12') . '%', 'LIKE')
-         ->fields('d', array('id_disp',))
-         ->fields('m', array('co_modu',
-                             'co_degre',
-                             'lib',
-                              ))
-         ->groupBy('co_modu')
-         ->distinct();
-  $query ->addExpression('SUM(dureeprevue)', 'sumprevue');
-  $query ->addExpression('SUM(dureeapayer)', 'sumapayer');
-  $result = $query->execute();
-
-  $header = array(
-               'col0' => array('data' => t('Code')), 
-               'col1' => array('data' => t('Titre du module')), 
-               'col2' => array('data' => t('Prévues')), 
-               'col3' => array('data' => t('À payer')), 
-               'col4' => array('data' => t('Fiche d\'évaluation')), 
-            );
-
-  foreach ($result as $r) {
-    $query = db_select('gbb_session', 's');
-    $query ->condition('s.co_modu', $r->co_modu, '=')
-           ->condition('s.co_degre', '2', '=')
-           ->fields('s', array('groupe'))
-           ->distinct();
-    $gr = $query->execute();
-    $items = array();
-    foreach ($gr as $g) {
-      $items[] = l( t('Groupe ') . $g->groupe,
-                    'evaluation/2/' . $r->co_modu . '/' . $g->groupe,
-                    array('attributes' => array('html' => FALSE))
-                 );
-    };
-    $groupes = theme('item_list', array('items' => $items));
-
-    $rows = array();
-    $rows[] = array( 
-                'col0' => array('data' => l( $r->id_disp . ' / ' . $r->co_modu,
-                                             'gest_module/2/' . $r->co_modu,
-                                             array('attributes' => array('html' => FALSE))
-                                          )
-                          ),
-                'col1' => array('data' => $r->lib),
-                'col2' => array('data' => $r->sumprevue),
-                'col3' => array('data' => $r->sumapayer),
-                'col4' => array('data' => $groupes),
-              );
-  }
-  if (!isset($rows)) return "Pas de stage";
 
   $query = db_select('gbb_session', 's');
   $query ->leftjoin('gbb_gmodu', 'm', 
@@ -344,8 +282,8 @@ function gbb_formateur_stages($args) {
          ->condition('id_disp', db_like('12') . '%', 'LIKE')
          ->fields('r', array('decharge',))
          ->distinct();
-  $query ->addExpression('SUM(dureeprevue)', 'sumprevue');
-  $query ->addExpression('SUM(dureeapayer)', 'sumapayer');
+  $query ->addExpression('SUM(duree_prevue)', 'sumprevue');
+  $query ->addExpression('SUM(duree_a_payer)', 'sumapayer');
   $r = $query->execute()->fetchObject();
 
   //http://code.google.com/p/drupal-chart-api/wiki/Examples
@@ -375,8 +313,7 @@ function gbb_formateur_stages($args) {
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
       chart_mixed_axis_label(t('Déch.('.$dech.'h)'));
 
-    return theme('chart', array('chart' => $chart)) . 
-           theme('table', array('header' => $header, 'rows' => $rows));
+    return theme('chart', array('chart' => $chart));
   };
 }
 

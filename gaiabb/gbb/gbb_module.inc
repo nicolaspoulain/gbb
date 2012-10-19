@@ -53,6 +53,10 @@ function gbb_module_view($args = 'NaN') {
                                );
   $build['attachements'] = render(drupal_get_form('gbb_attachements', $args));
   $build['sess_formatr'] = render(drupal_get_form('gbb_sess_formatr', $args));
+  if (user_access('unstable gbb')) {
+    $build['sess_formatr_toggle'] = gbb_sess_formatr_toggle($args);
+  }
+
   if (isset($_GET['sess_id'])) {
     $build['sess_edition'] = render(drupal_get_form('gbb_sess_edition', $args));
   };
@@ -578,6 +582,364 @@ function gbb_sess_formatr($form, $form_state, $args) {
   }
   return $form;
 }
+
+
+/**
+ * Formulaire du ** TABLEAU DES SESSIONS **
+ */
+function gbb_sess_formatr_toggle($args) {
+
+  $header = array(
+    'date' => t('Date'),
+    'icone' => '',
+    'horaires' => t('Horaires'),
+    'lieu' => t('Lieu'),
+    'groupe' => t('Gr'),
+    'formateur' => t('Formateur'),
+    'duree_prevue' => t('Prévues'),
+    'duree_a_payer' => t('À payer'),
+    'TypePaiement' => t('Type pmt'),
+  );
+
+  $query = db_select('gbb_session', 's');
+  $query ->leftjoin('gbb_gmodu_plus', 'mp', 
+                    'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
+  $query ->leftjoin('gbb_gresp_dafor', 'r', 
+                    'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
+  $query ->leftjoin('gbb_netab_dafor', 'e',
+                    'e.co_lieu = s.co_lieu');
+  $query ->leftjoin('users', 'u',
+                    'u.uid = s.uid');
+  $query ->orderBy('groupe', 'ASC');
+  $query ->orderBy('date', 'ASC');
+  $query ->orderBy('nomu', 'ASC');
+  $query ->condition('mp.co_modu', arg(2), '=')
+         ->condition('mp.co_degre', arg(1), '=')
+         ->fields('s', array('sess_id', 'date',
+                             'duree_prevue','duree_a_payer', 'type_paiement',
+                             'en_attente', 'convoc_sent', 'session_alert',
+                             'horaires', 'co_lieu', 'co_resp', 'groupe',
+                             'date_modif'))
+         ->fields('r', array('prenom', 'nomu', 'co_resp'))
+         ->fields('u', array('name'))
+         ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
+  // Une condition supplémentaire pour les administratifs
+  // afin que les stages en attente ne leur apparaissent pas.
+  if (user_access('gest_convocs gbb') && !user_access('gest_sessions gbb')) {
+    $query->condition('s.en_attente', 0, '=');
+  }
+  $result = $query->execute();
+  $nb_sessions = $result->rowCount();
+
+  $rows = array();
+  foreach ($result as $r) {
+    $d = render(drupal_get_form('gbb_mini_date_form', $r->date, $r->sess_id)) ;
+    $s = render(drupal_get_form('gbb_mini_status_form', $r->en_attente, $r->sess_id)) ;
+    $h = render(drupal_get_form('gbb_mini_horaires_form', $r->horaires, $r->sess_id)) ;
+    $lieu = "$r->sigle $r->denom_comp (rne:$r->co_lieu)";
+    $l = render(drupal_get_form('gbb_mini_lieu_form', $lieu, $r->sess_id));
+//    $l.= l( theme('image', variable_get('_gbb_etab_edit_icon')),
+//                  'etablissement/' . $r->co_lieu,
+//                   array('attributes' => array('class' => 'anchor-class'),
+//                       'html' => TRUE )
+//       );
+    $formatr = "$r->nomu $r->prenom (id:$r->co_resp)";
+    $f = render(drupal_get_form('gbb_mini_formatr_form', $formatr, $r->sess_id));
+//    $f.= l( theme('image', variable_get('_gbb_user_edit_icon')),
+//                  'formateur/' . $r->co_resp,
+//                   array('attributes' => array('class' => 'anchor-class'),
+//                         'html' => TRUE )
+//         );
+    $g = render(drupal_get_form('gbb_mini_groupe_form', $r->groupe, $r->sess_id)) ;
+    $a = render(drupal_get_form('gbb_mini_duree_prevue_form', $r->duree_prevue, $r->sess_id)) ;
+    $p = render(drupal_get_form('gbb_mini_duree_a_payer_form', $r->duree_a_payer, $r->sess_id)) ;
+    $t = render(drupal_get_form('gbb_mini_type_paiement_form', $r->type_paiement, $r->sess_id)) ;
+
+    $rows[] = array(
+              array('data' => $d),
+              array('data' => $s),
+              array('data' => $h),
+              array('data' => $l),
+              array('data' => $g),
+              array('data' => $f),
+              array('data' => $a),
+              array('data' => $p),
+              array('data' => $t),
+              );
+  }
+  return theme('table', array('rows' => $rows));
+}
+
+function gbb_mini_date_form($form, &$form_state, $date, $sess_id) {
+  drupal_add_library('system', 'ui.datepicker');
+  drupal_add_js('
+    jQuery(document).ready(function(){
+      jQuery( ".pickadate" ).datepicker({
+        dateFormat: "yy-mm-dd",
+        autoSize: true,
+        showButtonPanel: true,
+        firstDay: 1,
+        closeText: "Fermer",
+        currentText: "Aujourd\'hui",
+        numberOfMonths: 3,
+        dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
+        monthNames: ["Janvier","Fevrier","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"]
+      });
+    });', 'inline');
+  $form['f']['date'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $date,
+    '#size' => 8,
+    '#ajax' => array(
+      'callback' => 'gbb_mini_horaires_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),
+    '#attributes' => array('class' => array('pickadate')),
+  );
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_date_form_submit($form, &$form_state) {
+  db_merge('gbb_session')
+    ->key(array('sess_id' => $form_state['values']['sess_id']))
+    ->fields(array('date'    => $form_state['values']['date'],
+                   'date_ts' => strtotime($form_state['values']['date']),))
+    ->execute();
+}
+
+
+
+
+function gbb_mini_status_form($form, &$form_state, $en_attente, $sess_id) {
+  $form['status'] = array(
+    '#type' => 'button',
+    '#id' => 'status'.$sess_id,
+    '#default_value' => '»',
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+    '#ajax' => array(
+       'callback' => 'my_ajax_callback',
+       'wrapper' => 'my_ajax_wrapper' . $sess_id,
+    ),
+  );
+  $form['display'] = array(
+    '#prefix' => '<div id="my_ajax_wrapper'. $sess_id .'">',
+    '#suffix' => '</div>',
+  );
+  if(isset($form_state['values']['status'])) {
+    $en_attente = $form_state['values']['en_attente'] ;
+  };
+
+  if ($en_attente == 1 ) {
+    $form['display']['#markup'] = theme('image', variable_get('_gbb_en_attente_icon'));
+  } else {
+    $form['display']['#markup'] = theme('image', variable_get('_gbb_not_en_attente_icon'));
+  }
+  $form['f']['en_attente']  = array( '#type' => 'hidden',
+                                 '#value' => $en_attente );
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function my_ajax_callback(&$form, &$form_state){
+  if ($form_state['values']['en_attente'] == 0 ) {
+    $form_state['values']['en_attente'] = 1;
+  }
+  if ($form_state['values']['en_attente'] == 1 ) {
+    $form_state['values']['en_attente'] = 0;
+  }
+  return $form['display'];
+}
+
+/*
+function gbb_mini_status_form($form, &$form_state, $horaires, $sess_id) {
+  $form['status'] = array(
+    '#type' => 'button',
+    '#id' => 'status'.$sess_id,
+    '#default_value' => $sess_id,
+    '#prefix' => '',
+    '#suffix' => '',
+    '#ajax' => array(
+       'callback' => 'my_ajax_callback',
+       'wrapper' => 'my_ajax_wrapper' . $sess_id,
+    ),
+  );
+  $form['display'] = array(
+    '#prefix' => '<div id="my_ajax_wrapper'. $sess_id .'">',
+    '#suffix' => '</div>',
+  );
+  if(!isset($form_state['values']['status'])){
+    $form['display']['#markup'] = '<p>' . t('NO') . '</p>';
+  } else {
+    $form['display']['#markup'] = '<p>' . t('YES') . $form_state['values']['status'] . '</p>';
+  }
+  return $form;
+}
+function my_ajax_callback(&$form, &$form_state){
+  return $form['display'];
+}
+*/
+
+function gbb_mini_horaires_form($form, &$form_state, $horaires, $sess_id) {
+  $form['f']['horaires'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $horaires,
+    '#size' => 10,
+    '#maxlength' => 50,
+    '#ajax' => array(
+      'callback' => 'gbb_mini_horaires_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_horaires_form_submit($form, &$form_state) {
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('horaires' => $form_state['values']['horaires'],))
+    ->execute();
+}
+
+function gbb_mini_lieu_form($form, &$form_state, $lieu, $sess_id) {
+  $form['f']['lieu'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $lieu,
+    '#size' => 30,
+    '#maxlength' => 50,
+    '#autocomplete_path' => 'autocomp/etablissement',
+    '#ajax' => array(
+      'callback' => 'gbb_mini_lieu_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_lieu_form_submit($form, &$form_state) {
+  $replace = array ('\1');
+  $pattern = array ('/.*\(rne:(.*)\)/');
+  $co_lieu = preg_replace($pattern, $replace,
+                          $form_state['values']['lieu']);
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('co_lieu' => $co_lieu,))
+    ->execute();
+}
+
+function gbb_mini_groupe_form($form, &$form_state, $groupe, $sess_id) {
+  $form['f']['groupe'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $groupe,
+    '#size' => 1,
+    '#maxlength' => 2,
+    '#element_validate' => array('element_validate_integer_positive'),
+    '#ajax' => array(
+      'callback' => 'gbb_mini_horaires_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_groupe_form_submit($form, &$form_state) {
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('groupe' => $form_state['values']['groupe'],))
+    ->execute();
+}
+
+function gbb_mini_formatr_form($form, &$form_state, $formatr, $sess_id) {
+  $form['f']['formatr'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $formatr,
+    '#size' => 20,
+    '#autocomplete_path' => 'autocomp/formateur',
+    '#maxlength' => 50,
+    '#ajax' => array(
+      'callback' => 'gbb_mini_formatr_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_formatr_form_submit($form, &$form_state) {
+  $replace = array ('\1');
+  $pattern = array ('/.*\(id:(.*)\)/');
+  $co_resp = preg_replace($pattern, $replace,
+                          $form_state['values']['formatr']);
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('co_resp' => $co_resp,))
+    ->execute();
+}
+
+function gbb_mini_duree_prevue_form($form, &$form_state, $duree_prevue, $sess_id) {
+  $form['f']['duree_prevue'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $duree_prevue,
+    '#size' => 4,
+    '#maxlength' => 6,
+    '#element_validate' => array('element_validate_number'),
+    '#ajax' => array(
+      'callback' => 'gbb_mini_duree_prevue_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_duree_prevue_form_submit($form, &$form_state) {
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('duree_prevue' => $form_state['values']['duree_prevue'],))
+    ->execute();
+}
+
+function gbb_mini_duree_a_payer_form($form, &$form_state, $duree_a_payer, $sess_id) {
+  $form['f']['duree_a_payer'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $duree_a_payer,
+    '#size' => 4,
+    '#maxlength' => 6,
+    '#element_validate' => array('element_validate_number'),
+    '#ajax' => array(
+      'callback' => 'gbb_mini_duree_a_payer_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_duree_a_payer_form_submit($form, &$form_state) {
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('duree_a_payer' => $form_state['values']['duree_a_payer'],))
+    ->execute();
+}
+
+function gbb_mini_type_paiement_form($form, &$form_state, $type_paiement, $sess_id) {
+  $form['f']['type_paiement'] = array(
+    '#type' => 'select',
+    '#options' => array( 'VAC'  => t('VAC'),
+                         'CONV' => t('CONV'),
+                         'BDC'  => t('BDC'),
+                         'DECH' => t('DECH'),
+                         'HSE'  => t('HSE'),
+                         'SF'   => t('SF'),  ),
+    '#default_value' => $type_paiement,
+    '#maxlength' => 4,
+    '#ajax' => array(
+      'callback' => 'gbb_mini_type_paiement_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  $form['f']['sess_id']  = array( '#type' => 'hidden',
+                                 '#value' => $sess_id );
+  return $form;
+}
+function gbb_mini_type_paiement_form_submit($form, &$form_state) {
+  db_merge('gbb_session')
+    ->key(array('sess_id'  => $form_state['values']['sess_id']))
+    ->fields(array('type_paiement' => $form_state['values']['type_paiement'],))
+    ->execute();
+}
+
+
+
 
 /**
  * ----> Submit

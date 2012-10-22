@@ -56,6 +56,40 @@ function gbb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_string'),
             'argument' => array('handler' => 'views_handler_argument_string'),
   );
+  $data['gbb_gmodu']['cout_p_fonc'] = array(
+            'title' => t('cout_p_fonc'),
+            'help' => t('Coût prévisionnel de fonctionnement par groupe'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+             ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu']['cout_p_prest'] = array(
+            'title' => t('cout_p_prest'),
+            'help' => t('Coût prévisionnel de prestation par groupe'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+             ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu']['cout_p_excep'] = array(
+            'title' => t('cout_p_excep'),
+            'help' => t('Coût prévisionnel des frais exceptionnels'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+             ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
 
   // --------------------------------------------------------
   // gbb_session
@@ -136,7 +170,7 @@ function gbb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_numeric'),
             'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
-    $data['gbb_session']['duree_prevue'] = array(
+  $data['gbb_session']['duree_prevue'] = array(
             'title' => t('duree_prevue'),
             'help' => t('Durée prévue'),
             'field' => array(
@@ -264,6 +298,17 @@ function gbb_views_data() {
                 'extra' => 'gbb_gresp_dafor.co_degre = gbb_gmodu.co_degre',
               ),
             ),
+  );
+  $data['gbb_gresp_dafor']['co_resp'] = array(
+            'title' => t('co_resp'),
+            'help' => t('Code du formateur'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
   $data['gbb_gresp_dafor']['nomu'] = array(
             'title' => t('nomu'),

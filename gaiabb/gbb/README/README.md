@@ -127,12 +127,11 @@ Injections _M_YSQL après amélioration des données
 Il n'y a plus de paramètre
 ~~~
 
-
 Tables ajoutées à la base de données drupal
 ===========================================
 
 <!--
-@startuml BDD.png
+@startuml BDDsimple.png
 
 package "Legende" #DDDDDD {
   Table_locale << (+,Red) >>
@@ -170,189 +169,53 @@ class gbb_gdire {
 
 gbb_gdisp << (®,YellowGreen) >>
 class gbb_gdisp {
+  co_disp
   {static} co_disp
-  id_disp
-  lib
-  libl
-  co_objt
-  co_init
-  co_tcan
-  nb_place_prev
-  duree_prev
-  nb_mod_prev
-  co_chap
-  co_art
-  dt_crea
-  ty_crea
-  co_camp
-  co_them
-  co_andi
-  lobjt
-  co_orga
-  co_offre
-  co_orie
-  gestionnaire
-  - co_tpla
-  - co_offreur
-  - code_om_stag
-  - code_remu
-  - code_om_interv
-  - {static} co_degre
+  {static} co_degre
 }
 
 gbb_gmodu << (®,YellowGreen) >> 
 class gbb_gmodu {
   co_disp
   {static} co_modu
-  co_type
-  lib
-  libl
-  co_cont
-  co_form
-  co_moda
-  co_cibl
-  duree_prev
-  nb_place_prev
-  nb_interv
-  nb_h_interv
-  co_regr
-  conv
-  co_prac
-  co_prna
-  co_budg
-  dt_crea
-  cumul
-  lcont
-  lmoda
-  lcibl
-  lautre
-  co_anmo
-  co_remp
-  co_omodu
-  lpeda
-  lform
-  nb_groupe
-  nb_eff_groupe
-  cout_p_fonc
-  cout_p_prest
-  -cout_p_excep
-  -co_affich_org
-  -lcomm
-  -co_etab_dem
-  -publie
-  -{static} co_degre
+  {static} co_degre
 }
 
 gbb_gresp << (®,YellowGreen) >> 
 class  gbb_gresp {
   {static} co_resp
-  id_resp
-  qualite
-  num_voie
-  nat_voie
-  des_voie
-  esc_res
-  cp
-  vil
-  tel
-  fax
-  mel
-  organ
-  nomu
-  prenom
-  civilite
-  -{static} co_degre
+  {static} co_degre
 }
 
 gbb_ncont << (®,YellowGreen) >>
 class gbb_ncont {
   {static} co_cont
-  lib_court
-  lib_long
-  dt_deb
-  dt_fin
 }
 
 gbb_netab << (®,YellowGreen) >>
 class gbb_netab{
   {static} co_lieu
-  co_natu
-  co_cate
-  secteur
-  sigle
-  denom_princ
-  denom_comp
-  adr
-  mention
-  lieu_dit
-  bp
-  cedex
-  lieu_dist
-  cp
-  pays
-  tel
-  fax
-  mel
-  co_acad
-  co_comm
-  mdp
-  co_circ
-  zeelno
-  flag_mel
 }
 
 gbb_norie << (®,YellowGreen) >>
 class gbb_norie {
   {static} co_orie
-  lib_court
-  lib_long
-  dt_deb
-  dt_fin
 }
 
 gbb_ntcan << (®,YellowGreen) >>
 class gbb_ntcan {
   {static} co_tcan
-  lib_court
-  lib_long
-  dt_deb
-  dt_fin
 }
 
 gbb_session << (+,Red) >>
 class gbb_session {
   {static} sess_id
-  session_alert
-  co_resp
-  co_modu
-  co_degre
-  co_lieu
-  groupe
-  date
-  horaires
-  typePaiement
-  dureeapayer
-  dureeprevue
+  {static} co_degre
 }
 
 gbb_gresp_dafor << (+,Red) >> 
 class  gbb_gresp_dafor {
   {static} co_resp
-  id_resp
-  qualite
-  num_voie
-  nat_voie
-  des_voie
-  esc_res
-  cp
-  vil
-  tel
-  fax
-  mel
-  organ
-  nomu
-  prenom
-  civilite
   {static} co_degre
 }
 
@@ -360,25 +223,6 @@ gbb_gmodu_plus << (+,Red) >>
 class gbb_gmodu_plus {
   {static} co_modu
   {static} co_degre
-  en_attente
-  module_alert
-  co_lieu
-  date_demande
-  date_premiere_session
-  date_derniere_session
-  organisation
-  CDC_etat
-  liste_stagiaires
-  convoc_info_off
-  convoc_info_on
-  convoc_alert
-  convoc_printed
-  convoc_sent
-  LE_etat
-  LE_info
-  DSF_etat
-  DSF_info
-  DA_info
 }
 
 gbb_file << (+,Red) >>
@@ -391,255 +235,270 @@ class gbb_file {
 gbb_gresp_plus << (+,Red) >>
 class gbb_gresp_plus {
   {static} co_resp
-  resp_dafor
-  discipline
-  decharge
-  grade
-  divers
 }
 @enduml
 -->
 
-![Schéma de la base de données du module GaiaBB](BDD.png)
+![Schéma de la base de données du module GaiaBB](BDDsimple.png)
 
 
-
-TABLE        COL               TYPE      Max   Null Key Deflt  Comment
-----------   ---------------   --------- ---   ---- --- ------ --------
-file         co\_modu          int       NULL  NO       0      Code du module pour un dispositif donné
-file         co\_degre         smallint  NULL  NO       2      Code du degré
-file         fid               smallint  NULL  NO       NULL   Clé étrangère avec table file\_managed
-gdire        co\_disp          int       NULL  NO   PRI NULL   Code interne du dispositif
-gdire        co\_resp          int       NULL  NO   PRI NULL   Code responsable
-gdire        co\_tres          char      1     NO   PRI NULL   code du type de responsable
-gdire        co\_modu          int       NULL  NO   PRI 0      Code du module pour un dispositif donné
-gdire        co\_degre         smallint  NULL  NO   PRI 2      Code du degré
-gdisp        co\_disp          int       NULL  NO   PRI NULL   Code interne du dispositif
-gdisp        id\_disp          char      10    NO   MUL NULL   Identifiant du dispositif
-gdisp        lib               char      50    YES      NULL   Libellé
-gdisp        libl              char      250   YES      NULL   Libellé long
-gdisp        co\_objt          char      2     YES      NULL   Code de l objectif de formation
-gdisp        co\_init          char      2     YES      NULL   Code du niveau d initiative
-gdisp        co\_tcan          char      1     YES      NULL   Code du type de candidature
-gdisp        nb\_place\_prev   smallint  NULL  YES      NULL   Nombre de places prévues
-gdisp        duree\_prev       smallint  NULL  YES      NULL   Durée moyenne estimée par personne
-gdisp        nb\_mod\_prev     smallint  NULL  YES      NULL   Nombre de modules prévus
-gdisp        co\_chap          char      4     YES      NULL   Code du chapitre de prévision
-gdisp        co\_art           char      2     YES      NULL   Code article de prévision
-gdisp        dt\_crea          date      NULL  YES      NULL   date de création
-gdisp        ty\_crea          char      1     YES      NULL   Type de création
-gdisp        co\_camp          char      2     YES      NULL   Code de la campagne
-gdisp        co\_them          char      2     YES      NULL   Code du thème du dispositif
-gdisp        co\_andi          char      2     YES      NULL   Code du type d annulation du dispositif--
-gdisp        lobjt             text      65535 YES      NULL   Objectif littéral
-gdisp        co\_orga          int       NULL  YES      NULL   Code de l organisme
-gdisp        co\_offre         int       NULL  YES      NULL   Code interne de l offre
-gdisp        co\_orie          char      4     YES      NULL   Code nomenclature locale d orientation 
-gdisp        gestionnaire      char      50    YES      NULL   Gestionnaire en charge du dispositif
-gdisp        co\_tpla          char      1     YES      NULL   Code type de plan
-gdisp        co\_offreur       char      8     YES      NULL   Code offreur
-gdisp        code\_om\_stag    char      2     YES      NULL   Code du modèle choisi pour l OM stagiaire
-gdisp        code\_remu        char      2     YES      NULL   code du modèle choisi pour la fiche de rémunération
-gdisp        code\_om\_interv  char      2     YES      NULL   code du modèle choisi pou l OM intervenant
-gdisp        co\_degre         smallint  NULL  NO   PRI 2      Code du degré
-gmodu        co\_disp          int       NULL  NO   MUL NULL   Code interne du dispositif
-gmodu        co\_modu          int       NULL  NO   PRI NULL   Code du module pour un dispositif donné
-gmodu        co\_type          char      1     YES      NULL   type du module
-gmodu        lib               char      50    YES      NULL   Libellé
-gmodu        libl              char      150   YES      NULL   Libellé long
-gmodu        co\_cont          char      3     YES      NULL   Code contenu
-gmodu        co\_form          char      1     YES      NULL   Code forme
-gmodu        co\_moda          char      1     YES      NULL   Code modalité
-gmodu        co\_cibl          char      2     YES      NULL   Code du public cible
-gmodu        duree\_prev       smallint  NULL  YES      NULL   Durée moyenne estimée par personne
-gmodu        nb\_place\_prev   smallint  NULL  YES      NULL   Nombre de places prévues
-gmodu        nb\_interv        smallint  NULL  YES      NULL   Nombre d intervenant
-gmodu        nb\_h\_interv     smallint  NULL  YES      NULL   Nombre d heures d intervention
-gmodu        co\_regr          char      6     YES      NULL   Code regroupement
-gmodu        conv              char      1     YES      NULL   Flag convention ? O/N
-gmodu        co\_prac          char      2     YES      NULL   Code priorité académique
-gmodu        co\_prna          char      2     YES      NULL   Code priorité nationale
-gmodu        co\_budg          char      3     YES      NULL   Code budget
-gmodu        dt\_crea          date      NULL  YES      NULL   date de création
-gmodu        cumul             char      1     YES      NULL   cumul pour le 1 degré si plus 36 semaines
-gmodu        lcont             text      65535 YES      NULL   Contenu littéral
-gmodu        lmoda             text      65535 YES      NULL   modalité littérale
-gmodu        lcibl             text      65535 YES      NULL   Cible littérale
-gmodu        lautre            text      65535 YES      NULL   Autre zone littérale
-gmodu        co\_anmo          char      2     YES      NULL   Code du type d annulation des modules
-gmodu        co\_remp          char      1     YES      NULL   code de remplacement 1er degré
-gmodu        co\_omodu         int       NULL  YES      NULL   code du module de l offre
-gmodu        lpeda             char      250   YES      NULL   Descriptif de l objectif pédagogique
-gmodu        lform             char      250   YES      NULL   Description littérale de la forme
-gmodu        nb\_groupe        smallint  NULL  YES      NULL   Nombre de groupes possible
-gmodu        nb\_eff\_groupe   smallint  NULL  YES      NULL   Effectif par groupe
-gmodu        cout\_p\_fonc     decimal   NULL  YES      NULL   cout prévisionnel de fonctionnement par groupe
-gmodu        cout\_p\_prest    decimal   NULL  YES      NULL   cout prévisionnel de prestation par groupe
-gmodu        cout\_p\_excep    decimal   NULL  YES      NULL   cout prévisionnel des frais exceptionnels
-gmodu        co\_affich\_org   char      1     NO       NULL   Code affichage des organisations prévisionnelles -arborescence plan (O/N)
-gmodu        lcomm             char      250   YES      NULL   Commentaires
-gmodu        co\_etab\_dem     char      8     YES      NULL   Code de l établissement demandeur
-gmodu        publie            char      1     YES      NULL   Publication des demandes
-gmodu        co\_degre         smallint  NULL  NO   PRI 2      Code du degré
-gmodu\_plus  co\_modu          int       NULL  NO   PRI NULL   Code du module pour un dispositif donné
-gmodu\_plus  co\_degre         smallint  NULL  NO   PRI 2      Code du degré
-gmodu\_plus  module\_alert     tinyint   NULL  YES      0      Alerte sur le module : service administratif prévenu d un changt important.
-gmodu\_plus  prioritaire       tinyint   NULL  YES      0      Prioritaire
-gmodu\_plus  module\_printed   tinyint   NULL  YES      0      L ensemble des convocations a été imprimé.
-gmodu\_plus  organisation      text      65535 YES      NULL   Journal de bord
-gmodu\_plus  CDC\_etat         tinyint   NULL  YES      0      Le CDC a-t-il été transmis au CE ?
-gmodu\_plus  convoc\_info\_off text      65535 YES      NULL   Info à ne pas porter sur la convocation 
-gmodu\_plus  convoc\_info\_on  text      65535 YES      NULL   Info à porter sur la convocation 
-gmodu\_plus  LE\_etat          tinyint   NULL  YES      0      Listes d émargement transmises
-gmodu\_plus  LE\_info          text      65535 YES      NULL   Infos à propos des listes d émargement
-gmodu\_plus  DSF\_etat         tinyint   NULL  YES      0      Déclaration de Service Fait transmises
-gmodu\_plus  DSF\_info         text      65535 YES      NULL   Infos à propos des Déclaration de Service Fait 
-gmodu\_plus  DA\_info          text      65535 YES      NULL   Infos à propos du Dossier Administratif
-gmodu\_plus  DA\_date\_depot   datetime  NULL  NO       1970... Date de dépot du dossier administratif
-gresp        co\_resp          int       NULL  NO   PRI NULL   Code responsable
-gresp        id\_resp          char      5     YES      NULL   Identifiant du responsable
-gresp        qualite           char      60    YES      NULL   Qualité du responsable (fonction)
-gresp        num\_voie         char      4     YES      NULL   Numéro de la voie
-gresp        nat\_voie         char      4     YES      NULL   Nature de la voie
-gresp        des\_voie         char      20    YES      NULL   adresse
-gresp        esc\_res          char      30    YES      NULL   escalier - résidence
-gresp        cp                char      5     YES      NULL   code postal
-gresp        vil               char      30    YES      NULL   Ville
-gresp        tel               char      14    YES      NULL   Téléphone
-gresp        fax               char      14    YES      NULL   fax
-gresp        mel               char      60    YES      NULL   mail
-gresp        organ             char      60    YES      NULL   Organisme
-gresp        nomu              char      20    YES      NULL   Nom d usage
-gresp        prenom            char      15    YES      NULL   Prénom de la personne
-gresp        civilite          char      1     YES      NULL   Civilité
-gresp        co\_degre         smallint  NULL  NO   PRI 2      Code du degré
-gresp\_dafor co\_resp          int       NULL  NO   PRI NULL   Code responsable
-gresp\_dafor id\_resp          char      5     YES      NULL   Identifiant du responsable
-gresp\_dafor qualite           char      60    YES      NULL   Qualité du responsable (fonction)
-gresp\_dafor num\_voie         char      4     YES      NULL   Numéro de la voie
-gresp\_dafor nat\_voie         char      4     YES      NULL   Nature de la voie
-gresp\_dafor des\_voie         char      20    YES      NULL   adresse
-gresp\_dafor esc\_res          char      30    YES      NULL   escalier - résidence
-gresp\_dafor cp                char      5     YES      NULL   code postal
-gresp\_dafor vil               char      30    YES      NULL   Ville
-gresp\_dafor tel               char      14    YES      NULL   Téléphone
-gresp\_dafor fax               char      14    YES      NULL   fax
-gresp\_dafor mel               char      60    YES      NULL   mail
-gresp\_dafor organ             char      60    YES      NULL   Organisme
-gresp\_dafor nomu              char      20    YES      NULL   Nom d usage
-gresp\_dafor prenom            char      15    YES      NULL   Prénom de la personne
-gresp\_dafor civilite          char      1     YES      NULL   Civilité
-gresp\_dafor co\_degre         smallint  NULL  NO   PRI 2      Code du degré
-gresp\_plus  co\_resp          int       NULL  NO   PRI NULL   Code responsable
-gresp\_plus  resp\_dafor       varchar   10    NO       NULL   Initiales du conseiller responsable
-gresp\_plus  discipline        varchar   100   NO       NULL   Discipline
-gresp\_plus  decharge          decimal   NULL  NO       0.0    Nombre d heures de décharge
-gresp\_plus  grade             varchar   100   NO       NULL   Certifié, agrégé,...
-gresp\_plus  divers            varchar   1000  NO       NULL   Infos diverses
-ncont        co\_cont          char      3     NO   PRI NULL   Code contenu
-ncont        lib\_court        char      10    YES      NULL   Libellé court
-ncont        lib\_long         char      50    YES      NULL   Libellé long
-ncont        dt\_deb           date      NULL  YES      NULL   Date de début
-ncont        dt\_fin           date      NULL  YES      NULL   Date de fin
-netab        co\_lieu          char      8     NO   PRI NULL   Code lieu
-netab        co\_natu          char      3     YES      NULL   Code nature
-netab        co\_cate          char      4     YES      NULL   Code catégorie
-netab        secteur           char      2     YES      NULL   Secteur
-netab        sigle             char      6     YES      NULL   Sigle de l établissement
-netab        denom\_princ      char      30    YES      NULL   Dénomination principale
-netab        denom\_comp       char      30    YES      NULL   Dénomination complémentaire
-netab        adr               char      200   YES      NULL   Adresse
-netab        mention           char      32    YES      NULL   Mention
-netab        lieu\_dit         char      24    YES      NULL   Lieu-dit
-netab        bp                char      7     YES      NULL   Bureau Postal
-netab        cedex             char      2     YES      NULL   Cedex
-netab        lieu\_dist        char      26    YES      NULL   Bureau distributeur
-netab        cp                char      5     YES      NULL   code postal
-netab        pays              char      32    YES      NULL   Pays
-netab        tel               char      14    YES      NULL   Téléphone
-netab        fax               char      14    YES      NULL   fax
-netab        mel               char      60    YES      NULL   mail
-netab        co\_acad          char      3     YES      NULL   Code de l académie
-netab        co\_comm          char      6     YES      NULL   Code commune
-netab        mdp               char      8     YES      NULL   Mot de passe
-netab        co\_circ          char      8     YES      NULL   Code circonscription
-netab        zeelno            char      5     YES      NULL   Numéro de zone élémentaire
-netab        flag\_mel         char      1     YES      NULL   Flag pour envois des Ordres de Mission -OM- par mail (O/N)
-netab\_dafor co\_lieu          char      8     NO   PRI NULL   Code lieu
-netab\_dafor co\_natu          char      3     YES      NULL   Code nature
-netab\_dafor co\_cate          char      4     YES      NULL   Code catégorie
-netab\_dafor secteur           char      2     YES      NULL   Secteur
-netab\_dafor sigle             char       6    YES      NULL   Sigle de l établissement
-netab\_dafor denom\_princ      char      30    YES      NULL   Dénomination principale
-netab\_dafor denom\_comp       char      30    YES      NULL   Dénomination complémentaire
-netab\_dafor adr               char      200   YES      NULL   Adresse
-netab\_dafor mention           char      32    YES      NULL   Mention
-netab\_dafor lieu\_dit         char      24    YES      NULL   Lieu-dit
-netab\_dafor bp                char      7     YES      NULL   Bureau Postal
-netab\_dafor cedex             char      2     YES      NULL   Cedex
-netab\_dafor lieu\_dist        char      26    YES      NULL   Bureau distributeur
-netab\_dafor cp                char      5     YES      NULL   code postal
-netab\_dafor pays              char      3     YES      NULL   Pays
-netab\_dafor tel               char      14    YES      NULL   Téléphone
-netab\_dafor fax               char      14    YES      NULL   fax
-netab\_dafor mel               char      60    YES      NULL   mail
-netab\_dafor co\_acad          char      3     YES      NULL   Code de l académie
-netab\_dafor co\_comm          char      6     YES      NULL   Code commune
-netab\_dafor mdp               char      8     YES      NULL   Mot de passe
-netab\_dafor co\_circ          char      8     YES      NULL   Code circonscription
-netab\_dafor zeelno            char      5     YES      NULL   Numéro de zone élémentaire
-netab\_dafor flag\_mel         char      1     YES      NULL   Flag pour envois des Ordres de Mission -OM- par mail (O/N)
-norie        co\_orie          char      4     NO   PRI NULL   Code nomenclature locale d orientation
-norie        lib\_court        char      10    YES      NULL   Libellé court
-norie        lib\_long         char      50    YES      NULL   Libellé long
-norie        dt\_deb           date      NULL  YES      NULL   Date de début
-norie        dt\_fin           date      NULL  YES      NULL   Date de fin
-ntcan        co\_tcan          char      1     NO   PRI NULL   Code du type de candidature
-ntcan        lib\_court        char      10    YES      NULL   Libellé court
-ntcan        lib\_long         char      50    YES      NULL   Libellé long
-ntcan        dt\_deb           date      NULL  YES      NULL   Date de début
-ntcan        dt\_fin           date      NULL  YES      NULL   Date de fin
-session      sess\_id          smallint  NULL  NO   PRI NULL   Identifiant de la session
-session      session\_alert    tinyint   NULL  YES      0      Alerte sur la session, service administratif prévenu changt important. 0/ 1
-session      en\_at tente      tinyint   NULL  YES      0      O:stage en attente - 1:Demande de prép de convocation pour cette session
-session      convoc\_sent      tinyint   NULL  YES      0      La convocation pour cette session a été envoyée. 0/1
-session      co\_resp          int       NULL  NO   MUL NULL   Code responsable
-session      co\_modu          int       NULL  NO   MUL NULL   Code du module pour un dispositif donné
-session      co\_degre         smallint  NULL  NO       2      Code du degré
-session      co\_lieu          char      8     NO       NULL   Code lieu
-session      groupe            tinyint   NULL  YES      1      Numéro du groupe
-session      date              date      NULL  YES  MUL NULL   Date de la session format YYYY-MM-DD
-session      date\_ts          timestamp NULL  YES  MUL NULL   Date de la session format nb de secondes depuis 01/01/1970
-session      horaires          varchar   50    YES      0      Horaires de la session
-session      type\_paiement    varchar   8     YES      VAC    type de paiement du formateur
-session      duree\_a\_payer   decimal   NULL  YES      0.00   Nombre d heures à payer
-session      duree\_prevue     decimal   NULL  YES      0.00   Nombre d heures prévues
-session      uid               int       NULL  NO       NULL   User uid du responsable de la dernière modif
-session      date\_modif       datetime  NULL  NO       NULL   Date de dernière modification
+gbb\_file         TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_modu          int       NULL  NO       0      Code du module pour un dispositif donné
+co\_degre         smallint  NULL  NO       2      Code du degré
+fid               smallint  NULL  NO       NULL   Clé étrangère avec table file\_managed
 
 
-Notes :
-
-~~~
-CREATE table zzzz as SELECT
- id 'co_resp',
- id 'id_resp',
- NULL 'qualite',
- NULL 'num_voie',
- NULL 'nat_voie',
- NULL 'des_voie',
+gbb\_gdire        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_disp          int       NULL  NO   PRI NULL   Code interne du dispositif
+co\_resp          int       NULL  NO   PRI NULL   Code responsable
+co\_tres          char      1     NO   PRI NULL   code du type de responsable
+co\_modu          int       NULL  NO   PRI 0      Code du module pour un dispositif donné
+co\_degre         smallint  NULL  NO   PRI 2      Code du degré
 
 
- NULL 'esc_res',
- NULL 'cp',
- NULL 'vil',
- tel_fixe 'tel',
- NULL 'fax',
- mail 'mel',
- NULL 'org',
- CONCAT(SUBSTRING(formateur,1,LOCATE('-',formateur)-1),SUBSTRING(formateur,1,LOCATE(' ',formateur)-1)) 'nomu',
- SUBSTRING(SUBSTRING(formateur,LOCATE('-',formateur)+1),LOCATE(' ',SUBSTRING(formateur,LOCATE('-',formateur)+1))+1) 'prenom',
- NULL 'civilite',
- NULL 'co_degre'
-from gbb_gresp_dafor
-~~~
+gbb\_gdisp        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_disp          int       NULL  NO   PRI NULL   Code interne du dispositif
+id\_disp          char      10    NO   MUL NULL   Identifiant du dispositif
+lib               char      50    YES      NULL   Libellé
+libl              char      250   YES      NULL   Libellé long
+co\_objt          char      2     YES      NULL   Code de l objectif de formation
+co\_init          char      2     YES      NULL   Code du niveau d initiative
+co\_tcan          char      1     YES      NULL   Code du type de candidature
+nb\_place\_prev   smallint  NULL  YES      NULL   Nombre de places prévues
+duree\_prev       smallint  NULL  YES      NULL   Durée moyenne estimée par personne
+nb\_mod\_prev     smallint  NULL  YES      NULL   Nombre de modules prévus
+co\_chap          char      4     YES      NULL   Code du chapitre de prévision
+co\_art           char      2     YES      NULL   Code article de prévision
+dt\_crea          date      NULL  YES      NULL   date de création
+ty\_crea          char      1     YES      NULL   Type de création
+co\_camp          char      2     YES      NULL   Code de la campagne
+co\_them          char      2     YES      NULL   Code du thème du dispositif
+co\_andi          char      2     YES      NULL   Code du type d annulation du dispositif--
+lobjt             text      65535 YES      NULL   Objectif littéral
+co\_orga          int       NULL  YES      NULL   Code de l organisme
+co\_offre         int       NULL  YES      NULL   Code interne de l offre
+co\_orie          char      4     YES      NULL   Code nomenclature locale d orientation 
+gestionnaire      char      50    YES      NULL   Gestionnaire en charge du dispositif
+co\_tpla          char      1     YES      NULL   Code type de plan
+co\_offreur       char      8     YES      NULL   Code offreur
+code\_om\_stag    char      2     YES      NULL   Code du modèle choisi pour l OM stagiaire
+code\_remu        char      2     YES      NULL   code du modèle choisi pour la fiche de rémunération
+code\_om\_interv  char      2     YES      NULL   code du modèle choisi pou l OM intervenant
+co\_degre         smallint  NULL  NO   PRI 2      Code du degré
+
+
+gbb\_gmodu        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_disp          int       NULL  NO   MUL NULL   Code interne du dispositif
+co\_modu          int       NULL  NO   PRI NULL   Code du module pour un dispositif donné
+co\_type          char      1     YES      NULL   type du module
+lib               char      50    YES      NULL   Libellé
+libl              char      150   YES      NULL   Libellé long
+co\_cont          char      3     YES      NULL   Code contenu
+co\_form          char      1     YES      NULL   Code forme
+co\_moda          char      1     YES      NULL   Code modalité
+co\_cibl          char      2     YES      NULL   Code du public cible
+duree\_prev       smallint  NULL  YES      NULL   Durée moyenne estimée par personne
+nb\_place\_prev   smallint  NULL  YES      NULL   Nombre de places prévues
+nb\_interv        smallint  NULL  YES      NULL   Nombre d intervenant
+nb\_h\_interv     smallint  NULL  YES      NULL   Nombre d heures d intervention
+co\_regr          char      6     YES      NULL   Code regroupement
+conv              char      1     YES      NULL   Flag convention ? O/N
+co\_prac          char      2     YES      NULL   Code priorité académique
+co\_prna          char      2     YES      NULL   Code priorité nationale
+co\_budg          char      3     YES      NULL   Code budget
+dt\_crea          date      NULL  YES      NULL   date de création
+cumul             char      1     YES      NULL   cumul pour le 1 degré si plus 36 semaines
+lcont             text      65535 YES      NULL   Contenu littéral
+lmoda             text      65535 YES      NULL   modalité littérale
+lcibl             text      65535 YES      NULL   Cible littérale
+lautre            text      65535 YES      NULL   Autre zone littérale
+co\_anmo          char      2     YES      NULL   Code du type d annulation des modules
+co\_remp          char      1     YES      NULL   code de remplacement 1er degré
+co\_omodu         int       NULL  YES      NULL   code du module de l offre
+lpeda             char      250   YES      NULL   Descriptif de l objectif pédagogique
+lform             char      250   YES      NULL   Description littérale de la forme
+nb\_groupe        smallint  NULL  YES      NULL   Nombre de groupes possible
+nb\_eff\_groupe   smallint  NULL  YES      NULL   Effectif par groupe
+cout\_p\_fonc     decimal   NULL  YES      NULL   cout prévisionnel de fonctionnement par groupe
+cout\_p\_prest    decimal   NULL  YES      NULL   cout prévisionnel de prestation par groupe
+cout\_p\_excep    decimal   NULL  YES      NULL   cout prévisionnel des frais exceptionnels
+co\_affich\_org   char      1     NO       NULL   Code affichage des organisations prévisionnelles -arborescence plan (O/N)
+lcomm             char      250   YES      NULL   Commentaires
+co\_etab\_dem     char      8     YES      NULL   Code de l établissement demandeur
+publie            char      1     YES      NULL   Publication des demandes
+co\_degre         smallint  NULL  NO   PRI 2      Code du degré
+
+
+gbb\_gmodu\_plus  TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_modu          int       NULL  NO   PRI NULL   Code du module pour un dispositif donné
+co\_degre         smallint  NULL  NO   PRI 2      Code du degré
+module\_alert     tinyint   NULL  YES      0      Alerte sur le module : service administratif prévenu d un changt important.
+prioritaire       tinyint   NULL  YES      0      Prioritaire
+module\_printed   tinyint   NULL  YES      0      L ensemble des convocations a été imprimé.
+organisation      text      65535 YES      NULL   Journal de bord
+CDC\_etat         tinyint   NULL  YES      0      Le CDC a-t-il été transmis au CE ?
+convoc\_info\_off text      65535 YES      NULL   Info à ne pas porter sur la convocation 
+convoc\_info\_on  text      65535 YES      NULL   Info à porter sur la convocation 
+LE\_etat          tinyint   NULL  YES      0      Listes d émargement transmises
+LE\_info          text      65535 YES      NULL   Infos à propos des listes d émargement
+DSF\_etat         tinyint   NULL  YES      0      Déclaration de Service Fait transmises
+DSF\_info         text      65535 YES      NULL   Infos à propos des Déclaration de Service Fait 
+DA\_info          text      65535 YES      NULL   Infos à propos du Dossier Administratif
+DA\_date\_depot   datetime  NULL  NO       1970... Date de dépot du dossier administratif
+
+
+gbb\_gresp        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_resp          int       NULL  NO   PRI NULL   Code responsable
+id\_resp          char      5     YES      NULL   Identifiant du responsable
+qualite           char      60    YES      NULL   Qualité du responsable (fonction)
+num\_voie         char      4     YES      NULL   Numéro de la voie
+nat\_voie         char      4     YES      NULL   Nature de la voie
+des\_voie         char      20    YES      NULL   adresse
+esc\_res          char      30    YES      NULL   escalier - résidence
+cp                char      5     YES      NULL   code postal
+vil               char      30    YES      NULL   Ville
+tel               char      14    YES      NULL   Téléphone
+fax               char      14    YES      NULL   fax
+mel               char      60    YES      NULL   mail
+organ             char      60    YES      NULL   Organisme
+nomu              char      20    YES      NULL   Nom d usage
+prenom            char      15    YES      NULL   Prénom de la personne
+civilite          char      1     YES      NULL   Civilité
+co\_degre         smallint  NULL  NO   PRI 2      Code du degré
+
+
+gbb\_gresp\_dafor TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_resp          int       NULL  NO   PRI NULL   Code responsable
+id\_resp          char      5     YES      NULL   Identifiant du responsable
+qualite           char      60    YES      NULL   Qualité du responsable (fonction)
+num\_voie         char      4     YES      NULL   Numéro de la voie
+nat\_voie         char      4     YES      NULL   Nature de la voie
+des\_voie         char      20    YES      NULL   adresse
+esc\_res          char      30    YES      NULL   escalier - résidence
+cp                char      5     YES      NULL   code postal
+vil               char      30    YES      NULL   Ville
+tel               char      14    YES      NULL   Téléphone
+fax               char      14    YES      NULL   fax
+mel               char      60    YES      NULL   mail
+organ             char      60    YES      NULL   Organisme
+nomu              char      20    YES      NULL   Nom d usage
+prenom            char      15    YES      NULL   Prénom de la personne
+civilite          char      1     YES      NULL   Civilité
+co\_degre         smallint  NULL  NO   PRI 2      Code du degré
+
+
+gbb\_gresp\_plus  TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_resp          int       NULL  NO   PRI NULL   Code responsable
+resp\_dafor       varchar   10    NO       NULL   Initiales du conseiller responsable
+discipline        varchar   100   NO       NULL   Discipline
+decharge          decimal   NULL  NO       0.0    Nombre d heures de décharge
+grade             varchar   100   NO       NULL   Certifié, agrégé,...
+divers            varchar   1000  NO       NULL   Infos diverses
+
+gbb\_ncont        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_cont          char      3     NO   PRI NULL   Code contenu
+lib\_court        char      10    YES      NULL   Libellé court
+lib\_long         char      50    YES      NULL   Libellé long
+dt\_deb           date      NULL  YES      NULL   Date de début
+dt\_fin           date      NULL  YES      NULL   Date de fin
+
+gbb\_netab        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_lieu          char      8     NO   PRI NULL   Code lieu
+co\_natu          char      3     YES      NULL   Code nature
+co\_cate          char      4     YES      NULL   Code catégorie
+secteur           char      2     YES      NULL   Secteur
+sigle             char      6     YES      NULL   Sigle de l établissement
+denom\_princ      char      30    YES      NULL   Dénomination principale
+denom\_comp       char      30    YES      NULL   Dénomination complémentaire
+adr               char      200   YES      NULL   Adresse
+mention           char      32    YES      NULL   Mention
+lieu\_dit         char      24    YES      NULL   Lieu-dit
+bp                char      7     YES      NULL   Bureau Postal
+cedex             char      2     YES      NULL   Cedex
+lieu\_dist        char      26    YES      NULL   Bureau distributeur
+cp                char      5     YES      NULL   code postal
+pays              char      32    YES      NULL   Pays
+tel               char      14    YES      NULL   Téléphone
+fax               char      14    YES      NULL   fax
+mel               char      60    YES      NULL   mail
+co\_acad          char      3     YES      NULL   Code de l académie
+co\_comm          char      6     YES      NULL   Code commune
+mdp               char      8     YES      NULL   Mot de passe
+co\_circ          char      8     YES      NULL   Code circonscription
+zeelno            char      5     YES      NULL   Numéro de zone élémentaire
+flag\_mel         char      1     YES      NULL   Flag pour envois des Ordres de Mission -OM- par mail (O/N)
+
+
+gbb\_netab\_dafor TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_lieu          char      8     NO   PRI NULL   Code lieu
+co\_natu          char      3     YES      NULL   Code nature
+co\_cate          char      4     YES      NULL   Code catégorie
+secteur           char      2     YES      NULL   Secteur
+sigle             char       6    YES      NULL   Sigle de l établissement
+denom\_princ      char      30    YES      NULL   Dénomination principale
+denom\_comp       char      30    YES      NULL   Dénomination complémentaire
+adr               char      200   YES      NULL   Adresse
+mention           char      32    YES      NULL   Mention
+lieu\_dit         char      24    YES      NULL   Lieu-dit
+bp                char      7     YES      NULL   Bureau Postal
+cedex             char      2     YES      NULL   Cedex
+lieu\_dist        char      26    YES      NULL   Bureau distributeur
+cp                char      5     YES      NULL   code postal
+pays              char      3     YES      NULL   Pays
+tel               char      14    YES      NULL   Téléphone
+fax               char      14    YES      NULL   fax
+mel               char      60    YES      NULL   mail
+co\_acad          char      3     YES      NULL   Code de l académie
+co\_comm          char      6     YES      NULL   Code commune
+mdp               char      8     YES      NULL   Mot de passe
+co\_circ          char      8     YES      NULL   Code circonscription
+zeelno            char      5     YES      NULL   Numéro de zone élémentaire
+flag\_mel         char      1     YES      NULL   Flag pour envois des Ordres de Mission -OM- par mail (O/N)
+
+
+gbb\_norie        TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+co\_orie          char      4     NO   PRI NULL   Code nomenclature locale d orientation
+lib\_court        char      10    YES      NULL   Libellé court
+lib\_long         char      50    YES      NULL   Libellé long
+dt\_deb           date      NULL  YES      NULL   Date de début
+dt\_fin           date      NULL  YES      NULL   Date de fin
+co\_tcan          char      1     NO   PRI NULL   Code du type de candidature
+lib\_court        char      10    YES      NULL   Libellé court
+lib\_long         char      50    YES      NULL   Libellé long
+dt\_deb           date      NULL  YES      NULL   Date de début
+dt\_fin           date      NULL  YES      NULL   Date de fin
+
+
+gbb\_session      TYPE      Max   Null Key Deflt  Comment
+---------------   --------- ---   ---- --- ------ --------
+sess\_id          smallint  NULL  NO   PRI NULL   Identifiant de la session
+session\_alert    tinyint   NULL  YES      0      Alerte sur la session, service administratif prévenu changt important. 0/ 1
+en\_at tente      tinyint   NULL  YES      0      O:stage en attente - 1:Demande de prép de convocation pour cette session
+convoc\_sent      tinyint   NULL  YES      0      La convocation pour cette session a été envoyée. 0/1
+co\_resp          int       NULL  NO   MUL NULL   Code responsable
+co\_modu          int       NULL  NO   MUL NULL   Code du module pour un dispositif donné
+co\_degre         smallint  NULL  NO       2      Code du degré
+co\_lieu          char      8     NO       NULL   Code lieu
+groupe            tinyint   NULL  YES      1      Numéro du groupe
+date              date      NULL  YES  MUL NULL   Date de la session format YYYY-MM-DD
+date\_ts          timestamp NULL  YES  MUL NULL   Date de la session format nb de secondes depuis 01/01/1970
+horaires          varchar   50    YES      0      Horaires de la session
+type\_paiement    varchar   8     YES      VAC    type de paiement du formateur
+duree\_a\_payer   decimal   NULL  YES      0.00   Nombre d heures à payer
+duree\_prevue     decimal   NULL  YES      0.00   Nombre d heures prévues
+uid               int       NULL  NO       NULL   User uid du responsable de la dernière modif
+date\_modif       datetime  NULL  NO       NULL   Date de dernière modification
+
+

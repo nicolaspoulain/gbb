@@ -283,6 +283,6 @@ variable_set('_gbb_timer_end_icon', array(
 module_load_include('inc', 'gbb', 'gbb_liste_stages');
 module_load_include('inc', 'gbb', 'gbb_module');
 module_load_include('inc', 'gbb', 'gbb_formateur');
-module_load_include('inc', 'gbb', 'gbb_etablisement');
+module_load_include('inc', 'gbb', 'gbb_etablissement');
 //module_load_include('inc', 'gbb', 'gbb_evaluation');
 

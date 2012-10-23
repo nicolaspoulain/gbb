@@ -13,8 +13,8 @@
  */
 function gbb_etablissement_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . 'css/gaiabb.css',
-                 array('group' => CSS_DEFAULT, 'every_page' => TRUE)
+  drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css',
+                 array('group' => CSS_SYSTEM-1, 'preprocess' => FALSE)
   );
   // Construction de la page
   $build = array();
@@ -31,7 +31,7 @@ function gbb_etablissement_view($args = 'NaN') {
 function gbb_etablissement_filtre($form, &$form_state) {
 
   // requete sur gbb_gmodu_plus. Le rightjoin sur gbb_gmodu assure un résultat.
-  $query = db_select('gbb_netab', 'e')
+  $query = db_select('gbb_netab_dafor', 'e')
          ->fields('e', array('co_lieu',
                              'denom_comp',
                              'sigle'));
@@ -87,7 +87,7 @@ function gbb_etablissement_fiche($form, &$form_state) {
 
   if (arg(1)=='') return '';
 
-  $query = db_select('gbb_netab', 'e');
+  $query = db_select('gbb_netab_dafor', 'e');
   $query ->condition('e.co_lieu', arg(1), '=')
          ->fields('e', array('co_lieu', 
                              'denom_comp',
@@ -210,7 +210,7 @@ function gbb_etablissement_fiche($form, &$form_state) {
 function gbb_etablissement_fiche_submit($form, &$form_state) {
 
   // Merge Queries : http://drupal.org/node/310085
-  db_merge('gbb_netab')
+  db_merge('gbb_netab_dafor')
     ->key(array('co_lieu'  => $form_state['values']['colieu'],
              ))
     ->fields(array('co_lieu'   => $form_state['values']['colieu'],

@@ -14,7 +14,7 @@
 
 function gbb_formateur_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/css/gaiabb.css',
+  drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css',
                  array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE)
   );
   // Construction de la page
@@ -28,7 +28,7 @@ function gbb_formateur_view($args = 'NaN') {
                                  'class' => array('details'),
                                ),
                                '#children' => '',
-                               '#title' => t('Détail des formations'),
+                               '#title' => t('Graphique de répartition des heures'),
                                '#value' => gbb_formateur_stages($args),
                              )
                            )
@@ -81,7 +81,6 @@ function gbb_formateur_filtre($form, &$form_state) {
  * ----> Submit
  */
 function gbb_formateur_filtre_submit($form, &$form_state) {
-
   $url = url('formateur/' . $form_state['values']['coresp'],
                             array('absolute' => TRUE));
   $form_state['redirect'] = $url;
@@ -95,7 +94,6 @@ function gbb_formateur_filtre_submit($form, &$form_state) {
 function gbb_formateur_fiche($form, &$form_state) {
 
   if (arg(1)=='') return '';
-
   $query = db_select('gbb_gresp_dafor', 'r');
   $query ->leftjoin('gbb_gresp_plus', 'rp', 'r.co_resp=rp.co_resp');
   $query ->condition('r.co_resp', arg(1), '=')
@@ -109,7 +107,15 @@ function gbb_formateur_fiche($form, &$form_state) {
                               'decharge',
                               'grade',
                               'divers'));
-  $record = $query->execute()->fetchAssoc();
+  $r = $query->execute();
+  if ($r->rowCount() == 0) {
+    $record = array('nomu'=>'', 'prenom'=>'',
+                    'prenom' =>'', 'mel'=>'', 'tel'=>'',
+                    'discipline'=>'', 'resp_dafor'=>'',
+                    'grade'=>'', 'decharge'=>'', 'divers'=>'');
+  } else {
+    $record =  $r->fetchAssoc();
+  };
 
   if (arg(1)=='add'){ //TODO : reprendre cette ligne !!
     $record['co_resp'] = db_query("SELECT MAX(co_resp)+1 as max_id FROM gbb_gresp_dafor")
@@ -230,6 +236,15 @@ function gbb_formateur_fiche($form, &$form_state) {
  * ----> Submit
  */
 function gbb_formateur_fiche_submit($form, &$form_state) {
+  $query = db_select('gbb_gresp_dafor', 'r');
+  $query ->condition('r.nomu', $form_state['values']['nomu'], '=')
+         ->condition('r.prenom', $form_state['values']['prenom'], '=')
+         ->fields('r',  array('nomu'));
+  $nb = $query->execute()->rowCount();
+  if ( $nb > 0 ) {
+    drupal_set_message( t('Ce formateur existe déjà dans la base.') );
+    return;
+  }
 
   // Merge Queries : http://drupal.org/node/310085
   db_merge('gbb_gresp_dafor')
@@ -297,14 +312,15 @@ function gbb_formateur_stages($args) {
            // taille adaptative mais limitée à 900px :
            '#size' => chart_size(min(900,max(200,2*$dech,2*$r->sumprevue)), 130), 
         );
-    $chart['#data']['dech'] = $dech;
-    $chart['#data']['prevue'] = $r->sumprevue;
-    $chart['#data']['apayer'] = $r->sumapayer;
+    $centpcent = max($dech,$r->sumprevue);
+    $chart['#data']['dech'] = 100*$dech/$centpcent;
+    $chart['#data']['prevue'] = 100*$r->sumprevue/$centpcent;
+    $chart['#data']['apayer'] = 100*$r->sumapayer/$centpcent;
 
     $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
       chart_mixed_axis_label(t('0'));
     $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
-      chart_mixed_axis_label(max($dech,$r->sumprevue));
+      chart_mixed_axis_label($centpcent);
 
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
       chart_mixed_axis_label(t('Fait ('.$r->sumapayer.'h)'));

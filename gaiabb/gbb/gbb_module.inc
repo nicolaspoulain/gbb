@@ -1285,7 +1285,7 @@ function gbb_sess_edition($form, $form_state, $args) {
     '#type' => 'textfield',
     '#title' => t('Formateur&nbsp;' . 
                   l( theme('image',variable_get('_gbb_user_add_icon')),
-                     'formateur/',
+                     'formateur/add',
                      array('attributes' => array('class' => 'anchor-class'),
                                                  'html' => TRUE))
                 ),

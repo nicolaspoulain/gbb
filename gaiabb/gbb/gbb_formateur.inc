@@ -126,7 +126,7 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f'] = array(
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#collapsed' => FALSE,
     '#title' => t('Fiche formateur (Nom, prénom, adresse, décharge etc...)'),
   );
 
@@ -184,6 +184,8 @@ function gbb_formateur_fiche($form, &$form_state) {
     '#default_value' => $record['discipline'],
     '#size' => 40,
     '#maxlength' => 128,
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
   );
   $form['f']['grade'] = array(
     '#type' => 'select',
@@ -222,6 +224,7 @@ function gbb_formateur_fiche($form, &$form_state) {
     '#type' => 'textarea',
     '#title' => t('Divers'),
     '#default_value' => $record['divers'],
+    '#rows' =>2,
   );
 
   $form['f']['submit'] = array(
@@ -283,6 +286,7 @@ function gbb_formateur_fiche_submit($form, &$form_state) {
 function gbb_formateur_stages($args) {
 
   if ($args == 'NaN') return "Vide";
+  if (arg(1) == 'add') return "";
 
   $query = db_select('gbb_session', 's');
   $query ->leftjoin('gbb_gmodu', 'm', 

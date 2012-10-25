@@ -437,8 +437,8 @@ function gbb_sess_formatr($form, $form_state, $args) {
   $query ->orderBy('groupe', 'ASC');
   $query ->orderBy('date', 'ASC');
   $query ->orderBy('nomu', 'ASC');
-  $query ->condition('mp.co_modu', arg(2), '=')
-         ->condition('mp.co_degre', arg(1), '=')
+  $query ->condition('s.co_modu', arg(2), '=')
+         ->condition('s.co_degre', arg(1), '=')
          ->fields('s', array('sess_id', 'date',
                              'duree_prevue','duree_a_payer', 'type_paiement',
                              'en_attente', 'convoc_sent', 'session_alert',
@@ -520,11 +520,11 @@ function gbb_sess_formatr($form, $form_state, $args) {
       '#default_value' => ((isset($_GET['sess_id']))? $_GET['sess_id'] : array()),
       '#empty' => t('Aucune session. cliquez sur Ajouter pour en créer.'),
     );
+  };
     $form['f']['comodu'] = array(  '#type' => 'hidden',
                                   '#value' => arg(2)   );
     $form['f']['codegre'] = array( '#type' => 'hidden',
                                   '#value' => arg(1)   );
-  };
   if (user_access('gest_sessions gbb')) {
     $form['f']['ajouter'] = array(
       '#type' => 'submit',

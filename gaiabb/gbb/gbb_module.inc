@@ -208,7 +208,7 @@ function gbb_organis_form($form, &$form_state) {
     '#title' => t('Journal'),
     '#default_value' => $txt,
     '#ajax' => array(
-      'callback' => 'form_organisation_submit',
+      'callback' => 'gbb_organis_form_submit',
       'progress' => array('type'    => 'throbber', 
                           'message' => 'Enregistrement...'),
     ),
@@ -220,7 +220,7 @@ function gbb_organis_form($form, &$form_state) {
                    'Prioritaire' ),
     '#default_value' => $r['prioritaire'],
     '#ajax' => array(
-      'callback' => 'form_organisation_submit',
+      'callback' => 'gbb_organis_form_submit',
       'progress' => array('type' => 'throbber',
                           'message' => 'Enregistrement...'),
     ),
@@ -1259,7 +1259,7 @@ function gbb_sess_edition($form, $form_state, $args) {
   } 
   else {
     $form['f']['convoc_sent'] = array( '#type'  => 'hidden',
-                                       '#value' => 0        );
+                                       '#value' => $r->convoc_sent  );
   }
 
   $form['f']['lieu'] = array(
@@ -1320,6 +1320,19 @@ function gbb_sess_edition_submit($form, &$form_state) {
   $co_resp = preg_replace($pattern, $replace,
                           $form_state['values']['formateur']);
   $sess_id = $form_state['values']['sess_id'];
+
+  $convoc_sent = $form_state['values']['convoc_sent'];
+  // si le drapeau est posé sur une session, on fait sauter le convoc-sent
+  //  sur cette session ainsi que le module_printed sur le module
+  if ($form_state['values']['session_alert']==1) {
+    $convoc_sent =  0;
+    db_merge('gbb_gmodu_plus')
+      ->key(array('co_modu'  => $form_state['values']['co_modu'],
+                  'co_degre' => $form_state['values']['co_degre'] ))
+      ->fields(array('module_printed' => 0,))
+      ->execute();
+  };
+
   global $user;
   db_merge('gbb_session')
       ->key(array('sess_id'  => $sess_id ))
@@ -1327,7 +1340,7 @@ function gbb_sess_edition_submit($form, &$form_state) {
                    'co_modu'       => $form_state['values']['co_modu'],
                    'co_degre'      => $form_state['values']['co_degre'],
                    'groupe'        => $form_state['values']['groupe'],
-                   'convoc_sent'   => $form_state['values']['convoc_sent'],
+                   'convoc_sent'   => $convoc_sent,
                    'en_attente'    => $form_state['values']['en_attente'],
                    'session_alert' => $form_state['values']['session_alert'],
                    'horaires'      => $form_state['values']['horaires'],

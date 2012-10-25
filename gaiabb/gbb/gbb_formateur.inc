@@ -312,7 +312,7 @@ function gbb_formateur_stages($args) {
            // taille adaptative mais limitée à 900px :
            '#size' => chart_size(min(900,max(200,2*$dech,2*$r->sumprevue)), 130), 
         );
-    $centpcent = max($dech,$r->sumprevue);
+    $centpcent = max(max($dech,$r->sumprevue),0.1);
     $chart['#data']['dech'] = 100*$dech/$centpcent;
     $chart['#data']['prevue'] = 100*$r->sumprevue/$centpcent;
     $chart['#data']['apayer'] = 100*$r->sumapayer/$centpcent;

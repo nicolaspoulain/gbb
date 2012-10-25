@@ -345,43 +345,19 @@ function gbb_liste_stages_liste($args) {
               ->execute()->fetchCol();
     $query->condition('j.co_resp', $tab_resp, 'IN');  // print_r($tab_resp);
  };
+/*
+  // ----------------------------------------i---
+  // prise en compte du voir les stages fermés
+  // -------------------------------------------
+  if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
+    $query->condition('m.co_anmo', '', '='); };
+    $query .= 'AND co_anmo = \'\'';
+  }
+*/
 
   $result = $query->execute();
   if ($result->rowCount() == 0) return 'Hum !';
 
-  // ------------------------------------------------------------
-  // prise en compte du choix radio Tous/EndemandeDeTraitement
-  // ------------------------------------------------------------
-  if (isset($_GET['voir_encours']) && $_GET['voir_encours'] == 1) {
-    $db_or = db_or();
-
-    //  Sont considérés comme "en cours" les stages qui ont
-    //  - OU  module_alert = 1
-    //  - OU  ( nb session_alert = 1 ) > 0
-    //  - OU  ( nb de convoc_sent = 1 ) < (nb en_attente = 0 )
-    $db_or->condition('mp.module_alert', '1', '=');
-
-    $subq1 = db_select('gbb_session', 's')
-           ->condition('s.co_modu',  'm.co_modu',  '=')
-           ->condition('s.co_degre', 'm.co_degre', '=')
-           ->condition('s.session_alert',  '1',    '=');
-    $subq1 ->addExpression('COUNT(sess_id)' , 'nb_alert');
-    $db_or ->condition($subq1 , '0', '>');
-
-    $query ->condition($db_or);
-
-/*         mp.module_alert = 1
-           OR
-           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
-           OR
-           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) <
-           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0)
-*/
-  }
-  if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
-    $query .= 'AND co_anmo = \'\'';
-  }
-  
   $libd_precedent= '';
   $rows = array();
 
@@ -517,7 +493,20 @@ function gbb_liste_stages_liste($args) {
                  ' ' . $f->date . ' - ' . $f->prenom . ' ' . $f->nomu;
     };
     $formateurs = theme('item_list', array('items' => $items));
-    $rows[] = array( 
+  // ------------------------------------------------------------
+  // prise en compte du choix radio Tous/EndemandeDeTraitement
+  // ------------------------------------------------------------
+/*         mp.module_alert = 1
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND session_alert=1) > 0
+           OR
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) <
+           (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0)
+*/
+   if (   ($r->module_alert==1 OR  $nb_sa >0 OR $nb_nea > $nb_s) 
+       OR $voirEnCours == 0 ) {
+
+      $rows[] = array( 
                 'col0' => array(
                   'data' => "<span class='invisible'>$paf_ou_fil*</span>" .
                             "<span class='$paf_ou_fil $d_ouvert_ou_ferme'>" .
@@ -550,6 +539,7 @@ function gbb_liste_stages_liste($args) {
                 ),
     );
     $libd_precedent = $r->libd;
+   }
   }
   $attributes = array('id' => 'table-id', 
                       'class' => array('display'));

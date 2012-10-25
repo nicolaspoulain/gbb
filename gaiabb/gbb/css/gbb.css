@@ -15,7 +15,7 @@ td.nowrap {
   font-weight:bold;
   color : #004A78;
 }
-td.Ferme {
+.Ferme {
   text-decoration: line-through;
 }
 td.group {

@@ -341,6 +341,7 @@ function gbb_liste_stages_liste($args) {
     $tab_resp = db_select('gbb_gresp', 'c')
               ->fields('c', array('co_resp'))
               ->condition('nomu', '' . db_like($nomu) . '', 'LIKE')
+              ->condition('co_degre', arg(2), '=')
               ->distinct()
               ->execute()->fetchCol();
     $query->condition('j.co_resp', $tab_resp, 'IN');  // print_r($tab_resp);

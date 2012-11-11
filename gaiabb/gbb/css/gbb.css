@@ -187,7 +187,7 @@ ul.nope {
 }
 
 .dataTables_filter input{
- border : 1px solid #000;
+  border : 1px solid #000;
   -khtml-border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -204,3 +204,4 @@ ul.nope {
 .block-user li{
     display:inline;
 }
+

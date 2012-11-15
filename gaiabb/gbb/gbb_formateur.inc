@@ -244,10 +244,10 @@ function gbb_formateur_fiche_submit($form, &$form_state) {
          ->condition('r.prenom', $form_state['values']['prenom'], '=')
          ->fields('r',  array('nomu'));
   $nb = $query->execute()->rowCount();
-  if ( $nb > 0 ) {
-    drupal_set_message( t('Ce formateur existe déjà dans la base.') );
-    return;
-  }
+  //if ( $nb > 0 ) {
+  //  drupal_set_message( t('Ce formateur existe déjà dans la base.') );
+  //  return;
+  //}
 
   // Merge Queries : http://drupal.org/node/310085
   db_merge('gbb_gresp_dafor')

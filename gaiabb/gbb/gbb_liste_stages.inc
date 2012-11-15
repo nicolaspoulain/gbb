@@ -356,6 +356,8 @@ function gbb_liste_stages_liste($args) {
   }
 */
 
+  $query->orderBy('id_disp', 'ASC');
+  $query->orderBy('co_modu', 'ASC');
   $result = $query->execute();
   if ($result->rowCount() == 0) return 'Hum !';
 

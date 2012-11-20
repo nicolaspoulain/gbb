@@ -181,7 +181,7 @@ function gbb_liste_stages_choix($form, &$form_state, $args) {
 
   $form['f']['voir_ferme'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Voir les modules fermés'),
+    '#title' => t('Voir les modules fermés (<font color="red">Re-FONCTIONNE</font>)'),
     '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br />',
@@ -346,18 +346,17 @@ function gbb_liste_stages_liste($args) {
               ->execute()->fetchCol();
     $query->condition('j.co_resp', $tab_resp, 'IN');  // print_r($tab_resp);
  };
-/*
   // ----------------------------------------i---
   // prise en compte du voir les stages fermés
   // -------------------------------------------
   if ( !isset($_GET['voir_ferme']) || $_GET['voir_ferme']==0 ) {
-    $query->condition('m.co_anmo', '', '='); };
-    $query .= 'AND co_anmo = \'\'';
+    $query->condition('m.co_anmo', '', '=');
+    //$query .= 'AND co_anmo = \'\'';
   }
-*/
 
   $query->orderBy('id_disp', 'ASC');
   $query->orderBy('co_modu', 'ASC');
+  $query->distinct();
   $result = $query->execute();
   if ($result->rowCount() == 0) return 'Hum !';
 
@@ -430,6 +429,10 @@ function gbb_liste_stages_liste($args) {
     $session_alert = ($nb_sa == 0)? '' :
         theme('image', variable_get('_gbb_session_alert_icon')) .
                        '<span class="nb_sa">' . $nb_sa . '</span>'.
+                       '<span class="invisible">></span> ';
+    $module_alert = ($r->module_alert==0)? '' :
+        theme('image', variable_get('_gbb_module_alert_icon')) .
+                       '<span class="nb_sa">*</span>'.
                        '<span class="invisible">></span> ';
     $NOT_en_attente = ($nb_nea == 0)? '' :
         theme('image', variable_get('_gbb_not_en_attente_icon')) .
@@ -506,7 +509,7 @@ function gbb_liste_stages_liste($args) {
            (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND convoc_sent=1) <
            (select count(*) from {gbb_session} WHERE co_modu=m.co_modu AND co_degre=m.co_degre AND en_attente=0)
 */
-   if (   ($r->module_alert==1 OR  $nb_sa >0 OR $nb_nea > $nb_s) 
+   if (   ($r->module_alert==1 OR  $nb_sa >0 OR $nb_nea > 0) 
        OR $voirEnCours == 0 ) {
 
       $rows[] = array( 
@@ -523,7 +526,8 @@ function gbb_liste_stages_liste($args) {
                             $session_alert .
                             $NOT_en_attente .
                             $en_attente .
-                            //$module_alert .
+                            //$nb_nea.' '. $nb_s.
+                            $module_alert .
                             $prioritaire,
                             'class' => 'nowrap',
                 ),

@@ -1012,7 +1012,7 @@ $schema['gbb_session'] = array(
       'type' => 'varchar',
       'length' => '50',
       'not null' => FALSE,
-      'default' => '9h-17h',
+      'default' => '09h-17h',
     ),
     'type_paiement' => array(
       'description' => 'type de paiement du formateur',

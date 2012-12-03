@@ -1094,7 +1094,7 @@ function gbb_sess_edition($form, $form_state, $args) {
                   $r->sess_id ),
       '#attributes' => array('class' => array('eeditsession')),
     );
-  return $form;
+    return $form;
   }
 
   // On récupère les valeurs associées à la session pour peupler le formulaire
@@ -1108,7 +1108,18 @@ function gbb_sess_edition($form, $form_state, $args) {
                              'session_alert', 'en_attente', 'convoc_sent'))
          ->fields('r', array('co_resp', 'nomu', 'prenom'))
          ->fields('e', array('co_lieu', 'denom_comp', 'sigle'));
-  $r = $query->execute()->fetchObject();
+  // le 21 nov 2012
+  $result = $query->execute();
+  if (($result->rowCount() == 0)) {
+    $form['f'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('PROBLEME(S) AVEC LA(LES) SESSION(S) CHOISIE(S)'),
+      '#attributes' => array('class' => array('eeditsession')),
+    );
+    return $form;
+  }
+  $r = $result->fetchObject();
+  // le 21 nov 2012
 
   $form['f'] = array(
     '#type' => 'fieldset',

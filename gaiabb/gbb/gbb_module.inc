@@ -98,6 +98,8 @@ function gbb_infos_general($args) {
                  2 => t("Resp. orga."),
                  3 => t("Resp. péda.")
     );
+  $voir = (    user_access('gest_convocs gaiabb') 
+          and !user_access('gest_sessions gaiabb'))? 2 : 0;
   $voirEnCours = (    user_access('gest_convocs gaiabb') 
                  and !user_access('gest_sessions gaiabb'))? 1 : 0;
   $str="";
@@ -105,7 +107,7 @@ function gbb_infos_general($args) {
     if ($r->co_tres == 1 || $r->co_tres == 2 || $r->co_tres == 3 ) {
       $str .= $TRES[$r->co_tres] . " : ";
       $str .= l( $r->prenom . ' ' . $r->nomu, 
-                 'liste/12/' . $r->co_degre . '/0/' . $r->nomu, 
+                 'liste/12/' . $r->co_degre . '/'. $voir .'/' . $r->nomu, 
                  array('query' => array('voir_encours' => $voirEnCours))
               ) ;
       $str .= "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;";

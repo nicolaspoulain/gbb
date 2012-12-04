@@ -45,6 +45,17 @@ function gbb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_numeric'),
             'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
+   $data['gbb_gmodu']['co_anmo'] = array(
+            'title' => t('co_anmo'),
+            'help' => t('Code du type d annulation des modules'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
   $data['gbb_gmodu']['lib'] = array(
             'title' => t('lib'),
             'help' => t('Libellé du module'),

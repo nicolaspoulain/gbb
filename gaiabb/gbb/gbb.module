@@ -231,7 +231,7 @@ variable_set('_gbb_disk_icon', array(
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
 variable_set('_gbb_print_icon', array(
-  'path' => drupal_get_path('module', 'gbb') . '/images/convoc_printed.gif',
+  'path' => drupal_get_path('module', 'gbb') . '/images/convoc_printed32.png',
   'alt' => 'module_printed',
   'title' => t('Imprimé'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))

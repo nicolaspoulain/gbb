@@ -11,14 +11,16 @@
  * affichant une liste de responsables et les stages qui leur
  * associes
  */
-function evaluation($args = 'NaN') {
+function gbb_evaluation_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
-  drupal_add_css(drupal_get_path('module', 'gaiabb') . '/gaiabb.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+  drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css',
+                 array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
+  drupal_add_library('system', 'drupal.collapse');
+
   // Construction de la page
   $build = array();
-  $build['infos_gaia']   = infos_gaia($args); // sur page_gest_module.inc
-  $build['infos_sessions_pour_ce_groupe']   = infos_sessions($args); // sur page_gest_module.inc
+  $build['infos_gaia']   = gbb_infos_general($args); // sur page_gest_module.inc
+  //$build['infos_sessions_pour_ce_groupe']   = gbb_infos_sessions($args); // sur page_gest_module.inc
   $build['environnement'] = render(drupal_get_form('form_environnement' , $args));
   $build['group_participants'] = render(drupal_get_form('form_groupe_participants' , $args));
   $build['formation'] = render(drupal_get_form('form_formation' , $args));
@@ -29,7 +31,7 @@ function evaluation($args = 'NaN') {
 /**
  * Un tableau à deux lignes qui affiche le dispo et le module
  */
-function infos_sessions($args) {
+function gbb_infos_sessions($args) {
 
   $query = db_select('gbb_session', 's');
   $query  ->leftjoin('gbb_gresp_dafor', 'r',  'r.co_resp = s.co_resp AND r.co_degre=s.co_degre');

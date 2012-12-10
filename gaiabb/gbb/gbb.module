@@ -121,6 +121,15 @@ function gbb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+  // Affich fiche eval form
+
+  $items['evaluation'] = array(
+        'title' => '',
+        'page callback' => 'gbb_evaluation_view',
+        'access arguments' => array('unstable gbb'),
+        'type' => MENU_CALLBACK,
+  );
+
   // Pages pour autocomplete AJAX
   // TODO : décrire
   $items['autocomp/etablissement'] = array(
@@ -284,5 +293,5 @@ module_load_include('inc', 'gbb', 'gbb_liste_stages');
 module_load_include('inc', 'gbb', 'gbb_module');
 module_load_include('inc', 'gbb', 'gbb_formateur');
 module_load_include('inc', 'gbb', 'gbb_etablissement');
-//module_load_include('inc', 'gbb', 'gbb_evaluation');
+module_load_include('inc', 'gbb', 'gbb_evaluation');
 

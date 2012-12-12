@@ -1201,7 +1201,7 @@ function gbb_sess_edition($form, $form_state, $args) {
 
   $form['f']['duree_a_payer'] = array(
     '#type' => 'textfield',
-    '#title' => t('Duree à payer'),
+    '#title' => t('Durée à payer'),
     '#default_value' => $r->duree_a_payer,
     '#size' => 10,
     '#maxlength' => 6,

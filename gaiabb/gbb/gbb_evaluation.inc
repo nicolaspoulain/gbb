@@ -19,7 +19,7 @@ function gbb_evaluation_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
-  $build['infos_gaia']   = gbb_infos_general($args); // sur page_gest_module.inc
+  //$build['infos_gaia']   = gbb_infos_general($args); // sur page_gest_module.inc
   //$build['infos_sessions_pour_ce_groupe']   = gbb_infos_sessions($args); // sur page_gest_module.inc
   $build['environnement'] = render(drupal_get_form('form_environnement' , $args));
   $build['group_participants'] = render(drupal_get_form('form_groupe_participants' , $args));
@@ -101,9 +101,9 @@ function form_environnement($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Satisfaction concernant l\'environnement de la formation'),
   );
-  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => $r['co_degre']);
-  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => $r['co_modu']);
-  $form['f']['groupe'] = array('#type' => 'hidden','#value' => $r['groupe']);
+  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => arg(1));
+  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => arg(2));
+  $form['f']['groupe'] = array('#type' => 'hidden','#value' => arg(3));
   $form['f']['satisAccueil'] = array(
     '#type' => 'checkbox',
     '#title' => t('Accueil'),

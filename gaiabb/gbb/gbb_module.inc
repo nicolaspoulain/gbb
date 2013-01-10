@@ -114,7 +114,18 @@ function gbb_infos_general($args) {
     }
   }
   // --------------------------------------------------------------------
-
+  $query = db_select('gbb_evaluation', 'e');
+  $query ->condition('e.co_modu', arg(2), '=')
+         ->condition('e.co_degre', arg(1), '=')
+         ->fields('e',  array('groupe'));
+  $result = $query->execute();
+  $evalStr  = "Pas d'évaluation remplie.";
+  if (($result->rowCount() != 0)) {
+    $evalStr  = "Evaluation et bilan :";
+    foreach ($result as $rr) {
+      $evalStr  .= l(' gr'.$rr->groupe,'evaluationview/'.arg(1).'/'.arg(2).'/'.$rr->groupe);
+    };
+  };
   // Construction du tableau à trois lignes
   $paf_ou_fil = ($r->co_camp == 'BS')? 'fil' : 'paf';
   $ouvert_ou_ferme = ($r->co_andi == 'Fe')? 'Ferme' : '';
@@ -122,14 +133,20 @@ function gbb_infos_general($args) {
               array('data' => strtoupper($paf_ou_fil) . '&nbsp;-&nbsp;' . 
                               $r->id_disp . ' ' . $r->libd,
                     'class' => array($paf_ou_fil, $ouvert_ou_ferme),
-                    'colspan' => '2')
+                    'colspan' => '2'),
+              array('data' => $evalStr),
             );
   $rows[] = array( 
               array('data' => $r->co_modu . ' ' . $r->libm,
                     'class' => array($ouvert_ou_ferme),
-                    'colspan' => '2')
+                    'colspan' => '2'),
+              array('data' => ''),
             );
-  $rows[] = array(array('data' => $str));
+  $rows[] = array(
+              array('data' => $str),
+              array('data' => t(''),
+                    'colspan' => '2'),
+  );
 
   return theme('table', array('rows' => $rows));
 }

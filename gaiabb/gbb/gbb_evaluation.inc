@@ -94,52 +94,63 @@ function form_environnement($form, &$form_state) {
                                'commSalle',
                                'satisMatos',
                                'commMatos',
+                               'rencontrePrep',
                                ));
   $r = $query->execute()->fetchAssoc();
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Satisfaction concernant l\'environnement de la formation'),
+    '#title' => t('Environnement de la formation'),
   );
   $form['f']['co_degre'] = array('#type' => 'hidden','#value' => arg(1));
   $form['f']['co_modu'] = array('#type' => 'hidden','#value' => arg(2));
   $form['f']['groupe'] = array('#type' => 'hidden','#value' => arg(3));
   $form['f']['satisAccueil'] = array(
-    '#type' => 'checkbox',
+    '#type' => 'radios',
     '#title' => t('Accueil'),
     '#default_value' => $r['satisAccueil'],
+    '#options' => array(1 => t('Satisfaisant'),  0 => t('Non satisfaisant')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['commAccueil'] = array(
     '#type' => 'textfield',
-    '#title' => t('Commentaire'),
     '#default_value' => $r['commAccueil'],
-    '#size' => 40,
+    '#size' => 60,
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisAccueil"]' => array('value' => 0),),
+    ),
   );
   $form['f']['satisSalle'] = array(
-    '#type' => 'checkbox',
+    '#type' => 'radios',
     '#title' => t('Salle'),
     '#default_value' => $r['satisSalle'],
+    '#options' => array(1 => t('Satisfaisant'),  0 => t('Non satisfaisant')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['commSalle'] = array(
     '#type' => 'textfield',
     '#default_value' => $r['commSalle'],
-    '#size' => 40,
+    '#size' => 60,
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisSalle"]' => array('value' => 0),),
+    ),
   );
 
   $form['f']['satisMatos'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Matériel'),
+    '#type' => 'radios',
+    '#title' => t('Matériel mis à disposition'),
     '#default_value' => $r['satisMatos'],
+    '#options' => array(1 => t('Satisfaisant'),  0 => t('Non satisfaisant')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
@@ -150,6 +161,19 @@ $form['f']['commMatos'] = array(
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisMatos"]' => array('value' => 0),),
+    ),
+  );
+
+  $form['f']['rencontrePrep'] = array(
+    '#type' => 'radios',
+    '#title' => t('Pour les FIL, y a-t-il eu une rencontre préparatoire ?'),
+    '#default_value' => $r['rencontrePrep'],
+    '#options' => array(1 => t('Oui'),  0 => t('Non')),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
   );
 
   $form['f']['submit'] = array(
@@ -177,6 +201,7 @@ function form_environnement_submit($form, &$form_state) {
                    'commSalle'    => $form_state['values']['commSalle'],
                    'satisMatos'   => $form_state['values']['satisMatos'],
                    'commMatos'    => $form_state['values']['commMatos'],
+                   'rencontrePrep'=> $form_state['values']['rencontrePrep'],
              ))
     ->execute();
   drupal_set_message(t('Enregistrement effectué.'));
@@ -209,71 +234,90 @@ function form_groupe_participants($form, &$form_state) {
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Satisfaction concernant le groupe des participants'),
+    '#title' => t('Groupe des participants'),
   );
-  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => $r['co_degre']);
-  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => $r['co_modu']);
-  $form['f']['groupe'] = array('#type' => 'hidden','#value' => $r['groupe']);
+  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => arg(1));
+  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => arg(2));
+  $form['f']['groupe'] = array('#type' => 'hidden','#value' => arg(3));
   $form['f']['satisEffectif'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Effectif'),
+    '#type' => 'radios',
+    '#title' => t('Effectif adapté'),
     '#default_value' => $r['satisEffectif'],
+    '#options' => array(1 => t('Oui'),  0 => t('Non')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['commEffectif'] = array(
     '#type' => 'textfield',
-    '#title' => t('Commentaire'),
     '#default_value' => $r['commEffectif'],
-    '#size' => 40,
+    '#size' => 60,
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisEffectif"]' => array('value' => 0),),
+    ),
   );
   $form['f']['satisAssiduite'] = array(
-    '#type' => 'checkbox',
+    '#type' => 'radios',
     '#title' => t('Assiduité'),
     '#default_value' => $r['satisAssiduite'],
+    '#options' => array(1 => t('Oui'),  0 => t('Non')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['commAssiduite'] = array(
     '#type' => 'textfield',
     '#default_value' => $r['commAssiduite'],
-    '#size' => 40,
+    '#size' => 60,
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisAssiduite"]' => array('value' => 0),),
+    ),
   );
   $form['f']['satisCooper'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Coopérations'),
+    '#type' => 'radios',
+    '#title' => t('Coopération'),
     '#default_value' => $r['satisCooper'],
+    '#options' => array(1 => t('Oui'),  0 => t('Non')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['commCooper'] = array(
     '#type' => 'textfield',
     '#default_value' => $r['commCooper'],
-    '#size' => 40,
+    '#size' => 60,
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisCooper"]' => array('value' => 0),),
+    ),
   );
   $form['f']['satisPrerequis'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Prérequis'),
+    '#type' => 'radios',
+    '#title' => t('Prérequis respecté'),
     '#default_value' => $r['satisPrerequis'],
+    '#options' => array(1 => t('Oui'),  0 => t('Non')),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>',
   );
   $form['f']['commPrerequis'] = array(
     '#type' => 'textfield',
     '#default_value' => $r['commPrerequis'],
-    '#size' => 40,
+    '#size' => 60,
     '#maxlength' => 200,
     '#prefix' => '&nbsp;<div class="inline">',
     '#suffix' => '</div><br/>',
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisPrerequis"]' => array('value' => 0),),
+    ),
   );
 
   $form['f']['submit'] = array(
@@ -336,12 +380,13 @@ function form_formation($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('La formation'),
   );
-  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => $r['co_degre']);
-  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => $r['co_modu']);
-  $form['f']['groupe'] = array('#type' => 'hidden','#value' => $r['groupe']);
+  $form['f']['co_degre'] = array('#type' => 'hidden','#value' => arg(1));
+  $form['f']['co_modu'] = array('#type' => 'hidden','#value' => arg(2));
+  $form['f']['groupe'] = array('#type' => 'hidden','#value' => arg(3));
   $form['f']['satisObjectifs'] = array(
-    '#type' => 'checkbox',
+    '#type' => 'radios',
     '#title' => t('Avez-vous atteint les objectifs prescrits ?'),
+    '#options' => array(1 => t('Oui'),  0 => t('Non')),
     '#default_value' => $r['satisObjectifs'],
   );
   $form['f']['questionsTraitees'] = array(
@@ -351,6 +396,10 @@ function form_formation($form, &$form_state) {
     '#size' => 40,
     '#rows' => 3,
     '#maxlength' => 1000,
+    '#states' => array(    // This #states rule limits visibility
+      'visible' => array(  // action to take.
+        ':input[name="satisObjectifs"]' => array('value' => 0),),
+    ),
   );
   $form['f']['pointsForts'] = array(
     '#type' => 'textarea',

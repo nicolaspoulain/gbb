@@ -482,20 +482,27 @@ function gbb_liste_stages_liste($args) {
       };
     } else { $dates =''; };
 
-    // La liste des sessions pour le module 
+  $queryev = db_select('gbb_evaluation', 'e');
+  $queryev ->condition('e.co_modu', $r->co_modu, '=')
+           ->condition('e.co_degre', arg(2), '=')
+           ->fields('e',  array('groupe'));
+  $resultev = $queryev->execute();
+  if (($resultev->rowCount() != 0)) $dates .= "&nbsp;&nbsp;".theme('image', variable_get('_gbb_evals'));
+
+    // La liste des sessions pour le module
     $qf = db_select('gbb_session', 's');
-    $qf ->leftjoin('gbb_gresp_dafor', 'r',  
+    $qf ->leftjoin('gbb_gresp_dafor', 'r',
                    'r.co_resp = s.co_resp AND r.co_degre=s.co_degre');
     $qf ->condition('s.co_degre', arg(2), '=')
         ->condition('s.co_modu', $r->co_modu, '=')
         ->fields('r', array('nomu', 'prenom'))
         ->fields('s', array('date', 'en_attente'));
     $fo = $qf->execute();
-  
+
     $items = array();
     foreach ($fo as $f) {
       $items[] = ((!$f->en_attente)? '' :
-                     theme('image', variable_get('_gbb_en_attente_icon')) ) . 
+                     theme('image', variable_get('_gbb_en_attente_icon')) ) .
                  ' ' . $f->date . ' - ' . $f->prenom . ' ' . $f->nomu;
     };
     $formateurs = theme('item_list', array('items' => $items));

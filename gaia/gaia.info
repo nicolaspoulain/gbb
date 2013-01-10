@@ -1,0 +1,9 @@
+name = Gaia Module
+description = Moduel Gaia avec des entites
+core = 7.x
+package = Example modules
+
+dependencies[] = entity
+dependencies[] = views
+
+files[] = gaia.controller.inc

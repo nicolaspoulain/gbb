@@ -1,0 +1,336 @@
+<?php
+
+/**
+ *@file
+ * Implements the basic functionality required to create an entity and display it.
+ */
+
+/**
+ * Implements hook_entity_info()
+ * We let Drupal know about our entity via this function
+ */
+function gaia_entity_info() {
+  $entities = array();
+  $entities['gmodu'] = array(
+    'label'  => t('gmodu Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_gmodu', // la table décrite dans hook_schema du .install
+    // Les actions sur nos entités (fichier gaia.controller.inc). Ce sont
+    // soit les classes par défaut fournies par Entity API
+    // soit des extensions de ces classes si le besoin se fait sentir.
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'EntityDefaultViewsController',
+    'uri callback' => 'gmodu_uri',
+    // Then we add some properties that influence how our entities are treated
+    'entity keys' => array( // These keys are the name of properties of entity objects.
+        'id' => 'co_modu',
+    ),
+    'fieldable' => TRUE, // We want to be able to attach fields to our entity.
+    'bundles' => array(  // Bundles are defined by the model types below
+      'gmodu' => array(
+        'label' => 'gmodu',
+        'admin' => array(
+          'path' => 'admin/structure/gmodu/manage',
+          'access arguments' => array('administer gaia entities'),
+        ),
+      ),
+    ),
+  );
+   $entities['session'] = array(
+    'label'  => t('session Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_session',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'SessionViewsController',
+    'uri callback' => 'session_uri',
+    'entity keys' => array(
+        'id' => 'sess_id',
+    ),
+    'fieldable' => TRUE, // We want to be able to attach fields to our entity.
+    'bundles' => array(  // Bundles are defined by the model types below
+      'session' => array(
+        'label' => 'session',
+        'admin' => array(
+          'path' => 'admin/structure/session/manage',
+          'access arguments' => array('administer gaia entities'),
+        ),
+      ),
+    ),
+  );
+  $entities['gresp'] = array(
+    'label'  => t('gresp Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_gresp',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'GrespViewsController',
+    'uri callback' => 'gresp_uri',
+    'entity keys' => array(
+        'id' => 'co_resp',
+    ),
+  );
+  $entities['gdisp'] = array(
+    'label'  => t('gdisp Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_gdisp',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'GdispViewsController',
+    'uri callback' => 'gdisp_uri',
+    'entity keys' => array(
+        'id' => 'id_disp',
+    ),
+  );
+   $entities['netab'] = array(
+    'label'  => t('netab Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_netab',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'NetabViewsController',
+    'uri callback' => 'netab_uri',
+    'entity keys' => array(
+        'id' => 'co_lieu',
+    ),
+  );
+    $entities['ncont'] = array(
+    'label'  => t('ncont Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_ncont',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'NcontViewsController',
+    'uri callback' => 'ncont_uri',
+    'entity keys' => array(
+        'id' => 'co_cont',
+    ),
+  );
+  return $entities;
+}
+
+/**
+ * Implementing the uri callbacks defined
+ */
+function gmodu_uri($gmodu) {
+  return array(
+    'path' => 'gmodu/' . $gmodu->co_modu,
+  );
+}
+function session_uri($session) {
+  return array(
+    'path' => 'session/' . $session->sess_id,
+  );
+}
+function gresp_uri($gresp) {
+  return array(
+    'path' => 'gresp/' . $gresp->co_resp,
+  );
+}
+function gdisp_uri($gdisp) {
+  return array(
+    'path' => 'gdisp/' . $gdisp->id_disp,
+  );
+}
+function netab_uri($netab) {
+  return array(
+    'path' => 'netab/' . $netab->co_lieu,
+  );
+}
+function ncont_uri($ncont) {
+  return array(
+    'path' => 'ncont/' . $ncont->co_cont,
+  );
+}
+
+/**
+ * Fetch a gmodu object. Make sure that the wildcard you choose
+ * in the gmodu entity definition fits the function name here.
+ *
+ * @param $co_modu
+ *   Integer specifying the gmodu entity id.
+ * @param $reset
+ *   A boolean indicating that the internal cache should be reset.
+ * @Returns
+ *   A fully-loaded $gmodu object or FALSE if it cannot be loaded.
+ *
+ * @see gmodu_load_multiple()
+ */
+function gmodu_load($co_modu = NULL, $reset = FALSE) {
+  $co_modus = (isset($co_modu) ? array($co_modu) : array());
+  $gmodu = gmodu_load_multiple($co_modus, $reset);
+  return $gmodu ? reset($gmodu) : FALSE;
+}
+function gmodu_load_multiple($co_modus = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('gmodu', $co_modus, $conditions, $reset);
+}
+function session_load($sess_id = NULL, $reset = FALSE) {
+  $sess_ids = (isset($sess_id) ? array($sess_id) : array());
+  $session = session_load_multiple($sess_ids, $reset);
+  return $session ? reset($session) : FALSE;
+}
+function session_load_multiple($sess_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('session', $sess_ids, $conditions, $reset);
+}
+function gresp_load($co_resp = NULL, $reset = FALSE) {
+  $co_resps = (isset($co_resp) ? array($co_resp) : array());
+  $gresp = gresp_load_multiple($co_resps, $reset);
+  return $gresp ? reset($gresp) : FALSE;
+}
+function gresp_load_multiple($co_resps = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('gresp', $co_resps, $conditions, $reset);
+}
+function gdisp_load($id_disp = NULL, $reset = FALSE) {
+  $id_disps = (isset($id_disp) ? array($id_disp) : array());
+  $gdisp = gdisp_load_multiple($id_disps, $reset);
+  return $gdisp ? reset($gdisp) : FALSE;
+}
+function gdisp_load_multiple($id_disps = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('gdisp', $id_disps, $conditions, $reset);
+}
+function netab_load($co_lieu = NULL, $reset = FALSE) {
+  $co_lieus = (isset($co_lieu) ? array($co_lieu) : array());
+  $netab = netab_load_multiple($co_lieus, $reset);
+  return $netab ? reset($netab) : FALSE;
+}
+function netab_load_multiple($co_lieus = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('netab', $co_lieus, $conditions, $reset);
+}
+function ncont_load($co_cont = NULL, $reset = FALSE) {
+  $co_conts = (isset($co_cont) ? array($co_cont) : array());
+  $ncont = ncont_load_multiple($co_conts, $reset);
+  return $ncont ? reset($ncont) : FALSE;
+}
+function ncont_load_multiple($co_conts = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('ncont', $co_conts, $conditions, $reset);
+}
+
+/**
+ * Implements hook_menu()
+ * This provides a place for Field API to hang its own
+ * interface and has to be the same as what was defined
+ * in gmodu entity_info() above.
+ */
+function gaia_menu() {
+  $items['admin/structure/gmodu/manage'] = array(
+    'title' => 'Administration de l\'entité gmodu',
+    'description' => 'Gestion de gmodu et de sa structure d\'entité',
+    'page callback' => 'gmodu_admin_page',
+    'file' => 'gaia.admin.inc',
+    'access arguments' => array('administer gaia entities'),
+  );
+  $items['admin/structure/session/manage'] = array(
+    'title' => 'Administration de l\'entité session',
+    'description' => 'Gestion de session et de sa structure d\'entité',
+    'page callback' => 'session_admin_page',
+    'file' => 'gaia.admin.inc',
+    'access arguments' => array('administer gaia entities'),
+  );
+
+  $gmodu_uri = 'gmodu/%gmodu';
+  // Les pages pour l'entité - needs to follow what is defined in gmodu_uri
+  // and will use load_gmodu to retrieve the necessary entity_loady info.
+  $items[$gmodu_uri] = array(           // Voir les champs de l'entité
+    'page callback' => 'gmodu_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$gmodu_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items[$gmodu_uri . '/edit'] = array( // Modifier les champs d'une entité
+    'title' => 'Editer',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gmodu_edit_form',1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('create gaia entities'),
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+
+  $session_uri = 'session/%session';
+  $items[$session_uri] = array(
+    'page callback' => 'session_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$session_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $gdisp_uri = 'gdisp/%gdisp';
+  $items[$gdisp_uri] = array(
+    'page callback' => 'gdisp_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$gdisp_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $gresp_uri = 'gresp/%gresp';
+  $items[$gresp_uri] = array(
+    'page callback' => 'gresp_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$gresp_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $netab_uri = 'netab/%netab';
+  $items[$netab_uri] = array(
+    'page callback' => 'netab_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$netab_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $ncont_uri = 'ncont/%ncont';
+  $items[$ncont_uri] = array(
+    'page callback' => 'ncont_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$ncont_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  return $items;
+}
+/**
+ * Implements hook_help().
+ */
+function gaia_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#gaia':
+      return "<p>" . t('Once you have activated the module you can configure your entity bundle by visiting "admin/structure/gmodu/manage"') . "</p>";
+  }
+}
+

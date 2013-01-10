@@ -42,7 +42,8 @@ décimale est $18 446 744 073 709 551 616$.
 ==Remarques pédagogiques==
 
 Dans cette première partie, on traite uniquement le cas des nombres entiers 
-naturels non nuls afin de simplifier le problème. Par ailleurs, on se limite à la programmation de fonctions itératives afin de travailler les notions de boucles.
+naturels non nuls afin de simplifier le problème. 
+Par ailleurs, on se limite à la programmation de fonctions itératives afin de travailler les notions de boucles.
 
 Ce sujet présente de nombreux avantages du point de vue mathématique et algorithmique, en effet le sujet ne nécessite que des connaissances de base d'arithmétique, cependant certains calculs ne sont pas triviaux même pour des élèves de lycée.
 Par ailleurs le projet est très modulaire : chaque problème se résoud avec un algorithme de petite taille. De plus les difficultés sont très variées, on pourra ainsi facilement faire travailler les élèves par groupe. Les différentes méthodes et fonctions doivent cependant être cohérentes en ce qui concerne leurs entrées et sorties, ce qui oblige les groupes à bien fixer les règles du travail en commun.

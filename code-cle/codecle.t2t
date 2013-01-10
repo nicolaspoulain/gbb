@@ -18,7 +18,7 @@ se base sur le repérage de la position des 1 dans l'écriture binaire des nombr
 
 ==Représentation informatique du code CLE d'un entier naturel non nul==
 
-Les écritures en base deux ne comportent que des 1 et des 0. 
+Les écritures en base deux ne comportent que des 1 et des 0.
 Par exemple, avec un octet (8 bits) on ne peut représenter les entiers naturels 
 que de 0 (00000000 en binaire) à 255 (11111111 en binaire). 
 Il suffit donc de connaître la liste des positions de chiffres 1 pour

@@ -61,6 +61,11 @@ $schema['g_gdire'] = array(
 $schema['g_gdisp'] = array(
   'description' => 'Copie conforme de la table GAIA gdisp',
   'fields' => array(
+    'gdisp_id' => array(
+      'description' => 'Gdisp entity ID [ = co_modu*1000000000+co_disp ] (Pour les besoins de ENTITY API DRUPAL)',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
     'co_disp' => array(
       'description' => 'Code interne du dispositif',
       'type' => 'int',
@@ -230,9 +235,11 @@ $schema['g_gdisp'] = array(
       'default' => 2,
     ),
   ),
-  'primary key' => array('co_disp', 'co_degre'),
+  //'primary key' => array('co_disp', 'co_degre'),
+  'primary key' => array('g_gdisp_id'),
   'indexes' => array(
     'idx_gdisp_id_disp' => array(array('id_disp', 3)),
+    'idx_gdisp_g_gdisp_id' => array(array('g_gdisp_id', 3)),
   ),
 );
 
@@ -247,7 +254,12 @@ $schema['g_gmodu'] = array(
       'type' => 'int',
       'not null' => TRUE,
     ),
-    'co_modu' => array(
+  'gdisp_id' => array(
+      'description' => 'Gdisp entity ID [ = co_modu*1000000000+co_disp ] (Pour les besoins de ENTITY API DRUPAL)',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+  'co_modu' => array(
       'description' => 'Code du module pour un dispositif donné',
       'type' => 'int',
       'not null' => TRUE,

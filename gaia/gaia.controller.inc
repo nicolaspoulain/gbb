@@ -23,7 +23,6 @@ class GdispViewsController extends EntityDefaultViewsController {
         ),
       ),
     );
-    /*
     // gbb_gdire table de liaison, pas de champ à extraire
     $data['g_gdire']['table'] = array(
             'group' => t('g_gdire'),
@@ -35,8 +34,20 @@ class GdispViewsController extends EntityDefaultViewsController {
               ),
             ),
     );
-    */
-    return $data;
+    $data['g_gdire']['co_tres'] = array(
+            'title' => t('co_tres'),
+            'help' => t('Code trésorerie'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+    );
+
+
+return $data;
   }
 }
 

@@ -46,6 +46,18 @@ class GdispViewsController extends EntityDefaultViewsController {
            'argument' => array('handler' => 'views_handler_argument_numeric'),
     );
 
+    $data['g_gdire']['co_resp'] = array(
+            'title' => t('co_resp'),
+            'help' => t('Code responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+    );
+
 
 return $data;
   }

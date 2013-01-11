@@ -326,6 +326,7 @@ function gaia_menu() {
   );
   return $items;
 }
+
 /**
  * Implements hook_help().
  */
@@ -335,4 +336,20 @@ function gaia_help($path, $arg) {
       return "<p>" . t('Once you have activated the module you can configure your entity bundle by visiting "admin/structure/gmodu/manage"') . "</p>";
   }
 }
+
+/**
+ * * Implements hook_entity_property_info_alter().
+ * */
+function gaia_entity_property_info_alter(&$info) {
+  $properties = &$info['session']['properties'];
+
+  $properties['date'] = array(
+      'schema field' => 'date',
+      'type' => 'date',
+      'label' => t("Date"),
+      'description' => 'Date de la session',
+  );
+}
+
+
 

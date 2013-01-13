@@ -485,10 +485,17 @@ function gbb_liste_stages_liste($args) {
   $queryev = db_select('gbb_evaluation', 'e');
   $queryev ->condition('e.co_modu', $r->co_modu, '=')
            ->condition('e.co_degre', arg(2), '=')
-           ->fields('e',  array('groupe'));
+           ->fields('e',  array('groupe','syntheseEvalForm'));
   $resultev = $queryev->execute();
-  if (($resultev->rowCount() != 0)) $dates .= "&nbsp;&nbsp;".theme('image', variable_get('_gbb_evals'));
-
+  $evalbilan = '';
+  if (($resultev->rowCount() != 0)) {
+    $evalbilan = "&nbsp;&nbsp;".theme('image', variable_get('_gbb_evals'));
+    foreach ($resultev as $rrv) {
+      if ($rrv->syntheseEvalForm !='') {
+        $evalbilan = "&nbsp;&nbsp;".theme('image', variable_get('_gbb_bilans'));
+      };
+    };
+  };
     // La liste des sessions pour le module
     $qf = db_select('gbb_session', 's');
     $qf ->leftjoin('gbb_gresp_dafor', 'r',
@@ -549,7 +556,7 @@ function gbb_liste_stages_liste($args) {
                   'data' => nl2br($r->organisation). $formateurs ,
                 ),
                 'col4' => array(
-                  'data' => $dates,
+                  'data' => $dates . $evalbilan,
                 ),
     );
     $libd_precedent = $r->libd;

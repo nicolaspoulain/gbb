@@ -3,3 +3,14 @@
 - http://planete.drupalfr.org/node/1223
 - http://www.wunderkraut.com/blog/remote-entities-in-drupal-7/2012-10-25
 - http://www.cyber-sundae.com/create-drupal-entity-based-custom-table-and-create-drupal-view-based-entity-table-including-date
+- http://api.drupalize.me/api/drupal/function/hook_entity_property_info/7
+- http://drupalcontrib.org/api/drupal/contributions!entity!entity.api.php/function/hook_entity_property_info/7
+
+
+
+  Lecture sur views
+- http://api.drupalize.me/api/drupal/sites!all!modules!views!modules!book.views.inc/7
+- http://groups.drupal.org/node/10129
+- http://api.drupal.org/api/views/views.api.php/function/hook_views_data/7
+- http://api.drupal.org/api/views/views.api.php/function/hook_views_data_alter/7
+- 

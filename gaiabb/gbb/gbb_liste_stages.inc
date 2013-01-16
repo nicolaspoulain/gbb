@@ -181,7 +181,7 @@ function gbb_liste_stages_choix($form, &$form_state, $args) {
 
   $form['f']['voir_ferme'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Voir les modules fermés (<font color="red">Re-FONCTIONNE</font>)'),
+    '#title' => t('Voir les modules fermés'),
     '#default_value' => (isset($_GET['voir_ferme']))? $_GET['voir_ferme'] : 0,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br />',

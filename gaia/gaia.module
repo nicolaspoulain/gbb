@@ -21,7 +21,8 @@ function gaia_entity_info() {
     // soit des extensions de ces classes si le besoin se fait sentir.
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
-    'views controller class' => 'EntityDefaultViewsController',
+    'views controller class' => 'GmoduViewsController',
+    //'views controller class' => 'EntityDefaultViewsController',
     'uri callback' => 'gmodu_uri',
     // Then we add some properties that influence how our entities are treated
     'entity keys' => array( // These keys are the name of properties of entity objects.
@@ -342,7 +343,6 @@ function gaia_help($path, $arg) {
  * */
 function gaia_entity_property_info_alter(&$info) {
   $properties = &$info['session']['properties'];
-
   $properties['date'] = array(
       'schema field' => 'date',
       'type' => 'date',
@@ -350,6 +350,3 @@ function gaia_entity_property_info_alter(&$info) {
       'description' => 'Date de la session',
   );
 }
-
-
-

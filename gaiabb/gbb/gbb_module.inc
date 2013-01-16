@@ -121,9 +121,23 @@ function gbb_infos_general($args) {
   $result = $query->execute();
   $evalStr  = "Pas d'évaluation remplie.";
   if (($result->rowCount() != 0)) {
-    $evalStr  = "Evaluation et bilan :";
+    $evalStr  = "Evaluation remplies :";
     foreach ($result as $rr) {
       $evalStr  .= l(' gr'.$rr->groupe,'evaluationview/'.arg(1).'/'.arg(2).'/'.$rr->groupe);
+    };
+  };
+  // --------------------------------------------------------------------
+  $query = db_select('gbb_session', 's');
+  $query ->condition('s.co_modu', arg(2), '=')
+         ->condition('s.co_degre', arg(1), '=')
+         ->distinct()
+         ->fields('s',  array('groupe'));
+  $result = $query->execute();
+  $bilanStr  = "Pas de bilan car pas de session active.";
+  if (($result->rowCount() != 0)) {
+    $bilanStr  = "Bilans :";
+    foreach ($result as $rr) {
+      $bilanStr  .= l(' gr'.$rr->groupe,'bilanview/'.arg(1).'/'.arg(2).'/'.$rr->groupe);
     };
   };
   // Construction du tableau à trois lignes
@@ -140,7 +154,7 @@ function gbb_infos_general($args) {
               array('data' => $r->co_modu . ' ' . $r->libm,
                     'class' => array($ouvert_ou_ferme),
                     'colspan' => '2'),
-              array('data' => ''),
+              array('data' => $bilanStr),
             );
   $rows[] = array(
               array('data' => $str),
@@ -824,7 +838,7 @@ function gbb_mini_lieu_form($form, &$form_state, $lieu, $sess_id) {
     '#type' => 'textfield',
     '#default_value' => $lieu,
     '#size' => 30,
-    '#maxlength' => 50,
+    '#maxlength' => 100,
     '#autocomplete_path' => 'autocomp/etablissement',
     '#ajax' => array(
       'callback' => 'gbb_mini_lieu_form_submit',

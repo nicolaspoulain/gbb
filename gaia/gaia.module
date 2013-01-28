@@ -222,6 +222,8 @@ function ncont_load_multiple($co_conts = array(), $conditions = array(), $reset 
  * in gmodu entity_info() above.
  */
 function gaia_menu() {
+  drupal_add_library('system', 'drupal.collapse');
+
   $items['admin/structure/gmodu/manage'] = array(
     'title' => 'Administration de l\'entité gmodu',
     'description' => 'Gestion de gmodu et de sa structure d\'entité',

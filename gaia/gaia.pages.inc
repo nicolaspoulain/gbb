@@ -89,7 +89,7 @@ function session_view($session) {
   drupal_set_title(t('Session ') . entity_id('session', $session));
   $header = array('Champ','Valeur');
   $wrapper = entity_metadata_wrapper('session', $session);
-  //drupal_set_message(print_r($wrapper->getPropertyInfo()));
+  drupal_set_message(print_r($wrapper->getPropertyInfo()));
   foreach ($wrapper->getPropertyInfo() as $field) {
     $f = strtolower($field['label']);
     $f = ($f == 'session entity id')? 'sess_id' : $f;

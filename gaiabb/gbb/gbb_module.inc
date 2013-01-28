@@ -1542,7 +1542,15 @@ function gbb_convoc_form_module_alert_submit(&$form, &$form_state) {
                 'co_degre' => $form_state['values']['codegre'] ))
     ->fields(array('module_alert' => $form_state['values']['module_alert'],))
     ->execute();
-}
+  if ($form_state['values']['module_alert']==1) {
+    db_merge('gbb_gmodu_plus')
+      ->key(array('co_modu'  => $form_state['values']['comodu'],
+                  'co_degre' => $form_state['values']['codegre'] ))
+      ->fields(array('module_printed' => 0,))
+      ->execute();
+  };
+
+ }
 function gbb_convoc_form_module_printed_submit(&$form, &$form_state) {
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],

@@ -629,10 +629,16 @@ function _gbb_autocompformatr2($string) {
     ->condition('nomu', '%' . db_like($string) . '%', 'LIKE')
     ->range(0, 10)
     ->execute();
+  if (strpos($string,'++')) {
+    $result = db_select('gbb_gresp_dafor', 'c')
+      ->fields('c', array('co_resp', 'nomu', 'prenom'))
+      ->condition('nomu', '%' . db_like(str_replace("++","",$string)) . '%', 'LIKE')
+      ->execute();
+  }
   foreach ($result as $r) {
     $matches[$r->co_resp] = $r->prenom . ' ' . $r->nomu;
   }
   $count = $result->rowCount();
-  if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';
+  if ($count > 9 && !strpos($string,'++')) $matches[' '] = '..... Et bien d\'autres .....';
   drupal_json_output($matches);
 }

@@ -985,6 +985,105 @@ $schema['g_session'] = array(
 );
 
 
+// ---------------------------------------------------------------------------
+// SESSION_GAIA
+// ---------------------------------------------------------------------------
+$schema['g_session_gaia'] = array(
+  'description' => 'La table des sessions envoyee par la DSI',
+  'fields' => array(
+    'session_gaia_id' => array(
+      'description' => 'Identifiant unique',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_disp' => array(
+      'description' => 'Code interne du dispositif',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_modu' => array(
+     'description' => 'Code du module pour un dispositif donné',
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'no_sess' => array(
+      'description' => 'Numero de session',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'no_groupe' => array(
+      'description' => 'Numeru de groupe',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_lieu' => array(
+      'description' => 'Code lieu',
+      'type' => 'char',
+      'length' => '8',
+      'not null' => TRUE,
+    ),
+    'dt_deb' => array(
+      'description' => 'Date debut',
+      'type' => 'char',
+      'length' => '50',
+      'not null' => FALSE,
+    ),
+    'hm_deb' => array(
+      'description' => 'Heure debut',
+      'type' => 'float',
+      'not null' => FALSE,
+    ),
+    'dt_fin' => array(
+      'description' => 'Date fin',
+      'type' => 'char',
+      'length' => '50',
+      'not null' => FALSE,
+    ),
+    'hm_fin' => array(
+      'description' => 'Heure fin',
+      'type' => 'float',
+      'not null' => FALSE,
+    ),
+    'nb_hr' => array(
+      'description' => 'Nombre d heures',
+      'type' => 'float',
+      'not null' => FALSE,
+    ),
+    'no_matr' => array(
+      'description' => 'Numero de matricule',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'civilite' => array(
+      'description' => 'Civilité',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'nomu' => array(
+      'description' => 'Nom d usage',
+      'type' => 'char',
+      'length' => '20',
+      'not null' => FALSE,
+    ),
+    'prenom' => array(
+      'description' => 'Prénom de la personne',
+      'type' => 'char',
+      'length' => '20',
+      'not null' => FALSE,
+    ),
+    'nomp' => array(
+      'description' => 'Prénom de la personne',
+      'type' => 'char',
+      'length' => '20',
+      'not null' => FALSE,
+    ),
+  ),
+  'primary key' => array('session_gaia_id'),
+);
+
+
  return $schema;
 }
 

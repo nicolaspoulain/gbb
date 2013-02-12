@@ -34,7 +34,8 @@ function gbb_etablissement_filtre($form, &$form_state) {
   $query = db_select('gbb_netab_dafor', 'e')
          ->fields('e', array('co_lieu',
                              'denom_comp',
-                             'sigle'));
+                             'sigle'))
+         ->orderBy('denom_comp', 'DESC');
   $result = $query->execute();
 
   foreach ($result as $r) {

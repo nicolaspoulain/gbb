@@ -464,3 +464,28 @@ class NcontViewsController extends EntityDefaultViewsController {
 
 
 
+class Session_gaiaViewsController extends EntityDefaultViewsController {
+
+/**
+ * Override views_data().
+ * Ajoute les liaisons des autres tables à la table gmodu
+ */
+  public function views_data() {
+    $data = parent::views_data();
+    $data['g_session_gaia']['table'] = array(
+            'group' => t('session_gaia'),
+            'join' => array(
+              'g_gmodu' => array(
+                'left_field' => 'co_modu',
+                'field' => 'co_modu',
+              ),
+            ),
+    );
+    $data['g_session_gaia']['session_gaia_id']['title']
+                   = t('session_gaia_id *Identifiant de la session*');
+     return $data;
+  }
+}
+
+
+

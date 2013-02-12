@@ -28,7 +28,7 @@ function gbb_formateur_view($args = 'NaN') {
                                  'class' => array('details'),
                                ),
                                '#children' => '',
-                               '#title' => t('Graphique de répartition des heures'),
+                               '#title' => t('Graphique de répartition des heures en 2012-2013'),
                                '#value' => gbb_formateur_stages($args),
                              )
                            )

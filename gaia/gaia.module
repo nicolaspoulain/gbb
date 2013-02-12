@@ -116,6 +116,19 @@ function gaia_entity_info() {
         'id' => 'co_cont',
     ),
   );
+    $entities['session_gaia'] = array(
+    'label'  => t('session_gaia Entity'),
+    'module' => 'gaia',
+    'access callback' => 'access content',
+    'base table' => 'g_session_gaia',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    'views controller class' => 'Session_gaiaViewsController',
+    'uri callback' => 'session_gaia_uri',
+    'entity keys' => array(
+        'id' => 'session_gaia_id',
+    ),
+  );
   return $entities;
 }
 
@@ -150,6 +163,11 @@ function netab_uri($netab) {
 function ncont_uri($ncont) {
   return array(
     'path' => 'ncont/' . $ncont->co_cont,
+  );
+}
+function session_gaia_uri($session_gaia) {
+  return array(
+    'path' => 'session_gaia/' . $session_gaia->session_gaia_id,
   );
 }
 
@@ -213,6 +231,14 @@ function ncont_load($co_cont = NULL, $reset = FALSE) {
 }
 function ncont_load_multiple($co_conts = array(), $conditions = array(), $reset = FALSE) {
   return entity_load('ncont', $co_conts, $conditions, $reset);
+}
+function session_gaia_load($session_gaia_id = NULL, $reset = FALSE) {
+  $session_gaia_ids = (isset($session_gaia_id) ? array($session_gaia_id) : array());
+  $session_gaia = session_gaia_load_multiple($session_gaia_ids, $reset);
+  return $session_gaia ? reset($session_gaia) : FALSE;
+}
+function session_gaia_load_multiple($session_gaia_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('session_gaia', $session_gaia_ids, $conditions, $reset);
 }
 
 /**
@@ -323,6 +349,19 @@ function gaia_menu() {
     'access arguments' => array('view gaia entities'),
   );
   $items[$ncont_uri . '/view'] = array( // Voir
+    'title' => 'Voir',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $session_gaia_uri = 'session_gaia/%session_gaia';
+  $items[$session_gaia_uri] = array(
+    'page callback' => 'session_gaia_view',
+    'page arguments' => array(1),
+    'file' => 'gaia.pages.inc',
+    'access arguments' => array('view gaia entities'),
+  );
+  $items[$session_gaia_uri . '/view'] = array( // Voir
     'title' => 'Voir',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,

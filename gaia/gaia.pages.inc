@@ -135,7 +135,6 @@ function gresp_view($gresp) {
   };
   return theme('table',array('rows' => $rows,'header' => $header));
 }
-
 function ncont_view($ncont) {
   drupal_set_title(t('Ncont ') . entity_id('ncont', $ncont));
   $header = array('Champ','Valeur');
@@ -144,6 +143,22 @@ function ncont_view($ncont) {
   foreach ($wrapper->getPropertyInfo() as $field) {
     $f = strtolower($field['label']);
     $f = ($f == 'ncont entity id')? 'co_cont' : $f;
+    $v = $wrapper->$f->value(array('sanitize' => TRUE));
+    $rows[] = array(
+                array('data' => $field['label']),
+                array('data' => $v),
+              );
+  };
+  return theme('table',array('rows' => $rows,'header' => $header));
+}
+function session_gaia_view($session_gaia) {
+  drupal_set_title(t('Session Gaia ') . entity_id('session_gaia', $session_gaia));
+  $header = array('Champ','Valeur');
+  $wrapper = entity_metadata_wrapper('session_gaia', $session_gaia);
+  //drupal_set_message(print_r($wrapper->getPropertyInfo()));
+  foreach ($wrapper->getPropertyInfo() as $field) {
+    $f = strtolower($field['label']);
+    $f = ($f == 'session_gaia entity id')? 'session_gaia_id' : $f;
     $v = $wrapper->$f->value(array('sanitize' => TRUE));
     $rows[] = array(
                 array('data' => $field['label']),

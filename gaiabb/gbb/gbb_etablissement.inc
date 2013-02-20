@@ -136,7 +136,7 @@ function gbb_etablissement_fiche($form, &$form_state) {
     '#disabled' => TRUE,
     '#options' => drupal_map_assoc(array('', 'CLG', 'LP', 'LYC', 'CIO', 'LPO', 
                                          'LGT', 'LG', 'EREA', 'LT', 'SEGPA', 
-                                         'SEP', 'EXT', 'LYC_METIER', 'CRDP',
+                                         'SEP', 'ECOLE', 'UNIV', 'EXT', 'LYC_METIER', 'CRDP',
     )),
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div>&nbsp;',

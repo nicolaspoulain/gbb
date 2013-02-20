@@ -292,11 +292,27 @@ function gbb_views_data() {
                 'field' => 'co_resp',
                 'extra' => 'gbb_gresp.co_degre = gbb_gmodu.co_degre',
               ),
+              'gbb_gdiof' => array(
+                'left_table' => 'gbb_gmoof',
+                'left_field' => 'co_resp',
+                'field' => 'co_resp',
+              ),
             ),
   );
   $data['gbb_gresp']['nomu'] = array(
             'title' => t('nomu'),
             'help' => t('Nom du responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gresp']['qualite'] = array(
+            'title' => t('Qualité'),
+            'help' => t('Qualité du responsable'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,
@@ -865,6 +881,182 @@ function gbb_views_data() {
     $data['gbb_evaluation']['remqAnalysesRD'] = array(
             'title' => t('remqAnalysesRD'),
             'help' => t('remqAnalysesRD'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  
+  // --------------------------------------------------------
+  // gbb_gdiof
+  // --------------------------------------------------------
+
+  $data['gbb_gdiof']['table'] = array(
+            'group' => t('gbb_gdiof'),
+              'base' => array(
+                'field' => 'co_offre', 
+                'title' => t('GaiaBB_OFFRES'), 
+                'help' => t('Tables des offres GaiaBB.'),
+        ),
+  );
+  $data['gbb_gdiof']['co_tpla'] = array(
+            'title' => t('co_tpla'),
+            'help' => t('Code type plan'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof']['co_orie'] = array(
+            'title' => t('co_orie'),
+            'help' => t('Code orientation'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof']['no_offre'] = array(
+            'title' => t('no_offre'),
+            'help' => t('Numéro de l offre'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+  // --------------------------------------------------------
+  // gbb_gmoof
+  // --------------------------------------------------------
+
+  $data['gbb_gmoof']['table'] = array(
+            'group' => t('gbb_moof'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'left_field' => 'co_offre',
+                'field' => 'co_offre',
+              ),
+            ),
+  );
+  $data['gbb_gmoof']['co_omodu'] = array(
+            'title' => t('co_omodu'),
+            'help' => t('CODE ??'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmoof']['libl'] = array(
+            'title' => t('libl'),
+            'help' => t('Libellé long'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmoof']['duree_prev'] = array(
+            'title' => t('duree_prev'),
+            'help' => t('Durée prévue'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmoof']['nb_eff_groupe'] = array(
+            'title' => t('nb_eff_groupe'),
+            'help' => t('Effectif groupe'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmoof']['cout_p_prest'] = array(
+            'title' => t('cout_p_prest'),
+            'help' => t('Cout previsionnel de la prestation'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmoof']['cout_p_fonc'] = array(
+            'title' => t('cout_p_fonc'),
+            'help' => t('Cout previsionnel de fonctionnement'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmoof']['lcont'] = array(
+            'title' => t('lcont'),
+            'help' => t('Lcont'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmoof']['lpeda'] = array(
+            'title' => t('lpeda'),
+            'help' => t('Libellé pédagogique'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmoof']['duree_prev'] = array(
+  );
+
+  // --------------------------------------------------------
+  // GBB_NCONT
+  // --------------------------------------------------------
+
+  $data['gbb_ncont']['table'] = array(
+            'group' => t('gbb_ncont'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'left_table' => 'gbb_gmoof',
+                'left_field' => 'co_cont',
+                'field' => 'co_cont',
+              ),
+            ),
+  );
+  $data['gbb_ncont']['lib_court'] = array(
+            'title' => t('lib_court'),
+            'help' => t('Libellé du contenu (court)'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,

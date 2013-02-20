@@ -485,13 +485,15 @@ function gbb_liste_stages_liste($args) {
   $queryev = db_select('gbb_evaluation', 'e');
   $queryev ->condition('e.co_modu', $r->co_modu, '=')
            ->condition('e.co_degre', arg(2), '=')
-           ->fields('e',  array('groupe','syntheseEvalForm'));
+           #->fields('e',  array('groupe','syntheseEvalForm'));
+           ->fields('e',  array('groupe','remqAnalysesRD'));
   $resultev = $queryev->execute();
   $evalbilan = '';
   if (($resultev->rowCount() != 0)) {
     $evalbilan = "&nbsp;&nbsp;".theme('image', variable_get('_gbb_evals'));
     foreach ($resultev as $rrv) {
-      if ($rrv->syntheseEvalForm !='') {
+      #if ($rrv->syntheseEvalForm !='') {
+      if ($rrv->remqAnalysesRD !='') {
         $evalbilan = "&nbsp;&nbsp;".theme('image', variable_get('_gbb_bilans'));
       };
     };

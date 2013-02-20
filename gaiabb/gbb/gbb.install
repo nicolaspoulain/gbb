@@ -1462,5 +1462,396 @@ $schema['gbb_file'] = array(
   ),
 );
 
+// ---------------------------------------------------------------------------
+// GBB_GDIOF
+// ---------------------------------------------------------------------------
+$schema['gbb_gdiof'] = array(
+  'description' => 'Dispo offre',
+  'fields' => array(
+    'co_offre' => array(
+     'description' => 'Code offre',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'no_offre' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '8',
+      'not null' => TRUE,
+    ),
+    'co_orie' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '4',
+      'not null' => TRUE,
+    ),
+    'libl' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '250',
+      'not null' => TRUE,
+    ),
+    'lobjt' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => FALSE,
+    ),
+    'co_objt' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => TRUE,
+    ),
+    'co_resp' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_orga' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => FALSE,
+    ),
+    'nb_mod_prev' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+    ),
+    'larch' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '250',
+      'not null' => TRUE,
+    ),
+    'dt_crea' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'date',
+      'not null' => TRUE,
+    ),
+    'co_init' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'co_tcan' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'nb_place_prev' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => FALSE,
+    ),
+    'duree_prev' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => FALSE,
+    ),
+    'co_chap' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '4',
+      'not null' => FALSE,
+    ),
+    'co_art' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'co_camp' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'co_them' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'flag_compl' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'cle' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '4',
+      'not null' => FALSE,
+    ),
+    'co_tpla' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'co_offreur' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '8',
+      'not null' => FALSE,
+    ),
+    'gestionnaire' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '50',
+      'not null' => FALSE,
+    ),
+    'publie' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+  ),
+  'primary key' => array('co_offre'),
+  'indexes' => array(
+    'gdiof_idx2' => array('cle'),
+    'gdiof_pk' => array('co_orie'),
+    'gdiof_pk2' => array('no_offre'),
+  ),
+);
+$schema['gbb_gmoof'] = array(
+  'description' => 'TODO: please describe this table!',
+  'fields' => array(
+    'co_offre' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'co_omodu' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'libl' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '250',
+      'not null' => TRUE,
+    ),
+    'lpeda' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '250',
+      'not null' => TRUE,
+    ),
+    'lcont' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => TRUE,
+    ),
+    'co_form' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => TRUE,
+    ),
+    'lform' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => FALSE,
+    ),
+    'co_moda' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => TRUE,
+    ),
+    'lmoda' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => FALSE,
+    ),
+    'co_type' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => TRUE,
+    ),
+    'lcibl' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => FALSE,
+    ),
+    'co_resp' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => FALSE,
+    ),
+    'co_resp_org' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => FALSE,
+    ),
+    'lconp' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => FALSE,
+    ),
+    'duree_prev' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+    ),
+    'nb_groupe' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+    ),
+    'nb_eff_groupe' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+    ),
+    'cout_p_fonc' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'numeric',
+      'not null' => FALSE,
+      'precision' => '7',
+      'scale' => '2',
+    ),
+    'cout_p_prest' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'numeric',
+      'not null' => FALSE,
+      'precision' => '7',
+      'scale' => '2',
+    ),
+    'nb_interv' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => TRUE,
+    ),
+    'lcomm' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '250',
+      'not null' => FALSE,
+    ),
+    'dt_crea' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'date',
+      'not null' => TRUE,
+    ),
+    'dt_etat' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'date',
+      'not null' => FALSE,
+    ),
+    'co_etat' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'co_cont' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '3',
+      'not null' => FALSE,
+    ),
+    'co_cibl' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'nb_place_prev' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => FALSE,
+    ),
+    'nb_h_interv' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'size' => 'small',
+      'not null' => FALSE,
+    ),
+    'co_regr' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '6',
+      'not null' => FALSE,
+    ),
+    'conv' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'co_prac' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'co_prna' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '2',
+      'not null' => FALSE,
+    ),
+    'co_budg' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '3',
+      'not null' => FALSE,
+    ),
+    'cumul' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'co_remp' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'cout_p_excep' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'numeric',
+      'not null' => FALSE,
+      'precision' => '7',
+      'scale' => '2',
+    ),
+    'flag_compl' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '1',
+      'not null' => FALSE,
+    ),
+    'co_etab_dem' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'char',
+      'length' => '8',
+      'not null' => FALSE,
+    ),
+  ),
+  'primary key' => array('co_omodu'),
+  'indexes' => array(
+    'gmoof_pk' => array('co_offre'),
+  ),
+);
+
+
+
  return $schema;
 }

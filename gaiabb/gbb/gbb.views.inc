@@ -293,12 +293,25 @@ function gbb_views_data() {
                 'extra' => 'gbb_gresp.co_degre = gbb_gmodu.co_degre',
               ),
               'gbb_gdiof' => array(
+                'left_field' => 'co_resp',
+                'field' => 'co_resp',
+                'extra' => 'gbb_gresp.co_degre = 2',
+              ),
+            ),
+          );
+
+  $data['gbb_gresp2']['table'] = array(
+            'group' => t('gbb_gresp2'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'table' => 'gbb_gresp',
                 'left_table' => 'gbb_gmoof',
                 'left_field' => 'co_resp',
                 'field' => 'co_resp',
-              ),
+                'extra' => 'gbb_gresp.co_degre = 2',
             ),
-  );
+            ),
+          );
   $data['gbb_gresp']['nomu'] = array(
             'title' => t('nomu'),
             'help' => t('Nom du responsable'),
@@ -310,7 +323,53 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
+  $data['gbb_gresp2']['nomu'] = array(
+            'title' => t('nomu'),
+            'help' => t('Nom du responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  $data['gbb_gresp']['prenom'] = array(
+            'title' => t('prenom'),
+            'help' => t('Prenom du responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gresp2']['prenom'] = array(
+            'title' => t('prenom'),
+            'help' => t('Prenom du responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
   $data['gbb_gresp']['qualite'] = array(
+            'title' => t('Qualité'),
+            'help' => t('Qualité du responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gresp2']['qualite'] = array(
             'title' => t('Qualité'),
             'help' => t('Qualité du responsable'),
             'field' => array(
@@ -941,7 +1000,7 @@ function gbb_views_data() {
   // --------------------------------------------------------
 
   $data['gbb_gmoof']['table'] = array(
-            'group' => t('gbb_moof'),
+            'group' => t('gbb_gmoof'),
             'join' => array(
               'gbb_gdiof' => array(
                 'left_field' => 'co_offre',
@@ -1036,8 +1095,6 @@ function gbb_views_data() {
            'sort' => array('handler' => 'views_handler_sort'),
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
-  );
-  $data['gbb_gmoof']['duree_prev'] = array(
   );
 
   // --------------------------------------------------------

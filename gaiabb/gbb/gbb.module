@@ -147,6 +147,15 @@ function gbb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+  //   exemple : bilan/2/26142/3
+
+  $items['offres_edit'] = array(
+        'title' => '',
+        'page callback' => 'gbb_offres_view',
+        'access arguments' => array('stable gbb'),
+        'type' => MENU_CALLBACK,
+  );
+
   // Pages pour autocomplete AJAX
   // TODO : décrire
   $items['autocomp/etablissement'] = array(
@@ -324,4 +333,5 @@ module_load_include('inc', 'gbb', 'gbb_formateur');
 module_load_include('inc', 'gbb', 'gbb_etablissement');
 module_load_include('inc', 'gbb', 'gbb_evaluation');
 module_load_include('inc', 'gbb', 'gbb_bilan');
+module_load_include('inc', 'gbb', 'gbb_offres');
 

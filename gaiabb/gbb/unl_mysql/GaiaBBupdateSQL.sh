@@ -17,6 +17,8 @@ GDIRE="gdire"
 NCONT="ncont"
 NTCAN="ntcan"
 NORIE="norie"
+GDIOF="gdiof"
+GMOOF="gmoof"
 
 dow=`date +%u` ; dom=`date +%d`
 jour=`date +%A`
@@ -61,6 +63,8 @@ case "$1" in
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NCONT.unl
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NTCAN.unl
 	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NORIE.unl
+	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GDIOF.unl
+	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GMOOF.unl
     cd $HOME && echo `ls -alh *.unl`
     shift;;
   -r) ## **R**apport par mail
@@ -179,6 +183,37 @@ case "$1" in
 	  echo -e "fait."
 	  echo -e "\t\t\t\t\t\t\t$TEST"
 	fi
+
+	echo -ne "* $GDIOF.unl en traitement par unl2sql ...\t\t"
+	$HOME/unl2sql.sh $GDIOF 25
+	echo "fait."
+	NB_CHAMPS=`/bin/cat $HOME/$GDIOF.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
+	POIDS=$(/usr/bin/du $HOME/$GDIOF.SQL | /usr/bin/cut -f1)
+	TEST=`$HOME/unlChecker.sh $GDIOF 26 $NB_CHAMPS 3 $POIDS`
+	if [ "$TEST" == "ERROR" ]; then 
+	  echo -e "\t\t\t\t\t\t\t$TEST"
+	else
+	  echo -ne "* $GDIOF.SQL en cours d'injection  .....\t\t\t"
+	  /usr/bin/mysql --user=root --password=$BDDPW $BDD < $HOME/$GDIOF.SQL
+	  echo -e "fait."
+	  echo -e "\t\t\t\t\t\t\t$TEST"
+	fi
+
+	echo -ne "* $GMOOF.unl en traitement par unl2sql ...\t\t"
+	$HOME/unl2sqlGMOOF.sh $GMOOF 38
+	echo "fait."
+	NB_CHAMPS=`/bin/cat $HOME/$GMOOF.log |/usr/bin/cut -d' ' -f4 |/usr/bin/uniq`
+	POIDS=$(/usr/bin/du $HOME/$GMOOF.SQL | /usr/bin/cut -f1)
+	TEST=`$HOME/unlChecker.sh $GMOOF 39 $NB_CHAMPS 3 $POIDS`
+	if [ "$TEST" == "ERROR" ]; then 
+	  echo -e "\t\t\t\t\t\t\t$TEST"
+	else
+	  echo -ne "* $GMOOF.SQL en cours d'injection  .....\t\t\t"
+	  /usr/bin/mysql --user=root --password=$BDDPW $BDD < $HOME/$GMOOF.SQL
+	  echo -e "fait."
+	  echo -e "\t\t\t\t\t\t\t$TEST"
+	fi
+
     echo "Rapport du jour" > LOG.log
     echo "===============" >> LOG.log
     echo " " >> LOG.log

@@ -19,10 +19,45 @@ function gbb_offres_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
+  $build['search'] = render(drupal_get_form('gbb_offres_filter',$args));
   $build['tab'] = gbb_offres_tab($args);
 
   return implode('', $build);
 }
+
+function gbb_offres_filter($form, &$form_state, $args) {
+  $form['#method'] = 'get';
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Filtrer'),
+    '#attributes' => array('class' => array('collapsible', 
+                                            'collapsed')),
+  );
+
+  $form['f']['co_orie'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Orientation'),
+    '#default_value' => (isset($_GET['co_orie']))? $_GET['co_orie'] : '',
+    '#description' => t('p.ex.:PR70'),
+    '#size' => 20, 
+  );
+   $form['f']['no_offre'] = array(
+    '#type' => 'textfield',
+    '#title' => t('NoOffre'),
+    '#default_value' => (isset($_GET['no_offre']))? $_GET['no_offre'] : '',
+    '#description' => t('p.ex.:20130020'),
+    '#size' => 20, 
+  );
+  $form['f']['submit_co_modu'] = array(
+    '#type' => 'submit',
+    '#value' => 'Envoyer',
+  );
+
+  return $form;
+}
+
+
+
 
 function gbb_offres_tab($args) {
 
@@ -30,18 +65,21 @@ function gbb_offres_tab($args) {
     'nomu' => t('Interlocuteur dispo'),
     'co_tpla' => t('Type de Plan'),
     'co_orie' => t('Code Orientation'),
+    array('data' => t('Disc/Domaine'), 'class' => 'jaune'),
     'no_offre' => t('No Offre/ Code Module'),
     'libl' => t('Titre'),
     'nomu2' => t('Resp. péda.'),
-    'disc' => t('Disc / Domaine'),
-    'nb_hp' => t('Nbre HP'),
-    'nb_vac' => t('Nbre vac.'),
-    'nb_gr' => t('Nbre gr.'),
-    'hors_cdc' => t('Hors CDC'),
-    'prio_nat' => t('Priorité Nat.'),
-    'prio_aca' => t('Priorité Aca.'),
-    'offre_new' => t('Offre nouvelle'),
-    'comment' => t('&nbsp;&nbsp;&nbsp;Commentaires&nbsp;&nbsp;&nbsp;'),
+    'lmoda' => t('Modalités'),
+    'lcomm' => t('Commenatires (GAIA)'),
+    'nb_groupe' => t('Nbre groupe'),
+    'duree_prev' => t('Duree prév. (h)'),
+    array('data' => t('Nbre HP'), 'class' => 'jaune'),
+    array('data' => t('Nbre vac.'), 'class' => 'jaune'),
+    array('data' => t('Hors CDC'), 'class' => 'jaune'),
+    array('data' => t('Priorité Nat.'), 'class' => 'jaune'),
+    array('data' => t('Priorité Aca.'), 'class' => 'jaune'),
+    array('data' => t('Offre nouvelle'), 'class' => 'jaune'),
+    array('data' => t('&nbsp;&nbsp;&nbsp;Observations&nbsp;&nbsp;&nbsp;'), 'class' => 'jaune'),
   );
   // Number of records (or nodes, in our case) to show per page.
   $count = 20;
@@ -57,12 +95,16 @@ function gbb_offres_tab($args) {
                     'm.co_resp = r2.co_resp AND r2.co_degre = 2');
   $query ->condition('d.no_offre', '20130000', '>')
          ->fields('d', array('no_offre', 'co_tpla', 'co_orie'))
-         ->fields('m', array('libl', 'co_omodu'))
+         ->fields('m', array('libl', 'co_omodu', 'lmoda', 'lcomm','nb_groupe','duree_prev'))
          ->fields('r', array('nomu'));
   $query ->addField('r2', 'nomu', 'nomu2');
   $query ->fields('dd', array('disc','nb_hp','nb_vac','nb_gr','hors_cdc',
                               'prio_nat','prio_aca','offre_new','comment' ));
   $query = $query->extend('PagerDefault')->limit($count);
+
+  if (isset($_GET['co_orie']) && $_GET['co_orie']!='') $query ->condition('d.co_orie', $_GET['co_orie'], 'LIKE');
+  if (isset($_GET['no_offre']) && $_GET['no_offre']!='') $query ->condition('d.no_offre', $_GET['no_offre'], '=');
+
   $result = $query->execute();
   $nb_off = $result->rowCount();
 
@@ -74,8 +116,6 @@ function gbb_offres_tab($args) {
                                 $r->nb_hp, $r->no_offre)) ;
     $vac = render(drupal_get_form('gbb_offres_nb_vac_form',
                                 $r->nb_vac, $r->no_offre)) ;
-    $gr = render(drupal_get_form('gbb_offres_nb_gr_form',
-                                $r->nb_gr, $r->no_offre)) ;
     $hors_cdc = render(drupal_get_form('gbb_offres_hors_cdc_form',
                                 $r->hors_cdc, $r->no_offre)) ;
     $prio_nat = render(drupal_get_form('gbb_offres_prio_nat_form',
@@ -91,13 +131,16 @@ function gbb_offres_tab($args) {
                 array('data' => $r->nomu),
                 array('data' => $r->co_tpla),
                 array('data' => $r->co_orie),
+                array('data' => $d),
                 array('data' => $r->no_offre.' / '.$r->co_omodu),
                 array('data' => $r->libl),
                 array('data' => $r->nomu2),
-                array('data' => $d),
+                array('data' => $r->lmoda),
+                array('data' => $r->lcomm),
+                array('data' => $r->nb_groupe),
+                array('data' => $r->duree_prev),
                 array('data' => $hp),
                 array('data' => $vac),
-                array('data' => $gr),
                 array('data' => $hors_cdc),
                 array('data' => $prio_nat),
                 array('data' => $prio_aca),
@@ -115,7 +158,7 @@ function gbb_offres_tab($args) {
 function gbb_offres_disc_form($form, &$form_state, $disc, $no_offre) {
   $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
   $form['f']['disc'] = array(
-    '#type' => 'textfield', '#size' => 8,
+    '#type' => 'textfield', '#size' => 15,
     '#default_value' => $disc,
     '#ajax' => array(
       'callback' => 'gbb_offres_disc_form_submit',
@@ -163,23 +206,6 @@ function gbb_offres_nb_vac_form_submit($form, &$form_state) {
   ))->execute();
 }
 
-function gbb_offres_nb_gr_form($form, &$form_state, $nb_gr, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
-  $form['f']['nb_gr'] = array(
-    '#type' => 'textfield', '#size' => 1,
-    '#default_value' => $nb_gr,
-    '#ajax' => array(
-      'callback' => 'gbb_offres_nb_hp_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => '')),);
-  return $form;
-}
-function gbb_offres_nb_gr_form_submit($form, &$form_state) {
-  db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
-    ->fields(array('nb_gr'  => $form_state['values']['nb_gr'],
-  ))->execute();
-}
-
 function gbb_offres_hors_cdc_form($form, &$form_state, $hors_cdc, $no_offre) {
   $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
   $form['f']['hors_cdc'] = array(
@@ -219,7 +245,7 @@ function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $no_offre) {
   $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
   $form['f']['prio_aca'] = array(
     '#type' => 'select',
-    '#options' => array(1,2,3,4,5,6,7,8,9),
+    '#options' => array(1,2,3,4,5,6),
     '#default_value' => $prio_aca,
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_aca_form_submit',

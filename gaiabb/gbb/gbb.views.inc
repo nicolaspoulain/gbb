@@ -996,6 +996,108 @@ function gbb_views_data() {
   );
 
   // --------------------------------------------------------
+  // gbb_gdiof_dafor
+  // --------------------------------------------------------
+
+  $data['gbb_gdiof_dafor']['table'] = array(
+            'group' => t('gbb_gdiof_dafor'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'left_field' => 'no_offre',
+                'field' => 'no_offre',
+              ),
+            ),
+  );
+  $data['gbb_gdiof_dafor']['disc'] = array(
+            'title' => t('disc'),
+            'help' => t('Disc. ou domaine / dossier'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof_dafor']['nb_hp'] = array(
+            'title' => t('nb_hp'),
+            'help' => t('Heures Poste, sur décharge'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof_dafor']['nb_vac'] = array(
+            'title' => t('nb_vac'),
+            'help' => t('Nbre vacations (dont ex-HSE)'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof_dafor']['nb_gr'] = array(
+            'title' => t('nb_gr'),
+            'help' => t('nombre de groupes prévus'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gdiof_dafor']['hors_cdc'] = array(
+            'title' => t('hors_cdc'),
+            'help' => t('Hors CDC'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gdiof_dafor']['prio_nat'] = array(
+            'title' => t('prio_nat'),
+            'help' => t('Priorité nationale'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof_dafor']['prio_aca'] = array(
+            'title' => t('prio_aca'),
+            'help' => t('Priorité académique'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof_dafor']['offre_new'] = array(
+            'title' => t('offre_new'),
+            'help' => t('Offre Nouvelle (p/r an dernier)'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  // --------------------------------------------------------
   // gbb_gmoof
   // --------------------------------------------------------
 
@@ -1088,6 +1190,17 @@ function gbb_views_data() {
   $data['gbb_gmoof']['lpeda'] = array(
             'title' => t('lpeda'),
             'help' => t('Libellé pédagogique'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmoof']['lmoda'] = array(
+            'title' => t('lmoda'),
+            'help' => t('Modalité'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,

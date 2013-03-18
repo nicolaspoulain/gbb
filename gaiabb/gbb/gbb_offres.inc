@@ -160,6 +160,9 @@ function gbb_offres_disc_form($form, &$form_state, $disc, $no_offre) {
   $form['f']['disc'] = array(
     '#type' => 'textfield', '#size' => 15,
     '#default_value' => $disc,
+    '#autocomplete_path' => 'autocomp/disc',
+    '#prefix' => '<fieldset class="ajaxform inline">',
+    '#suffix' => '</fieldset>',
     '#ajax' => array(
       'callback' => 'gbb_offres_disc_form_submit',
       'progress' => array('type' => 'throbber', 'message' => '')),);
@@ -245,7 +248,7 @@ function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $no_offre) {
   $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
   $form['f']['prio_aca'] = array(
     '#type' => 'select',
-    '#options' => array(1,2,3,4,5,6),
+    '#options' => array(0,1,2,3,4,5,6),
     '#default_value' => $prio_aca,
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_aca_form_submit',
@@ -295,4 +298,24 @@ function gbb_offres_comment_form_submit($form, &$form_state) {
 }
 
 
+
+/**
+ * Fonctions d' ** AUTOCOMPLETE AJAX RESPONSABLES **
+ */
+function _gbb_autocompdisc($string) {
+
+  $matches = array();
+  $result = db_select('gbb_gdiof_dafor', 'c')
+    ->fields('c', array('disc'))
+    ->condition('disc', '%' . db_like($string) . '%', 'LIKE')
+    ->distinct()
+    ->range(0, 10)
+    ->execute();
+  foreach ($result as $r) {
+    $matches[$r->disc] = $r->disc;
+  }
+  $count = $result->rowCount();
+  if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';
+  drupal_json_output($matches);
+}
 

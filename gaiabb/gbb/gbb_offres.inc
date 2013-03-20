@@ -48,6 +48,34 @@ function gbb_offres_filter($form, &$form_state, $args) {
     '#description' => t('p.ex.:20130020'),
     '#size' => 20, 
   );
+   $form['f']['nomu'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Resp. (dispo)'),
+    '#default_value' => (isset($_GET['nomu']))? $_GET['nomu'] : '',
+    '#description' => t('p.ex.:DENISE'),
+    '#size' => 20, 
+  );
+   $form['f']['nomu2'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Resp. (module)'),
+    '#default_value' => (isset($_GET['nomu2']))? $_GET['nomu2'] : '',
+    '#description' => t('p.ex.:POULAIN'),
+    '#size' => 20, 
+  );
+   $form['f']['disc'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Disc/Domaine'),
+    '#default_value' => (isset($_GET['disc']))? $_GET['disc'] : '',
+    '#description' => t('p.ex.:TICE'),
+    '#size' => 20, 
+  );
+   $form['f']['co_tpla'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Type de plan'),
+    '#default_value' => (isset($_GET['co_tpla']))? $_GET['co_tpla'] : '',
+    '#description' => t('p.ex.:S'),
+    '#size' => 20, 
+  );
   $form['f']['submit_co_modu'] = array(
     '#type' => 'submit',
     '#value' => 'Envoyer',
@@ -104,6 +132,10 @@ function gbb_offres_tab($args) {
 
   if (isset($_GET['co_orie']) && $_GET['co_orie']!='') $query ->condition('d.co_orie', $_GET['co_orie'], 'LIKE');
   if (isset($_GET['no_offre']) && $_GET['no_offre']!='') $query ->condition('d.no_offre', $_GET['no_offre'], '=');
+  if (isset($_GET['nomu']) && $_GET['nomu']!='') $query ->condition('r.nomu', $_GET['nomu'], 'LIKE');
+  if (isset($_GET['nomu2']) && $_GET['nomu2']!='') $query ->condition('r2.nomu', $_GET['nomu2'], 'LIKE');
+  if (isset($_GET['co_tpla']) && $_GET['co_tpla']!='') $query ->condition('d.co_tpla', $_GET['co_tpla'], 'LIKE');
+  if (isset($_GET['disc']) && $_GET['disc']!='') $query ->condition('dd.disc', $_GET['disc'], 'LIKE');
 
   $result = $query->execute();
   $nb_off = $result->rowCount();
@@ -230,7 +262,7 @@ function gbb_offres_prio_nat_form($form, &$form_state, $prio_nat, $no_offre) {
   $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
   $form['f']['prio_nat'] = array(
     '#type' => 'select', 
-    '#options' => array('Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9'),
+    '#options' => array('Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','0'),
     '#default_value' => $prio_nat,
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_nat_form_submit',
@@ -248,7 +280,7 @@ function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $no_offre) {
   $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
   $form['f']['prio_aca'] = array(
     '#type' => 'select',
-    '#options' => array(0,1,2,3,4,5,6),
+    '#options' => array(0,1,2,3,4,5),
     '#default_value' => $prio_aca,
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_aca_form_submit',

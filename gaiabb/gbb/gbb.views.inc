@@ -308,7 +308,7 @@ function gbb_views_data() {
                 'left_table' => 'gbb_gmoof',
                 'left_field' => 'co_resp',
                 'field' => 'co_resp',
-                'extra' => 'gbb_gresp.co_degre = 2',
+                'extra' => 'gbb_gresp2.co_degre = 2',
             ),
             ),
           );
@@ -379,6 +379,17 @@ function gbb_views_data() {
            'sort' => array('handler' => 'views_handler_sort'),
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gresp2']['co_degre'] = array(
+            'title' => t('Degré'),
+            'help' => t('Degré du responsable'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
   // --------------------------------------------------------

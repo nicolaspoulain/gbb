@@ -1014,8 +1014,9 @@ function gbb_views_data() {
             'group' => t('gbb_gdiof_dafor'),
             'join' => array(
               'gbb_gdiof' => array(
-                'left_field' => 'no_offre',
-                'field' => 'no_offre',
+                'left_table' => 'gbb_gmoof',
+                'left_field' => 'co_omodu',
+                'field' => 'co_omodu',
               ),
             ),
   );
@@ -1106,6 +1107,29 @@ function gbb_views_data() {
            'sort' => array('handler' => 'views_handler_sort'),
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  $data['gbb_gdiof_dafor']['comment'] = array(
+            'title' => t('Comment'),
+            'help' => t('Observations'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof_dafor']['position'] = array(
+            'title' => t('position'),
+            'help' => t('Classement des modules'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
   // --------------------------------------------------------

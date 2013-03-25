@@ -108,15 +108,16 @@ function gbb_offres_tab($args) {
     array('data' => t('Priorité Aca.'), 'class' => 'jaune'),
     array('data' => t('Offre nouvelle'), 'class' => 'jaune'),
     array('data' => t('&nbsp;&nbsp;&nbsp;Observations&nbsp;&nbsp;&nbsp;'), 'class' => 'jaune'),
+    array('data' => t('Position'), 'CLASS' => 'jaune'),
   );
   // Number of records (or nodes, in our case) to show per page.
   $count = 20;
 
   $query = db_select('gbb_gdiof', 'd');
-  $query ->leftjoin('gbb_gdiof_dafor', 'dd',
-                    'd.no_offre = dd.no_offre');
   $query ->leftjoin('gbb_gmoof', 'm',
                     'd.co_offre = m.co_offre');
+  $query ->leftjoin('gbb_gdiof_dafor', 'dd',
+                    'm.co_omodu = dd.co_omodu');
   $query ->leftjoin('gbb_gresp', 'r',
                     'd.co_resp = r.co_resp AND r.co_degre = 2');
   $query ->leftjoin('gbb_gresp', 'r2',
@@ -127,8 +128,9 @@ function gbb_offres_tab($args) {
          ->fields('r', array('nomu'));
   $query ->addField('r2', 'nomu', 'nomu2');
   $query ->fields('dd', array('disc','nb_hp','nb_vac','nb_gr','hors_cdc',
-                              'prio_nat','prio_aca','offre_new','comment' ));
+                              'prio_nat','prio_aca','offre_new','comment','position' ));
   $query = $query->extend('PagerDefault')->limit($count);
+  $query ->distinct();
 
   if (isset($_GET['co_orie']) && $_GET['co_orie']!='') $query ->condition('d.co_orie', $_GET['co_orie'], 'LIKE');
   if (isset($_GET['no_offre']) && $_GET['no_offre']!='') $query ->condition('d.no_offre', $_GET['no_offre'], '=');
@@ -143,21 +145,23 @@ function gbb_offres_tab($args) {
   $rows = array();
   foreach ($result as $r) {
     $d = render(drupal_get_form('gbb_offres_disc_form',
-                                $r->disc, $r->no_offre)) ;
+                                $r->disc, $r->co_omodu)) ;
     $hp = render(drupal_get_form('gbb_offres_nb_hp_form',
-                                $r->nb_hp, $r->no_offre)) ;
+                                $r->nb_hp, $r->co_omodu)) ;
     $vac = render(drupal_get_form('gbb_offres_nb_vac_form',
-                                $r->nb_vac, $r->no_offre)) ;
+                                $r->nb_vac, $r->co_omodu)) ;
     $hors_cdc = render(drupal_get_form('gbb_offres_hors_cdc_form',
-                                $r->hors_cdc, $r->no_offre)) ;
+                                $r->hors_cdc, $r->co_omodu)) ;
     $prio_nat = render(drupal_get_form('gbb_offres_prio_nat_form',
-                                $r->prio_nat, $r->no_offre)) ;
+                                $r->prio_nat, $r->co_omodu)) ;
     $prio_aca = render(drupal_get_form('gbb_offres_prio_aca_form',
-                                $r->prio_aca, $r->no_offre)) ;
+                                $r->prio_aca, $r->co_omodu)) ;
     $offre_new = render(drupal_get_form('gbb_offres_offre_new_form',
-                                $r->offre_new, $r->no_offre)) ;
+                                $r->offre_new, $r->co_omodu)) ;
     $comment = render(drupal_get_form('gbb_offres_comment_form',
-                                $r->comment, $r->no_offre)) ;
+                                $r->comment, $r->co_omodu)) ;
+    $position = render(drupal_get_form('gbb_offres_position_form',
+                                $r->position, $r->co_omodu)) ;
 
     $rows[] = array(
                 array('data' => $r->nomu),
@@ -178,6 +182,7 @@ function gbb_offres_tab($args) {
                 array('data' => $prio_aca),
                 array('data' => $offre_new),
                 array('data' => $comment),
+                array('data' => $position),
               );
   }
   $output = theme('table', 
@@ -187,8 +192,8 @@ function gbb_offres_tab($args) {
   return $output . theme('pager', array('tags' => array()));
 }
 
-function gbb_offres_disc_form($form, &$form_state, $disc, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_disc_form($form, &$form_state, $disc, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['disc'] = array(
     '#type' => 'textfield', '#size' => 15,
     '#default_value' => $disc,
@@ -202,13 +207,13 @@ function gbb_offres_disc_form($form, &$form_state, $disc, $no_offre) {
 }
 function gbb_offres_disc_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('disc'  => $form_state['values']['disc'],
   ))->execute();
 }
 
-function gbb_offres_nb_hp_form($form, &$form_state, $nb_hp, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_nb_hp_form($form, &$form_state, $nb_hp, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['nb_hp'] = array(
     '#type' => 'textfield', '#size' => 1,
     '#default_value' => $nb_hp,
@@ -219,13 +224,13 @@ function gbb_offres_nb_hp_form($form, &$form_state, $nb_hp, $no_offre) {
 }
 function gbb_offres_nb_hp_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('nb_hp'  => $form_state['values']['nb_hp'],
   ))->execute();
 }
 
-function gbb_offres_nb_vac_form($form, &$form_state, $nb_vac, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_nb_vac_form($form, &$form_state, $nb_vac, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['nb_vac'] = array(
     '#type' => 'textfield', '#size' => 1,
     '#default_value' => $nb_vac,
@@ -236,13 +241,13 @@ function gbb_offres_nb_vac_form($form, &$form_state, $nb_vac, $no_offre) {
 }
 function gbb_offres_nb_vac_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('nb_vac'  => $form_state['values']['nb_vac'],
   ))->execute();
 }
 
-function gbb_offres_hors_cdc_form($form, &$form_state, $hors_cdc, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_hors_cdc_form($form, &$form_state, $hors_cdc, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['hors_cdc'] = array(
     '#type' => 'checkbox', '#size' => 1,
     '#default_value' => $hors_cdc,
@@ -253,13 +258,13 @@ function gbb_offres_hors_cdc_form($form, &$form_state, $hors_cdc, $no_offre) {
 }
 function gbb_offres_hors_cdc_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('hors_cdc'  => $form_state['values']['hors_cdc'],
   ))->execute();
 }
 
-function gbb_offres_prio_nat_form($form, &$form_state, $prio_nat, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_prio_nat_form($form, &$form_state, $prio_nat, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['prio_nat'] = array(
     '#type' => 'select', 
     '#options' => array('Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','0'),
@@ -271,13 +276,13 @@ function gbb_offres_prio_nat_form($form, &$form_state, $prio_nat, $no_offre) {
 }
 function gbb_offres_prio_nat_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('prio_nat'  => $form_state['values']['prio_nat'],
   ))->execute();
 }
 
-function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['prio_aca'] = array(
     '#type' => 'select',
     '#options' => array(0,1,2,3,4,5),
@@ -289,13 +294,13 @@ function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $no_offre) {
 }
 function gbb_offres_prio_aca_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('prio_aca'  => $form_state['values']['prio_aca'],
   ))->execute();
 }
 
-function gbb_offres_offre_new_form($form, &$form_state, $offre_new, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_offre_new_form($form, &$form_state, $offre_new, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['offre_new'] = array(
     '#type' => 'checkbox', '#size' => 1,
     '#default_value' => $offre_new,
@@ -306,13 +311,13 @@ function gbb_offres_offre_new_form($form, &$form_state, $offre_new, $no_offre) {
 }
 function gbb_offres_offre_new_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('offre_new'  => $form_state['values']['offre_new'],
   ))->execute();
 }
 
-function gbb_offres_comment_form($form, &$form_state, $comment, $no_offre) {
-  $form['f']['no_offre']  = array('#type' => 'hidden','#value' => $no_offre );
+function gbb_offres_comment_form($form, &$form_state, $comment, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['comment'] = array(
     '#type' => 'textarea', 
     '#cols' => 20, '#rows' => 2,
@@ -324,8 +329,25 @@ function gbb_offres_comment_form($form, &$form_state, $comment, $no_offre) {
 }
 function gbb_offres_comment_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
-    ->key(array('no_offre' => $form_state['values']['no_offre']))
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('comment' => $form_state['values']['comment'],
+  ))->execute();
+}
+
+function gbb_offres_position_form($form, &$form_state, $position, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
+  $form['f']['position'] = array(
+    '#type' => 'textfield', '#size' => 4,
+    '#default_value' => $position,
+    '#ajax' => array(
+      'callback' => 'gbb_offres_position_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  return $form;
+}
+function gbb_offres_position_form_submit($form, &$form_state) {
+  db_merge('gbb_gdiof_dafor')
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
+    ->fields(array('position' => $form_state['values']['position'],
   ))->execute();
 }
 

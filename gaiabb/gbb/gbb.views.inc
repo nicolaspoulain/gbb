@@ -1132,6 +1132,42 @@ function gbb_views_data() {
            'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
+  $data['gbb_gdiof_dafor']['iufm'] = array(
+            'title' => t('iufm'),
+            'help' => t('IUFM (O/N)'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+  $data['gbb_gdiof_dafor']['nouv_offreur'] = array(
+            'title' => t('nouv_offreur'),
+            'help' => t('Nouv. ofreur (O/N)'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+  $data['gbb_gdiof_dafor']['pub_des'] = array(
+            'title' => t('pub_des'),
+            'help' => t('Public désigné'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
   // --------------------------------------------------------
   // gbb_gmoof
   // --------------------------------------------------------
@@ -1247,6 +1283,18 @@ function gbb_views_data() {
   $data['gbb_gmoof']['lmoda'] = array(
             'title' => t('lmoda'),
             'help' => t('Modalité'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  $data['gbb_gmoof']['dt_crea'] = array(
+            'title' => t('dt_crea'),
+            'help' => t('Date création'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,

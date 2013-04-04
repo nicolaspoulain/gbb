@@ -19,7 +19,7 @@ function gaia_schema() {
 // ---------------------------------------------------------------------------
 // GDIRE
 // ---------------------------------------------------------------------------
-$schema['g_gdire'] = array(
+$schema['gbb_gdire'] = array(
   'description' => 'Copie conforme de la table GAIA gdire',
   'fields' => array(
     'co_disp' => array(
@@ -58,7 +58,7 @@ $schema['g_gdire'] = array(
 // ---------------------------------------------------------------------------
 // GDISP
 // ---------------------------------------------------------------------------
-$schema['g_gdisp'] = array(
+$schema['gbb_gdisp'] = array(
   'description' => 'Copie conforme de la table GAIA gdisp',
   'fields' => array(
     'gdisp_id' => array(
@@ -236,17 +236,17 @@ $schema['g_gdisp'] = array(
     ),
   ),
   //'primary key' => array('co_disp', 'co_degre'),
-  'primary key' => array('g_gdisp_id'),
+  'primary key' => array('gbb_gdisp_id'),
   'indexes' => array(
     'idx_gdisp_id_disp' => array(array('id_disp', 3)),
-    'idx_gdisp_g_gdisp_id' => array(array('g_gdisp_id', 3)),
+    'idx_gdisp_gbb_gdisp_id' => array(array('gbb_gdisp_id', 3)),
   ),
 );
 
 // ---------------------------------------------------------------------------
 // GMODU
 // ---------------------------------------------------------------------------
-$schema['g_gmodu'] = array(
+$schema['gbb_gmodu'] = array(
   'description' => 'Copie conforme de la table GAIA gmodu',
   'fields' => array(
     'co_disp' => array(
@@ -499,7 +499,7 @@ arborescence plan (O/N)',
 // ---------------------------------------------------------------------------
 // NETAB
 // ---------------------------------------------------------------------------
-$schema['g_netab'] = array(
+$schema['gbb_netab'] = array(
   'description' => 'Copie conforme de la table GAIA netab',
   'fields' => array(
     'co_lieu' => array(
@@ -654,7 +654,7 @@ mail (O/N)',
 // ---------------------------------------------------------------------------
 // GRESP
 // ---------------------------------------------------------------------------
-$schema['g_gresp'] = array(
+$schema['gbb_gresp'] = array(
   'description' => 'Copie conforme de la table GAIA gresp',
   'fields' => array(
     'co_resp' => array(
@@ -766,7 +766,7 @@ $schema['g_gresp'] = array(
 // ---------------------------------------------------------------------------
 // NCONT
 // ---------------------------------------------------------------------------
-$schema['g_ncont'] = array(
+$schema['gbb_ncont'] = array(
   'description' => 'Copie conforme de la table GAIA ncont',
   'fields' => array(
     'co_cont' => array(
@@ -812,7 +812,7 @@ $schema['g_ncont'] = array(
 // ---------------------------------------------------------------------------
 // NTCAN
 // ---------------------------------------------------------------------------
-$schema['g_ntcan'] = array(
+$schema['gbb_ntcan'] = array(
   'description' => 'Copie conforme de la table GAIA ntcan',
   'fields' => array(
     'co_tcan' => array(
@@ -858,7 +858,7 @@ $schema['g_ntcan'] = array(
 // ---------------------------------------------------------------------------
 // NORIE
 // ---------------------------------------------------------------------------
-$schema['g_norie'] = array(
+$schema['gbb_norie'] = array(
   'description' => 'Copie conforme de la table GAIA norie',
   'fields' => array(
     'co_orie' => array(
@@ -904,7 +904,7 @@ $schema['g_norie'] = array(
 // ---------------------------------------------------------------------------
 // SESSION (non gaia)
 // ---------------------------------------------------------------------------
-$schema['g_session'] = array(
+$schema['gbb_session'] = array(
   'description' => 'Module GaiaBB - table des demandes de session de formation',
   'fields' => array(
     'sess_id' => array(
@@ -988,7 +988,7 @@ $schema['g_session'] = array(
 // ---------------------------------------------------------------------------
 // SESSION_GAIA
 // ---------------------------------------------------------------------------
-$schema['g_session_gaia'] = array(
+$schema['gbb_session_gaia'] = array(
   'description' => 'La table des sessions envoyee par la DSI',
   'fields' => array(
     'session_gaia_id' => array(

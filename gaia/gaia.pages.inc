@@ -10,6 +10,7 @@ function gmodu_view($gmodu) {
   //drupal_set_message(print_r($wrapper->getPropertyInfo()));
   foreach ($wrapper->getPropertyInfo() as $field) {
     $f = strtolower($field['label']);
+    $f = ($f == 'field_tags_matiere')? 'co_modu' : $f;
     $f = ($f == 'gmodu entity id')? 'co_modu' : $f;
     $v = $wrapper->$f->value(array('sanitize' => TRUE));
     $rows[] = array(
@@ -26,14 +27,33 @@ function gmodu_view($gmodu) {
  */
 function gmodu_edit_form($form, &$form_state, $gmodu) {
   $form_state['gmodu'] = $gmodu;
-  //$form['lib'] = array(
-  //  '#type' => 'textfield',
-  //  '#title' => t('Lib'),
-  //  '#required' => TRUE,
-  //  '#default_value' => $gmodu->lib,
-  //);
   field_attach_form('gmodu', $gmodu, $form, $form_state);
-  $form['submit'] = array(
+  $tags=$form['field_tags_matiere'];
+
+  $wrapper = entity_metadata_wrapper('gmodu', $gmodu);
+  foreach ($wrapper->getPropertyInfo() as $field) {
+    $f = strtolower($field['label']);
+    $f = ($f == 'gmodu entity id')? 'co_modu' : $f;
+    $v = $wrapper->$f->value(array('sanitize' => TRUE));
+      $form[$field['label']] = array(
+        '#type' => 'textfield',
+        '#type' => 'hidden',
+        '#title' => $field['label'],
+        '#required' => false,
+        '#default_value' => $v,
+      );
+  };
+  //$form['Lcont']['#type']='textarea';
+  //$form['Lcibl']['#type']='textarea';
+  //$form['Lpeda']['#type']='textarea';
+  $form['field_tags_matiere']=$tags;
+  $form['co_modu'] = array(
+    '#type' => 'textfield',
+    '#title' => t('entity_id'),
+    '#required' => TRUE,
+    '#default_value' => $gmodu->co_modu,
+  );
+    $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Modif'),
     '#weight' => 100,
@@ -58,6 +78,7 @@ function gmodu_edit_form_submit($form, &$form_state) {
   $gmodu = gmodu_save($gmodu_submission);
   $form_state['redirect'] = $gmodu['path'];
   drupal_set_message(t('Modification enregistrée'));
+  print_r($gmodu_submission);
 }
 
 /**

@@ -15,7 +15,7 @@ function gaia_entity_info() {
     'label'  => t('gmodu Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_gmodu', // la table décrite dans hook_schema du .install
+    'base table' => 'gbb_gmodu', // la table décrite dans hook_schema du .install
     // Les actions sur nos entités (fichier gaia.controller.inc). Ce sont
     // soit les classes par défaut fournies par Entity API
     // soit des extensions de ces classes si le besoin se fait sentir.
@@ -43,7 +43,7 @@ function gaia_entity_info() {
     'label'  => t('session Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_session',
+    'base table' => 'gbb_session',
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
     'views controller class' => 'SessionViewsController',
@@ -66,7 +66,7 @@ function gaia_entity_info() {
     'label'  => t('gresp Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_gresp',
+    'base table' => 'gbb_gresp',
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
     'views controller class' => 'GrespViewsController',
@@ -80,7 +80,7 @@ function gaia_entity_info() {
     'label'  => t('gdisp Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_gdisp',
+    'base table' => 'gbb_gdisp',
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
     'views controller class' => 'GdispViewsController',
@@ -94,7 +94,7 @@ function gaia_entity_info() {
     'label'  => t('netab Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_netab',
+    'base table' => 'gbb_netab',
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
     'views controller class' => 'NetabViewsController',
@@ -107,7 +107,7 @@ function gaia_entity_info() {
     'label'  => t('ncont Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_ncont',
+    'base table' => 'gbb_ncont',
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
     'views controller class' => 'NcontViewsController',
@@ -120,7 +120,7 @@ function gaia_entity_info() {
     'label'  => t('session_gaia Entity'),
     'module' => 'gaia',
     'access callback' => 'access content',
-    'base table' => 'g_session_gaia',
+    'base table' => 'gbb_session_gaia',
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
     'views controller class' => 'Session_gaiaViewsController',

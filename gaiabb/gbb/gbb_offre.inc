@@ -39,8 +39,10 @@ function gbb_offre_view($args = 'NaN') {
 function gbb_offre_tab($args) {
   //print_r(taxonomy_get_vocabularies());
   foreach (taxonomy_get_vocabularies() as $k=>$v) {
-    $header[] = array('data' => t($v->name), 'class' => 'jaune');
-    $rows[0][] = array('data' => render(drupal_get_form('gbb_offre_taxonomy_form', arg(1), $k)) );
+    $header[] = array('data' => t($v->name.' ').l('('.t('edit').')',
+                            'admin/structure/taxonomy/'.$v->machine_name), 'class' => 'gris');
+    $rows[0][] = array('data' => render(drupal_get_form('gbb_offre_taxonomy_form', arg(1), $k)),
+                       'class'=>'topAlign');
   }
   $output = theme('table',array('header' => $header, 'rows'   => $rows ));
   return $output;

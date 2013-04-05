@@ -1329,6 +1329,69 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
-  
+
+  // --------------------------------------------------------
+  // GBB_GMOOF_TAXONOMY
+  // --------------------------------------------------------
+
+  $data['gbb_gmoof_taxonomy']['table'] = array(
+            'group' => t('gbb_gmoof_taxnomy'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'left_table' => 'gbb_gmoof',
+                'left_field' => 'co_omodu',
+                'field' => 'co_omodu',
+              ),
+            ),
+  );
+  $data['gbb_gmoof_taxonomy']['tid'] = array(
+            'title' => t('tid'),
+            'help' => t('tid'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  // --------------------------------------------------------
+  // TAXONOMY_TERM_DATA
+  // --------------------------------------------------------
+
+   $data['taxonomy_term_data2']['table'] = array(
+            'group' => t('taxonomy_term_data2'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'table' => 'taxonomy_term_data',
+                'left_table' => 'gbb_gmoof_taxonomy',
+                'left_field' => 'tid',
+                'field' => 'tid',
+              ),
+            ),
+          );
+  $data['taxonomy_term_data2']['name'] = array(
+            'title' => t('name'),
+            'help' => t('Nom du terme de taxonomie'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+   $data['taxonomy_term_data2']['vid'] = array(
+            'title' => t('vid'),
+            'help' => t('Identifiant du vocabulaire'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
      return $data;
 }

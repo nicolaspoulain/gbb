@@ -198,12 +198,6 @@ function gbb_menu() {
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK
   );
-  // TODO : décrire
-  $items['autocomp/disc'] = array(
-        'page callback' => '_gbb_autocompdisc',
-        'access arguments' => array('stable gbb'),
-        'type' => MENU_CALLBACK
-  );
 
   return $items;
 

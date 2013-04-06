@@ -62,13 +62,6 @@ function gbb_offres_filter($form, &$form_state, $args) {
     '#description' => t('p.ex.:POULAIN'),
     '#size' => 20, 
   );
-   $form['f']['disc'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Disc/Domaine'),
-    '#default_value' => (isset($_GET['disc']))? $_GET['disc'] : '',
-    '#description' => t('p.ex.:TICE'),
-    '#size' => 20, 
-  );
    $form['f']['co_tpla'] = array(
     '#type' => 'textfield',
     '#title' => t('Type de plan'),
@@ -93,7 +86,6 @@ function gbb_offres_tab($args) {
     'nomu' => t('Interlocuteur dispo'),
     'co_tpla' => t('Type de Plan'),
     'co_orie' => t('Code Orientation'),
-    array('data' => t('Disc/Domaine'), 'class' => 'jaune'),
     'no_offre' => t('No Offre/ Code Module'),
     'libl' => t('Titre'),
     'nomu2' => t('Resp. péda.'),
@@ -111,7 +103,6 @@ function gbb_offres_tab($args) {
     array('data' => t('Priorité Aca.'), 'class' => 'jaune'),
     array('data' => t('Offre nouvelle'), 'class' => 'jaune'),
     array('data' => t('&nbsp;&nbsp;&nbsp;Observations&nbsp;&nbsp;&nbsp;'), 'class' => 'jaune'),
-    array('data' => t('Numérotation par Disc/Domaine. *NE PAS UTILISER LA TOUCHE ENTRÉE* '), 'CLASS' => 'jaune'),
   );
   // Number of records (or nodes, in our case) to show per page.
   $count = 20;
@@ -130,9 +121,9 @@ function gbb_offres_tab($args) {
          ->fields('m', array('libl', 'co_omodu', 'lmoda', 'lcomm','nb_groupe','duree_prev'))
          ->fields('r', array('nomu'));
   $query ->addField('r2', 'nomu', 'nomu2');
-  $query ->fields('dd', array('disc','nb_hp','nb_vac','hors_cdc','iufm',
+  $query ->fields('dd', array('nb_hp','nb_vac','hors_cdc','iufm',
                               'nouv_offreur','prio_nat','prio_aca','offre_new',
-                              'pub_des','comment','position' ));
+                              'pub_des','comment' ));
   $query = $query->extend('PagerDefault')->limit($count);
   $query ->distinct();
 
@@ -141,15 +132,12 @@ function gbb_offres_tab($args) {
   if (isset($_GET['nomu']) && $_GET['nomu']!='') $query ->condition('r.nomu', $_GET['nomu'], 'LIKE');
   if (isset($_GET['nomu2']) && $_GET['nomu2']!='') $query ->condition('r2.nomu', $_GET['nomu2'], 'LIKE');
   if (isset($_GET['co_tpla']) && $_GET['co_tpla']!='') $query ->condition('d.co_tpla', $_GET['co_tpla'], 'LIKE');
-  if (isset($_GET['disc']) && $_GET['disc']!='') $query ->condition('dd.disc', $_GET['disc'], 'LIKE');
 
   $result = $query->execute();
   $nb_off = $result->rowCount();
 
   $rows = array();
   foreach ($result as $r) {
-    $d = render(drupal_get_form('gbb_offres_disc_form',
-                                $r->disc, $r->co_omodu)) ;
     $hp = render(drupal_get_form('gbb_offres_nb_hp_form',
                                 $r->nb_hp, $r->co_omodu)) ;
     $vac = render(drupal_get_form('gbb_offres_nb_vac_form',
@@ -164,8 +152,6 @@ function gbb_offres_tab($args) {
                                 $r->offre_new, $r->co_omodu)) ;
     $comment = render(drupal_get_form('gbb_offres_comment_form',
                                 $r->comment, $r->co_omodu)) ;
-    $position = render(drupal_get_form('gbb_offres_position_form',
-                                $r->position, $r->co_omodu)) ;
     
     $iufm = render(drupal_get_form('gbb_offres_iufm_form',
                                 $r->iufm, $r->co_omodu)) ;
@@ -178,7 +164,6 @@ function gbb_offres_tab($args) {
                 array('data' => $r->nomu),
                 array('data' => $r->co_tpla),
                 array('data' => $r->co_orie),
-                array('data' => $d),
                 array('data' => $r->no_offre.' / '.$r->co_omodu),
                 array('data' => $r->libl),
                 array('data' => $r->nomu2),
@@ -196,7 +181,6 @@ function gbb_offres_tab($args) {
                 array('data' => $prio_aca),
                 array('data' => $offre_new),
                 array('data' => $comment),
-                array('data' => $position),
               );
   }
   $output = theme('table', 
@@ -204,26 +188,6 @@ function gbb_offres_tab($args) {
                         'rows'   => $rows
                   ));
   return $output . theme('pager', array('tags' => array()));
-}
-
-function gbb_offres_disc_form($form, &$form_state, $disc, $co_omodu) {
-  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
-  $form['f']['disc'] = array(
-    '#type' => 'textfield', '#size' => 15,
-    '#default_value' => $disc,
-    '#autocomplete_path' => 'autocomp/disc',
-    '#prefix' => '<fieldset class="ajaxform inline">',
-    '#suffix' => '</fieldset>',
-    '#ajax' => array(
-      'callback' => 'gbb_offres_disc_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => '')),);
-  return $form;
-}
-function gbb_offres_disc_form_submit($form, &$form_state) {
-  db_merge('gbb_gdiof_dafor')
-    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
-    ->fields(array('disc'  => $form_state['values']['disc'],
-  ))->execute();
 }
 
 function gbb_offres_nb_hp_form($form, &$form_state, $nb_hp, $co_omodu) {
@@ -348,24 +312,6 @@ function gbb_offres_comment_form_submit($form, &$form_state) {
   ))->execute();
 }
 
-function gbb_offres_position_form($form, &$form_state, $position, $co_omodu) {
-  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
-  $form['f']['position'] = array(
-    '#type' => 'textfield', '#size' => 4,
-    '#default_value' => $position,
-    '#ajax' => array(
-      'callback' => 'gbb_offres_position_form_submit',
-      'progress' => array('type' => 'throbber', 'message' => '')),);
-  return $form;
-}
-function gbb_offres_position_form_submit($form, &$form_state) {
-  db_merge('gbb_gdiof_dafor')
-    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
-    ->fields(array('position' => $form_state['values']['position'],
-  ))->execute();
-}
-
-
 function gbb_offres_iufm_form($form, &$form_state, $iufm, $co_omodu) {
   $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['iufm'] = array(
@@ -417,27 +363,5 @@ function gbb_offres_pub_des_form_submit($form, &$form_state) {
     ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('pub_des'  => $form_state['values']['pub_des'],
   ))->execute();
-}
-
-
-
-/**
- * Fonctions d' ** AUTOCOMPLETE AJAX RESPONSABLES **
- */
-function _gbb_autocompdisc($string) {
-
-  $matches = array();
-  $result = db_select('gbb_gdiof_dafor', 'c')
-    ->fields('c', array('disc'))
-    ->condition('disc', '%' . db_like($string) . '%', 'LIKE')
-    ->distinct()
-    ->range(0, 10)
-    ->execute();
-  foreach ($result as $r) {
-    $matches[$r->disc] = $r->disc;
-  }
-  $count = $result->rowCount();
-  if ($count > 9) $matches[' '] = '..... Et bien d\'autres .....';
-  drupal_json_output($matches);
 }
 

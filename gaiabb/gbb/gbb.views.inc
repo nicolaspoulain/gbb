@@ -1020,17 +1020,6 @@ function gbb_views_data() {
               ),
             ),
   );
-  $data['gbb_gdiof_dafor']['disc'] = array(
-            'title' => t('disc'),
-            'help' => t('Disc. ou domaine / dossier'),
-            'field' => array(
-              'handler' => 'views_handler_field',
-              'click sortable' => TRUE,
-            ),
-           'sort' => array('handler' => 'views_handler_sort'),
-           'filter' => array('handler' => 'views_handler_filter_string'),
-           'argument' => array('handler' => 'views_handler_argument_string'),
-  );
   $data['gbb_gdiof_dafor']['nb_hp'] = array(
             'title' => t('nb_hp'),
             'help' => t('Heures Poste, sur décharge'),
@@ -1119,17 +1108,6 @@ function gbb_views_data() {
            'sort' => array('handler' => 'views_handler_sort'),
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
-  );
-  $data['gbb_gdiof_dafor']['position'] = array(
-            'title' => t('position'),
-            'help' => t('Classement des modules'),
-            'field' => array(
-              'handler' => 'views_handler_field_numeric',
-              'click sortable' => TRUE,
-            ),
-           'sort' => array('handler' => 'views_handler_sort'),
-           'filter' => array('handler' => 'views_handler_filter_numeric'),
-           'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
   $data['gbb_gdiof_dafor']['iufm'] = array(
@@ -1354,6 +1332,17 @@ function gbb_views_data() {
            'sort' => array('handler' => 'views_handler_sort'),
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmoof_taxonomy']['position'] = array(
+            'title' => t('position'),
+            'help' => t('position'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
   // --------------------------------------------------------

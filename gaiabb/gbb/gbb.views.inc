@@ -1333,9 +1333,9 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
-  $data['gbb_gmoof_taxonomy']['position'] = array(
-            'title' => t('position'),
-            'help' => t('position'),
+  $data['gbb_gmoof_taxonomy']['weight'] = array(
+            'title' => t('weight'),
+            'help' => t('weight'),
             'field' => array(
               'handler' => 'views_handler_field_numeric',
               'click sortable' => TRUE,

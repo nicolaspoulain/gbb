@@ -2,7 +2,7 @@
 /**
  * @file
  *
- * Composition de la page de gestion des évaluations
+ * Comweight de la page de gestion des évaluations
  *
  */
 
@@ -16,8 +16,8 @@ CREATE TABLE `gbbdr_exp`.`gbb_gmoof_taxonomy` (
 `tid` INT( 10 ) NOT NULL
 ) ENGINE = MYISAM ;
 
-INSERT INTO gbb_gmoof_taxonomy (co_omodu,tid,position)
-SELECT co_omodu,tid,position FROM gbb_gdiof_dafor
+INSERT INTO gbb_gmoof_taxonomy (co_omodu,tid,weight)
+SELECT co_omodu,tid,weight FROM gbb_gdiof_dafor
 JOIN taxonomy_term_data
 ON taxonomy_term_data.name=gbb_gdiof_dafor.disc
 
@@ -57,7 +57,7 @@ function gbb_offre_tab($args) {
   foreach ($terms as $term) {
     $terms_select[$term->tid] = str_repeat('— ', $term->depth) . $term->name;
   };
-  $check = db_query("SELECT tid,position FROM {gbb_gmoof_taxonomy}
+  $check = db_query("SELECT tid,weight FROM {gbb_gmoof_taxonomy}
                                   WHERE co_omodu = :co_omodu",
                                   array(':co_omodu' => arg(1),))
                                   ->fetchAllkeyed();
@@ -83,12 +83,12 @@ function gbb_offre_tab($args) {
         'callback' => 'gbb_offre_taxonomy_form_submit',
         'progress' => array('type' => 'throbber', 'message' => '')),
       );
-    $form['f']['position'] = array(
+    $form['f']['weight'] = array(
       '#type' => 'textfield',
       '#size' => 2,
       '#default_value' => $pos,
       '#prefix' => '&nbsp;<div class="inline">',
-      '#attributes' => array('class' => array('position')),
+      '#attributes' => array('class' => array('weight')),
       '#suffix' => '</div>',
       '#states' => array(    // This #states rule limits visibility
         'visible' => array(  // action to take.
@@ -118,12 +118,12 @@ function gbb_offre_taxonomy_form_submit($form, &$form_state) {
         db_insert('gbb_gmoof_taxonomy')
           ->fields(array('co_omodu' => $form_state['values']['co_omodu'] ,
                               'tid' => $form_state['values']['tid'] ,
-                         'position' => $form_state['values']['position']
+                         'weight' => $form_state['values']['weight']
             ))
             ->execute();
       } else {
         db_update('gbb_gmoof_taxonomy')
-          ->fields(array('position'=>$form_state['values']['position']))
+          ->fields(array('weight'=>$form_state['values']['weight']))
           ->condition('co_omodu', $form_state['values']['co_omodu'] )
           ->condition('tid', $form_state['values']['tid'] )
           ->execute();

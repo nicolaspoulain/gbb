@@ -208,14 +208,7 @@ ul.nope {
   background-color : yellow;
   color : black;
 }
-.topAlign {
-  vertical-align : top;
-}
-.cadregris {
-  background-color : #DDD;
-  border : 1px solid #3B3B3B;
-}
-.position {
-  background-color : #e8e8e8;
-  border : 1px solid #3B3B3B;
+.weight {
+  background-color : white;
+  color : black;
 }

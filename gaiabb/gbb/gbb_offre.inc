@@ -73,7 +73,7 @@ function gbb_offre_tab($args) {
   function gbb_offre_taxonomy_form($form, &$form_state, $tid,$voc,$pos,$ischk,$co_omodu) {
     $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
     $form['f']['tid']  = array('#type' => 'hidden','#value' => $tid );
-    $form['f']['disc'] = array(
+    $form['f'][$tid] = array(
       '#type' => 'checkbox',
       '#title' => $voc,
       '#default_value' => $ischk,
@@ -90,6 +90,10 @@ function gbb_offre_tab($args) {
       '#prefix' => '&nbsp;<div class="inline">',
       '#attributes' => array('class' => array('position')),
       '#suffix' => '</div>',
+      '#states' => array(    // This #states rule limits visibility
+        'visible' => array(  // action to take.
+          ':input[name='.$tid.']' => array('checked' => TRUE),),
+      ),
       '#ajax' => array(
         'callback' => 'gbb_offre_taxonomy_form_submit',
         'progress' => array('type' => 'throbber', 'message' => '')),
@@ -98,7 +102,8 @@ function gbb_offre_tab($args) {
 }
 
 function gbb_offre_taxonomy_form_submit($form, &$form_state) {
-  if ($form_state['values']['disc'] == 0) { // $form_state['values']['disc'][$key] not checked
+  $tid = $form_state['values']['tid'];
+  if ($form_state['values'][$tid] == 0) { // $form_state['values']['disc'][$key] not checked
     db_delete('gbb_gmoof_taxonomy')
         ->condition('co_omodu', $form_state['values']['co_omodu'] )
         ->condition('tid', $form_state['values']['tid'] )

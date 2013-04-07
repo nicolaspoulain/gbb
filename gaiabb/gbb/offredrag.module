@@ -91,6 +91,7 @@ function theme_offredrag_form($variables) {
     $output ='<h1>'.$result['vname'].' : '.$result['name'].'</h1>';
     $output .= t('Ré-organisez ici les offres en les déplaçant avec la souris.');
     $header = array(t('Name'), t('Weight'));
+    $rows[] = array();
     foreach (element_children($form['demo']) as $id) {
        $name = $form['demo'][$id]['#demo']->name;
        $row = array();

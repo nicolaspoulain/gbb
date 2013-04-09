@@ -158,6 +158,17 @@ function gbb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+  // Saisie de la classification d'un module du plan
+  // co_modu 26142
+  // exemple : ctplan/26142
+
+  $items['ctplan'] = array(
+        'title' => '',
+        'page callback' => 'gbb_ctplan_view',
+        'access arguments' => array('stable gbb'),
+        'type' => MENU_CALLBACK,
+  );
+
   //   exemple : bilan/2/26142/3
 
   $items['offres_edit'] = array(
@@ -346,4 +357,5 @@ module_load_include('inc', 'gbb', 'gbb_evaluation');
 module_load_include('inc', 'gbb', 'gbb_bilan');
 module_load_include('inc', 'gbb', 'gbb_offres');
 module_load_include('inc', 'gbb', 'gbb_offre');
+module_load_include('inc', 'gbb', 'gbb_ctplan');
 

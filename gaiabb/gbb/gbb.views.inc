@@ -67,6 +67,17 @@ function gbb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_string'),
             'argument' => array('handler' => 'views_handler_argument_string'),
   );
+  $data['gbb_gmodu']['lcont'] = array(
+            'title' => t('lcont'),
+            'help' => t('Contenur litteral'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_string'),
+            'argument' => array('handler' => 'views_handler_argument_string'),
+  );
   $data['gbb_gmodu']['cout_p_fonc'] = array(
             'title' => t('cout_p_fonc'),
             'help' => t('Coût prévisionnel de fonctionnement par groupe'),
@@ -99,6 +110,82 @@ function gbb_views_data() {
             'sort' => array('handler' => 'views_handler_sort'),
             'filter' => array('handler' => 'views_handler_filter_numeric'),
             'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+
+  // --------------------------------------------------------
+  // GBB_GMODU_TAXONOMY
+  // --------------------------------------------------------
+
+  $data['gbb_gmodu_taxonomy']['table'] = array(
+            'group' => t('gbb_gmodu_taxnomy'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'left_field' => 'co_modu',
+                'field' => 'co_modu',
+                'extra' => 'gbb_gmodu_taxonomy.co_degre = gbb_gmodu.co_degre',
+              ),
+            ),
+  );
+  $data['gbb_gmodu_taxonomy']['tid'] = array(
+            'title' => t('tid'),
+            'help' => t('tid'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmodu_taxonomy']['weight'] = array(
+            'title' => t('weight'),
+            'help' => t('weight'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+  // --------------------------------------------------------
+  // TAXONOMY_TERM_DATA
+  // --------------------------------------------------------
+
+   $data['taxonomy_term_data3']['table'] = array(
+            'group' => t('taxonomy_term_data3'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'table' => 'taxonomy_term_data',
+                'left_table' => 'gbb_gmodu_taxonomy',
+                'left_field' => 'tid',
+                'field' => 'tid',
+              ),
+            ),
+          );
+  $data['taxonomy_term_data3']['name'] = array(
+            'title' => t('name'),
+            'help' => t('Nom du terme de taxonomie'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+   $data['taxonomy_term_data3']['vid'] = array(
+            'title' => t('vid'),
+            'help' => t('Identifiant du vocabulaire'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
   );
 
 
@@ -508,6 +595,17 @@ function gbb_views_data() {
              'click sortable' => TRUE,
            ),
            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdisp']['co_tpla'] = array(
+            'title' => t('co_tpla'),
+            'help' => t('Code type plan'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
@@ -986,6 +1084,17 @@ function gbb_views_data() {
   $data['gbb_gdiof']['co_orie'] = array(
             'title' => t('co_orie'),
             'help' => t('Code orientation'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdiof']['libl'] = array(
+            'title' => t('libl'),
+            'help' => t('Libellé du didpositif offre'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,

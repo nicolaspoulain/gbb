@@ -36,20 +36,25 @@ function gbb_offre_view($args = 'NaN') {
   return implode('', $build);
 }
 
+/**
+ * Construit le tableau avec un vocabulaire par colonne
+ */
 function gbb_offre_tab($args) {
+
   //print_r(taxonomy_get_vocabularies());
   foreach (taxonomy_get_vocabularies() as $k=>$v) {
     $header[] = array('data' => t($v->name.' ').l('('.t('edit').')',
                             'admin/structure/taxonomy/'.$v->machine_name), 'class' => 'gris');
     $rows[0][] = array('data' => gbb_offre_vocab($k),
                        'class'=>'topAlign');
-    //$rows[0][] = array('data' => render(drupal_get_form('gbb_offre_taxonomy_form', arg(1), $k)),
-    //                   'class'=>'topAlign');
   }
   $output = theme('table',array('header' => $header, 'rows'   => $rows ));
   return $output;
 }
 
+/**
+ * Construit le tableau avec une colonne contant les mots du vocabulaire $vid
+ */
   function gbb_offre_vocab($vid) {
 
   $terms = taxonomy_get_tree($vid);
@@ -70,7 +75,11 @@ function gbb_offre_tab($args) {
   return $output;
   }
 
-  function gbb_offre_taxonomy_form($form, &$form_state, $tid,$voc,$pos,$ischk,$co_omodu) {
+/**
+ * Construit un formualire pour chaque mot de vocabulaire
+ */
+function gbb_offre_taxonomy_form($form, &$form_state, $tid,$voc,$pos,$ischk,$co_omodu) {
+
     $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
     $form['f']['tid']  = array('#type' => 'hidden','#value' => $tid );
     $form['f'][$tid] = array(

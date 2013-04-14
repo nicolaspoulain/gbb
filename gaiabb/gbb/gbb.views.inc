@@ -609,6 +609,45 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
+  $data['gbb_gdisp']['co_orie'] = array(
+            'title' => t('co_orie'),
+            'help' => t('Code orientation'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  // --------------------------------------------------------
+  // GBB_NORIE
+  // --------------------------------------------------------
+
+   $data['gbb_norie']['table'] = array(
+            'group' => t('gbb_norie'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                #'table' => 'taxonomy_term_data',
+                'left_table' => 'gbb_gdisp',
+                'left_field' => 'co_orie',
+                'field' => 'co_orie',
+              ),
+            ),
+          );
+  $data['gbb_norie']['lib_court'] = array(
+            'title' => t('lib_court'),
+            'help' => t('Orientation libellé court'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
 
   // --------------------------------------------------------
   // gbb_netab_dafor

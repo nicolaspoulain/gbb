@@ -158,6 +158,13 @@ function gbb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+  $items['ctp'] = array(
+        'title' => '',
+        'page callback' => 'gbb_offre_ctp_view',
+        'access arguments' => array('stable gbb'),
+        'type' => MENU_CALLBACK,
+  );
+
   // Saisie de la classification d'un module du plan
   // co_modu 26142
   // exemple : ctplan/26142

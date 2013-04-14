@@ -141,3 +141,84 @@ function gbb_offre_taxonomy_form_submit($form, &$form_state) {
 }
 
 
+/**
+ * Affiche le contenu à compiler pour le CTP
+ */
+function gbb_offre_ctp_view($args = 'NaN') {
+
+  // Construction de la page
+  $build = array();
+  $build['tab'] = gbb_offre_ctp($args);
+
+  return implode('', $build);
+}
+
+/**
+ * Construit le tableau avec un vocabulaire par colonne
+ */
+function gbb_offre_ctp($args) {
+
+  //print_r(taxonomy_get_vocabularies());
+  foreach (taxonomy_get_vocabularies() as $k=>$v) {
+    $header[] = array('data' => t($v->name.' ').l('('.t('edit').')',
+                            'admin/structure/taxonomy/'.$v->machine_name), 'class' => 'gris');
+    $rows[0][] = array('data' => gbb_offre_ctp_vocab($k),
+                       'class'=>'topAlign');
+  }
+  $output = theme('table',array('header' => $header, 'rows'   => $rows ));
+  return $output;
+}
+
+/**
+ * Construit le tableau avec une colonne contant les mots du vocabulaire $vid
+ */
+  function gbb_offre_ctp_vocab($vid) {
+
+  $terms = taxonomy_get_tree($vid);
+  $terms_select = array();
+  foreach ($terms as $term) {
+    $depth = $term->depth +1;
+    $terms_select[$term->tid] = '((H' . $depth .'))' . $term->name . '<br/>';
+  };
+  foreach ($terms_select as $key=>$val) {
+    $query = db_select('gbb_gmoof_taxonomy','t')
+          ->condition('tid', $key )
+          ->condition('weight', 500, '<');
+    $query->leftjoin('gbb_gmoof', 'm',
+                    't.co_omodu = m.co_omodu');
+    $query->leftjoin('gbb_gdiof', 'd',
+                    'm.co_offre = d.co_offre');
+    $query->leftjoin('gbb_gresp', 'rm',
+                    'm.co_resp = rm.co_resp');
+    $query->fields('m',array('co_omodu','duree_prev','lpeda','lcont','lmoda','lform'));
+    $query->addField('rm', 'nomu', 'nomu_modu');
+    $query->addField('rm', 'prenom', 'prenom_modu');
+    $query->addField('rm', 'qualite', 'qualite');
+    $query->addField('m', 'libl', 'libmodu');
+    $query->fields('d',array('no_offre','libl','lobjt'));
+    $query->orderBy('weight', 'ASC');
+    $list= $query->execute()->fetchAll();
+    $str = "";
+    foreach ($list as $f) {
+      $str .= '((1))' . $f->no_offre;
+      $str .= '((2))' . $f->libl;
+      $str .= '((3))' . $f->lobjt;
+      $str .= '((4))' . $f->co_omodu;
+      $str .= '((5))' . $f->libmodu;
+      $str .= '((6))' . $f->duree_prev;
+      $str .= '((7))' . $f->prenom_modu.' '.$f->nomu_modu;
+      $str .= '((8))' . $f->qualite;
+      $str .= '((9))' . $f->lpeda;
+      $str .= '((10))' . $f->lcont;
+      $str .= '((11))' . $f->lmoda;
+      $str .= '((12))' . $f->lform;
+      $str .= '((13))';
+      $str .= '<br/>';
+    };
+    $rows[] = $val." ".$str;
+  }
+  $output = implode('<br/>',$rows);
+  return $output;
+  }
+
+

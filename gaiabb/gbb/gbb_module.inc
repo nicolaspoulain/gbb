@@ -1316,7 +1316,7 @@ function gbb_sess_edition($form, $form_state, $args) {
                 ),
     '#default_value' => t("$r->sigle $r->denom_comp (rne:$r->co_lieu)"),
     '#size' => 40,
-    '#maxlength' => 50,
+    '#maxlength' => 128,
     '#autocomplete_path' => 'autocomp/etablissement',
     '#prefix' => '<br/><div class="inline">',
     '#suffix' => '</div>&nbsp;',

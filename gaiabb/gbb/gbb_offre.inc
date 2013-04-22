@@ -194,13 +194,14 @@ function gbb_offre_ctp($args) {
                        'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_resp=3');
       $query->leftjoin('gbb_gresp', 'rm',
                        'gd.co_resp = rm.co_resp AND rm.co_degre=2');
+      $query->fields('t',array('tid'));
       $query->fields('m',array('co_modu','duree_prev','lpeda','lcont','lmoda','lform'));
       $query->addField('rm', 'nomu', 'nomu_modu');
       $query->addField('rm', 'prenom', 'prenom_modu');
       $query->addField('rm', 'qualite', 'qualite');
       $query->addField('m', 'libl', 'libmodu');
       $query->addField('m', 'co_modu', 'co_omodu');
-      $query->addField('d', 'co_disp', 'no_offre');
+      $query->addField('d', 'id_disp', 'no_offre');
       $query->fields('d',array('libl','lobjt'));
       $query->orderBy('weight', 'ASC');
       $list= $query->execute()->fetchAll();
@@ -221,6 +222,7 @@ function gbb_offre_ctp($args) {
         $query->leftjoin('gbb_gresp', 'rm',
                          'm.co_resp = rm.co_resp AND rm.co_degre=2');
       }
+      $query->fields('t',array('tid'));
       $query->fields('m',array('co_omodu','duree_prev','lpeda','lcont','lmoda','lform'));
       $query->addField('rm', 'nomu', 'nomu_modu');
       $query->addField('rm', 'prenom', 'prenom_modu');
@@ -240,6 +242,7 @@ function gbb_offre_ctp($args) {
     //%!postproc(tex): "\(\(4\)\)"  "  \\\\ \hline \n M : "
     //%!postproc(tex): "\(\(5\)\)"  " & \hfill \\textbf{"
     //%!postproc(tex): "\(\(6\)\)"  " } \hfill {\small Durée : "
+    //%!postproc(tex): "\(\(6b\)\)"  " } "
     //%!postproc(tex): "\(\(7\)\)"  "~h} \\\\ \hline \nResponsable : & "
     //%!postproc(tex): "\(\(8\)\)"  ", "
     //%!postproc(tex): "\(\(9\)\)"  "\\\\ \nObjectif : &"
@@ -248,20 +251,63 @@ function gbb_offre_ctp($args) {
     //%!postproc(tex): "\(\(12\)\)" "\\\\ \nForme : &"
     //%!postproc(tex): "\(\(13\)\)" " \\\\ \hline\n\end{tabularx}\\\\[1em] \n\r"
 
+  /*
+    foreach ($list as $f) {
+      if ($no_offre != $f->no_offre) { //on crée un nouveau tableau
+        // si les modules ne sont pas dans le même dispo
+        if ($no_offre != -1) $str .= '((13))<br/>';
+        $str .= '((1))' . $f->no_offre;
+        $str .= '((2))' . strtoupperFr($f->libl);
+        $str .= '((3))';
+      };
+      $str .= '((4))' . $f->co_omodu;
+      $str .= '((5))' . strtoupperFr($f->libmodu);
+      $str .= '((6b))';
+      $no_offre = $f->no_offre;
+    };
+    $rowslight[] = $val." ".$str.(($str=="")? "":'((13))<br/>');
+  */
+
+    $str = "";
+    $count= 0;
+    $no_offre = -1;
+
     foreach ($list as $f) {
       if ($no_offre != $f->no_offre || $count==3) { //on crée un nouveau tableau
         // si les modules ne sont pas dans le même dispo ou si le tableau a plus
         // de 4 lignes.
         if ($no_offre != -1) $str .= '((13))<br/>';
         $str .= '((1))' . $f->no_offre;
-        $str .= '((2))' . strtoupper($f->libl);
-        $str .= '((3))' . $f->lobjt;
+        $str .= '((2))' . strtoupperFr($f->libl);
+        $q = $query;
+        if ($vid == 3) {//on tape dans le plan
+          $q = db_select('gbb_gmodu','m');
+          $q->fields('m',array('co_modu'));
+          $q->leftjoin('gbb_gdisp', 'd',
+                       'm.co_disp = d.co_disp');
+          $q->leftjoin('gbb_gmodu_taxonomy', 't',
+                       't.co_modu = m.co_modu');
+          $q->condition('weight', 500, '<');
+          $q->condition('tid', $f->tid);
+          $nbmod = $q->condition('d.id_disp', $f->no_offre)->execute()->rowCount();
+        } else {
+          $q = db_select('gbb_gmoof','m');
+          $q->fields('m',array('co_omodu'));
+          $q->leftjoin('gbb_gdiof', 'd',
+                       'm.co_offre = d.co_offre');
+          $q->leftjoin('gbb_gmoof_taxonomy', 't',
+                       't.co_omodu = m.co_omodu');
+          $q->condition('weight', 500, '<');
+          $q->condition('tid', $f->tid);
+          $nbmod = $q->condition('d.no_offre', $f->no_offre)->execute()->rowCount();
+        }
+        $str .= ($nbmod>1)? '((3))' . $f->lobjt : '((3))';
         $count = 0;
       } else { 
         $count = $count+1;
       };
       $str .= '((4))' . $f->co_omodu;
-      $str .= '((5))' . strtoupper($f->libmodu);
+      $str .= '((5))' . strtoupperFr($f->libmodu);
       $str .= '((6))' . $f->duree_prev;
       $str .= '((7))' . $f->prenom_modu.' '.$f->nomu_modu;
       $str .= '((8))' . $f->qualite;
@@ -273,8 +319,16 @@ function gbb_offre_ctp($args) {
     };
     $rows[] = $val." ".$str.(($str=="")? "":'((13))<br/>');
   }
+  //$output = implode('<br/>',$rowslight);
   $output = implode('<br/>',$rows);
   return $output;
   }
 
-
+function strtoupperFr($string) {
+  $string = strtoupper($string);
+  $string = str_replace(
+    array('é', 'è', 'ê', 'ë', 'à', 'â', 'î', 'ï', 'ô', 'ù', 'û'),
+    array('É', 'È', 'Ê', 'Ë', 'À', 'Â', 'Î', 'Ï', 'Ô', 'Ù', 'Û'),
+    $string);
+  return $string;
+}

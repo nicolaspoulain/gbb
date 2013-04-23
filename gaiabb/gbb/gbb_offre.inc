@@ -191,7 +191,7 @@ function gbb_offre_ctp($args) {
       $query->leftjoin('gbb_gdisp', 'd',
                        'm.co_disp = d.co_disp');
       $query->leftjoin('gbb_gdire', 'gd',
-                       'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_resp=3');
+                       'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_tres=3');
       $query->leftjoin('gbb_gresp', 'rm',
                        'gd.co_resp = rm.co_resp AND rm.co_degre=2');
       $query->fields('t',array('tid'));

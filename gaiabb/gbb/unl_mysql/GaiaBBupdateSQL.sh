@@ -70,9 +70,9 @@ case "$1" in
   -r) ## **R**apport par mail
   if grep -q "Erreur" $HOME/LOG.log
     then
-      /usr/bin/mail -s "$(echo -e "ECHEC de la mise à jour BB")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr christian.muir@ac-paris.fr < $HOME/LOG.log
+      /usr/bin/mail -s "$(echo -e "ECHEC de la mise à jour BB")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr christian.muir@ac-paris.fr jean-luc.simonet@ac-paris.fr < $HOME/LOG.log
     else
-      /usr/bin/mail -s "$(echo -e "SUCCÈS de la mise à jour BB")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr christian.muir@ac-paris.fr < $HOME/LOG.log
+      /usr/bin/mail -s "$(echo -e "SUCCÈS de la mise à jour BB")" nico.poulain@gmail.com azouz.manai@ac-paris.fr catherine.laigle@ac-paris.fr michel.denise@ac-paris.fr christian.muir@ac-paris.fr jean-luc.simonet@ac-paris.fr < $HOME/LOG.log
     fi
 
     shift;;

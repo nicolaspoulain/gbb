@@ -301,7 +301,9 @@ function gbb_offre_ctp($args) {
           $q->condition('tid', $f->tid);
           $nbmod = $q->condition('d.no_offre', $f->no_offre)->execute()->rowCount();
         }
-        $str .= ($nbmod>1)? '((3))' . $f->lobjt : '((3))';
+        // Si 2nd degré ou encadrement, on n'affiche le lib dispo que si modules
+        // multiples
+        $str .= ($nbmod>1 || $vid==3 || $vid==5)? '((3))' . $f->lobjt : '((3))';
         $count = 0;
       } else { 
         $count = $count+1;

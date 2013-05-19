@@ -2,27 +2,14 @@
 /**
  * @file
  *
- * Comweight de la page de gestion des évaluations
+ * Page d'affichage du plan
  *
  */
 
 /**
  * Fonction d'appel aux differents elements composant la page
- * affichant une liste de responsables et les stages qui leur
- * associes
-
-CREATE TABLE `gbbdr_exp`.`gbb_gmodu_taxonomy` (
-`co_modu` INT( 11 ) NOT NULL ,
-`tid` INT( 10 ) NOT NULL
-) ENGINE = MYISAM ;
-
-INSERT INTO gbb_gmodu_taxonomy (co_modu,tid,weight)
-SELECT co_modu,tid,weight FROM gbb_gdiof_dafor
-JOIN taxonomy_term_data
-ON taxonomy_term_data.name=gbb_gdiof_dafor.disc
-
  */
-function gbb_ctplan_view($args = 'NaN') {
+function gbb_pia_view($args = 'NaN') {
   // Charge la feuille des style et les fichiers javascript pour le module
   drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css',
                  array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
@@ -30,102 +17,81 @@ function gbb_ctplan_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
-  $build['tab'] = gbb_ctplan_tab($args);
-
+  if (is_numeric(arg(1))) {
+    $build['tab'] = gbb_pia_stages(arg(1));
+  } else {
+    $build['tab'] = gbb_pia_categories($args);
+  };
   return implode('', $build);
 }
 
-function gbb_ctplan_tab($args) {
-  //print_r(taxonomy_get_vocabularies());
+
+/*
+  insert into gbb_gmodu_taxonomy (co_modu,tid,weight) 
+   select co_modu,tid, weight 
+     from gbb_gdisp as d 
+     left join gbb_gmodu as g on g.co_disp=d.co_disp 
+     left join gbb_gmoof_taxonomy as gt on gt.co_omodu=g.co_omodu  
+     WHERE weight <500 AND id_disp like '13%'
+ */
+function gbb_pia_stages($tid) {
+  $query = db_select('gbb_gmodu_taxonomy', 'gt');
+  $query->condition('tid', $tid);
+  $query->condition('id_disp', db_like('13') . '%', 'LIKE');
+  $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
+  $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
+  $query->fields('gt', array('co_modu'));
+  $query->fields('gm', array('lib'));
+  $query->fields('gd', array('id_disp'));
+  $query->orderBy('id_disp', 'DESC');
+  $res = $query->distinct()->execute()->fetchAll();
+  foreach ($res as $stage) {
+    $items[] = array('data'=>"$stage->id_disp $stage->co_modu $stage->lib");
+  };
+  $title = "TITRE";
+  $type = 'ul';
+  $attributes = array(
+     'id' => 'my-custom-listing',
+     'class' => 'ul-custom-class'.' another-custom-class', // a string or indexed
+   );
+  $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
+  return $output;
+}
+
+function gbb_pia_categories($args) {
   foreach (taxonomy_get_vocabularies() as $k=>$v) {
-    $header[] = array('data' => t($v->name.' ').l('('.t('edit').')',
-                            'admin/structure/taxonomy/'.$v->machine_name), 'class' => 'gris');
-    $rows[0][] = array('data' => gbb_ctplan_vocab($k),
+    if ($k == 6) {
+      $str .= gbb_pia_vocab($k,$v->name);
+    } else {
+      $str = gbb_pia_vocab($k,$v->name);
+    };
+    $rows[0][] = array('data' => $str,
                        'class'=>'topAlign');
   }
-  $output = theme('table',array('header' => $header, 'rows'   => $rows ));
+  $item[0][] = $rows[0][3];
+  $item[0][] = $rows[0][0];
+  $item[0][] = $rows[0][4];
+  $output = theme('table',array('rows'   => $item ));
   return $output;
 }
 
-  function gbb_ctplan_vocab($vid) {
+function gbb_pia_vocab($vid,$title) {
 
   $terms = taxonomy_get_tree($vid);
-  $terms_select = array();
   foreach ($terms as $term) {
-    $terms_select[$term->tid] = str_repeat('— ', $term->depth) . $term->name;
+    $query = db_select('gbb_gmodu_taxonomy', 'gt');
+    $query->condition('tid', $term->tid);
+    $query->fields('gt', array('co_modu'));
+    $nb = $query->countQuery()->execute()->fetchField();
+    $str = str_repeat(' - ', $term->depth) . $term->name;
+    if ($nb > 0) $str = l($str,"pia/$term->tid");
+    $items[] = array('data'=>$str);
   };
-  $check = db_query("SELECT tid,weight FROM {gbb_gmodu_taxonomy}
-                                  WHERE co_modu = :co_modu",
-                                  array(':co_modu' => arg(1),))
-                                  ->fetchAllkeyed();
-  foreach ($terms_select as $key=>$val) {
-    $pos= array_key_exists($key,$check)? $check[$key] : 1;
-    $ischk= array_key_exists($key,$check);
-    $rows[] = array(array('data'=>render(drupal_get_form('gbb_ctplan_taxonomy_form',$key,$val,$pos,$ischk,arg(1)))));
-  }
-  $output = theme('table',array('rows'   => $rows,'attributes' => array('id' => 'ctplan-table'.$key) ));
+  $type = 'ul';
+  $attributes = array(
+     'id' => 'my-custom-listing'.$vid,
+     'class' => 'ul-custom-class'.$vid.' another-custom-class', // a string or indexed
+   );
+  $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
   return $output;
   }
-
-  function gbb_ctplan_taxonomy_form($form, &$form_state, $tid,$voc,$pos,$ischk,$co_modu) {
-    $form['f']['co_modu']  = array('#type' => 'hidden','#value' => $co_modu );
-    $form['f']['tid']  = array('#type' => 'hidden','#value' => $tid );
-    $form['f'][$tid] = array(
-      '#type' => 'checkbox',
-      '#title' => $voc,
-      '#default_value' => $ischk,
-      '#prefix' => '<div class="inline">',
-      '#suffix' => '</div>',
-      '#ajax' => array(
-        'callback' => 'gbb_ctplan_taxonomy_form_submit',
-        'progress' => array('type' => 'throbber', 'message' => '')),
-      );
-    $form['f']['weight'] = array(
-      '#type' => 'textfield',
-      '#size' => 2,
-      '#default_value' => $pos,
-      '#prefix' => '&nbsp;<div class="inline">',
-      '#attributes' => array('class' => array('weight')),
-      '#suffix' => '</div>',
-      '#states' => array(    // This #states rule limits visibility
-        'visible' => array(  // action to take.
-          ':input[name='.$tid.']' => array('checked' => TRUE),),
-      ),
-      '#ajax' => array(
-        'callback' => 'gbb_ctplan_taxonomy_form_submit',
-        'progress' => array('type' => 'throbber', 'message' => '')),
-      );
-    return $form;
-}
-
-function gbb_ctplan_taxonomy_form_submit($form, &$form_state) {
-  $tid = $form_state['values']['tid'];
-  if ($form_state['values'][$tid] == 0) { // $form_state['values']['disc'][$key] not checked
-    db_delete('gbb_gmodu_taxonomy')
-        ->condition('co_modu', $form_state['values']['co_modu'] )
-        ->condition('tid', $form_state['values']['tid'] )
-        ->execute();
-  } else {           // $form_state['values']['disc'][$key] was checked
-      $nb = db_select('gbb_gmodu_taxonomy','m')
-          ->fields('m',array('tid'))
-          ->condition('co_modu', $form_state['values']['co_modu'] )
-          ->condition('tid', $form_state['values']['tid']  )
-          ->execute()->rowCount();
-      if ($nb==0) {
-        db_insert('gbb_gmodu_taxonomy')
-          ->fields(array('co_modu' => $form_state['values']['co_modu'] ,
-                              'tid' => $form_state['values']['tid'] ,
-                         'weight' => $form_state['values']['weight']
-            ))
-            ->execute();
-      } else {
-        db_update('gbb_gmodu_taxonomy')
-          ->fields(array('weight'=>$form_state['values']['weight']))
-          ->condition('co_modu', $form_state['values']['co_modu'] )
-          ->condition('tid', $form_state['values']['tid'] )
-          ->execute();
-      }
-  }
-}
-
-

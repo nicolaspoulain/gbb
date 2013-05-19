@@ -17,12 +17,53 @@ function gbb_pia_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
+  $build['search'] = render(drupal_get_form('gbb_pia_search_form',$args));
   if (is_numeric(arg(1))) {
     $build['tab'] = gbb_pia_stages(arg(1));
   } else {
     $build['tab'] = gbb_pia_categories($args);
   };
   return implode('', $build);
+}
+
+
+/**
+ * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
+ */
+function gbb_pia_search_form($form, &$form_state, $args) {
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Rechercher un STAGE'),
+    '#attributes' => array('class' => array('collapsible',)),
+  );
+  $form['f']['kw'] = array(
+    '#type' => 'textfield',
+    '#description' => t('par ex. : écriture, agrégation ou théâtre...'),
+    #'#element_validate' => array('element_validate_integer_positive'),
+    #'#prefix' => '<div class="ajaxform inline">',
+    #'#suffix' => '</div>',
+    '#size' => 80, 
+  );
+  $form['f']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Chercher',
+    '#submit' => array('gbb_pia_search_form_submit'),
+  );
+  $form['f']['#action'] = url('pia', array('absolute' => TRUE));
+
+  return $form;
+}
+
+function gbb_pia_search_form_submit($form, &$form_state) {
+  $form_state['redirect'] = array(
+    'pia',
+    array(
+                 'query' => array(
+                      'kw' => $_POST['kw'],
+                     ),
+                 //'fragment' => 'baz',
+               ),
+    );
 }
 
 
@@ -54,38 +95,19 @@ function gbb_pia_stages($tid) {
   };
   $html = "";
   foreach ($dispo as $k=>$d) {
-    $html .= "<p><span class=\"iddisp\">$k</span>";
-    $html .= "<input type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-    $html .= "<div id=\"$k\" style=\"display: none;\">";
-    $html .= "details dispo";
-    $html .= "</div>";
-    foreach ($d as $m) {
-      if (count($d) == 1) {
-        $html .= "<div id=\"$k\" style=\"display: none;\">";
-        $html .= $m['co_modu'] . " " . $m['lib'];
-        $html .= "</div>";
-    } else {
-        $html .= "<div>".$m['co_modu'];
-        $html .= "<input type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-        $html .= $m['lib'];
-        $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
-        $html .= "details module";
-        $html .= "</div>";
-        $html .= "</div>";
-    }
-    };
-    $html .= "</p>";
-  };
-  $html = "";
-  foreach ($dispo as $k=>$d) {
     if (count($d) == 1) {
       $html .= "<p><span class=\"iddisp\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
       $html .= "<div id=\"$k\" style=\"display: none;\">";
       $html .= "details dispo";
+      $html .= "<div class=\"liste\">";
       $html .= "<span class=\"comodu\">" . $d[0]['co_modu'] . "</span>";
       $html .= $d[0]['lib'];
+      $html .= "<div>";
+      $html .= "details module";
+      $html .= "</div>";
+      $html .= "</div>";
       $html .= "</div>";
     } else {
       $html .= "<p><span class=\"iddisp\">$k</span>";
@@ -107,25 +129,9 @@ function gbb_pia_stages($tid) {
     };
     $html .= "</p>";
   };
-foreach ($dispo as $k=>$d) {
-    $items[] = array('data'=> $k);
-    foreach ($d as $m) {
-      if (count($d) == 1) {
-        $items[] = array('data'=> $m['co_modu']);
-    } else {
-        $items[] = array('data'=> $m['co_modu']. " ". $m['lib']);
-    }
-    };
-  };
-  $title = "TITRE";
-  $type = 'ul';
-  $attributes = array(
-     'id' => 'my-custom-listing',
-     'class' => 'ul-custom-class'.' another-custom-class', // a string or indexed
-   );
-  $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
   return $html;
 }
+
 
 function gbb_pia_categories($args) {
   foreach (taxonomy_get_vocabularies() as $k=>$v) {

@@ -17,10 +17,14 @@ function gbb_pia_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
-  $build['search'] = render(drupal_get_form('gbb_pia_search_form',$args));
+  setlocale(LC_CTYPE, 'fr_FR.ISO-8859-1');
   if (is_numeric(arg(1))) {
-    $build['tab'] = gbb_pia_stages(arg(1));
+    $build['tab'] = gbb_pia_stages(1,arg(1));
+  //} elseif (isset($_GET['kw']) && ctype_lower(iconv( "UTF-8", "ISO-8859-1", $_GET['kw']))) {
+  } elseif (isset($_GET['kw']) && preg_match('#[[:alpha:]]#', $_GET['kw'])) {
+    $build['tab'] = gbb_pia_stages(2,$_GET['kw']);
   } else {
+    $build['search'] = render(drupal_get_form('gbb_pia_search_form',$args));
     $build['tab'] = gbb_pia_categories($args);
   };
   return implode('', $build);
@@ -28,7 +32,7 @@ function gbb_pia_view($args = 'NaN') {
 
 
 /**
- * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
+ * Formulaire de recherche d'un stage 
  */
 function gbb_pia_search_form($form, &$form_state, $args) {
   $form['f'] = array(
@@ -55,29 +59,37 @@ function gbb_pia_search_form($form, &$form_state, $args) {
 }
 
 function gbb_pia_search_form_submit($form, &$form_state) {
-  $form_state['redirect'] = array(
-    'pia',
-    array(
-                 'query' => array(
-                      'kw' => $_POST['kw'],
-                     ),
-                 //'fragment' => 'baz',
-               ),
-    );
+  $form_state['redirect'] = array('pia',
+                    array('query' => array('kw' => $_POST['kw'])),
+                                 );
 }
 
 
-/*
-  insert into gbb_gmodu_taxonomy (co_modu,tid,weight) 
-   select co_modu,tid, weight 
-     from gbb_gdisp as d 
-     left join gbb_gmodu as g on g.co_disp=d.co_disp 
-     left join gbb_gmoof_taxonomy as gt on gt.co_omodu=g.co_omodu  
-     WHERE weight <500 AND id_disp like '13%'
+/**
+ * Affiche les stages, au choix
+ * - pour une taxonomie (type=1, arg=tid) 
+ * - pour un mot clé (type=2, arg=keyword)
+ *
+ * récupération du classement dans l'offre vers le classement dans le plan.
+ *
+ *  insert into gbb_gmodu_taxonomy (co_modu,tid,weight)
+ *   select co_modu,tid, weight
+ *     from gbb_gdisp as d
+ *     left join gbb_gmodu as g on g.co_disp=d.co_disp 
+ *     left join gbb_gmoof_taxonomy as gt on gt.co_omodu=g.co_omodu  
+ *     WHERE weight <500 AND id_disp like '13%'
  */
-function gbb_pia_stages($tid) {
+function gbb_pia_stages($type,$arg) {
   $query = db_select('gbb_gmodu_taxonomy', 'gt');
-  $query->condition('tid', $tid);
+  $query->condition('weight', 500, '<');
+  switch ($type) {
+    case 1:
+      $query->condition('tid', $arg);
+      break;
+    case 2:
+      $query->condition('gd.lib', '%' . db_like($arg) . '%', 'LIKE');
+      break;
+  }
   $query->condition('id_disp', db_like('13') . '%', 'LIKE');
   $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
@@ -93,7 +105,7 @@ function gbb_pia_stages($tid) {
                                       'lib_dispo' => $stage->lib_dispo,
                                       'lib' => $stage->lib);
   };
-  $html = "";
+  $html = "<p class=\"retour\"><a href=\"gbbdr/pia\">Retour</a></p> ";
   foreach ($dispo as $k=>$d) {
     if (count($d) == 1) {
       $html .= "<p><span class=\"iddisp\">$k</span>";
@@ -132,7 +144,9 @@ function gbb_pia_stages($tid) {
   return $html;
 }
 
-
+/**
+ * affiche le tableau des catégories
+ */
 function gbb_pia_categories($args) {
   foreach (taxonomy_get_vocabularies() as $k=>$v) {
     if ($k == 6) {
@@ -150,6 +164,9 @@ function gbb_pia_categories($args) {
   return $output;
 }
 
+/**
+ * Crée la liste des catégories
+ */
 function gbb_pia_vocab($vid,$title) {
 
   $terms = taxonomy_get_tree($vid);

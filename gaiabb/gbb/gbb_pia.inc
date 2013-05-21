@@ -93,24 +93,36 @@ function gbb_pia_stages($type,$arg) {
   $query->condition('id_disp', db_like('13') . '%', 'LIKE');
   $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
-  $query->fields('gt', array('co_modu'));
+  $query->fields('gt', array('co_modu','tid'));
   $query->fields('gm', array('lib'));
   $query->fields('gd', array('id_disp'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
   foreach ($res as $stage) {
+    /*
+    $query = db_select('taxonomy_term_data', 'ttd');
+    $query->condition('tid', $stage->tid);
+    $query->fields('ttd', array('name'));
+    $cats = $query->distinct()->execute()->fetchCol();
+    */
+    $query = db_select('taxonomy_term_data', 'ttd');
+    $query->condition('tid', $stage->tid);
+    $query->fields('ttd', array('vid'));
+    $cats = $query->distinct()->execute()->fetchCol();
     $dispo[$stage->id_disp][] = array('co_modu' => $stage->co_modu,
                                       'id_disp' => $stage->id_disp,
                                       'lib_dispo' => $stage->lib_dispo,
+                                      'categories' => implode(",",$cats),
                                       'lib' => $stage->lib);
   };
-  $html = "<p class=\"retour\"><a href=\"gbbdr/pia\">Retour</a></p> ";
+  $html = "<p class=\"retour\"><a href=\"pia\">Retour</a></p> ";
   foreach ($dispo as $k=>$d) {
     if (count($d) == 1) {
       $html .= "<p><span class=\"iddisp\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
+       $html .= " (".$d[0]['categories'].")";
       $html .= "<div id=\"$k\" style=\"display: none;\">";
       $html .= "details dispo";
       $html .= "<div class=\"liste\">";
@@ -133,6 +145,7 @@ function gbb_pia_stages($type,$arg) {
         $html .= "<span class=\"comodu\">" . $m['co_modu'] . "</span>";
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
         $html .= $m['lib'];
+         $html .= " (".$m['categories'].")";
         $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
         $html .= "details module";
         $html .= "</div>";

@@ -182,7 +182,8 @@ function gbb_menu() {
   $items['pia'] = array(
         'title' => '',
         'page callback' => 'gbb_pia_view',
-        'access arguments' => array('stable gbb'),
+        //'access arguments' => array('stable gbb'),
+        'access callback' => TRUE,
         'type' => MENU_CALLBACK,
   );
 

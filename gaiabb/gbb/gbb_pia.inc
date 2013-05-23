@@ -61,7 +61,7 @@ function gbb_pia_search_form($form, &$form_state, $args) {
   );
   $form['f']['kw'] = array(
     '#type' => 'textfield',
-    '#description' => t('par ex. : écriture, agrégation ou théâtre...'),
+    '#description' => t('par ex. : Agrégation, lettre ou théâtre...'),
     #'#element_validate' => array('element_validate_integer_positive'),
     #'#prefix' => '<div class="ajaxform inline">',
     #'#suffix' => '</div>',
@@ -77,6 +77,14 @@ function gbb_pia_search_form($form, &$form_state, $args) {
   return $form;
 }
 
+function gbb_pia_search_form_validate($form, &$form_state) {
+  if (!preg_match('#[[:alpha:]]#', $_POST['kw'])) {
+    form_set_error('ttt',t("Merci de reformuler votre requête."));
+    return FALSE;
+  } else {
+    return TRUE;
+  }
+}
 function gbb_pia_search_form_submit($form, &$form_state) {
   $form_state['redirect'] = array('pia',
                     array('query' => array('kw' => $_POST['kw'])),
@@ -106,7 +114,10 @@ function gbb_pia_stages($type,$arg) {
       $query->condition('tid', $arg);
       break;
     case 2:
-      $query->condition('gd.lib', '%' . db_like($arg) . '%', 'LIKE');
+      $query->condition(
+           db_or()->condition('gd.lib', '%' . db_like($arg) . '%', 'LIKE')
+                  ->condition('gm.lib', '%' . db_like($arg) . '%', 'LIKE')
+      );
       break;
   }
   $query->condition('id_disp', db_like('13') . '%', 'LIKE');

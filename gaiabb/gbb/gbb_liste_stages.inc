@@ -415,6 +415,13 @@ function gbb_liste_stages_liste($args) {
          ->condition('fm.status', '1', '=');
     $nb_pj = $qpj->execute()->rowCount();
 
+    $dda = db_select('gbb_gmodu_plus', 'mp');
+    $dda ->fields('mp', array('DA_date_depot'))
+         ->condition('mp.co_degre', arg(2), '=')
+         ->condition('mp.co_modu', $r->co_modu, '=');
+    $ddt = $dda->execute()->fetchObject();
+    $DAdd = ($ddt) ? $ddt->DA_date_depot : "Nan";
+
     $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
     $options_co_modu = array('attributes' =>
                                 array('class' => array($m_ouvert_ou_ferme),
@@ -481,7 +488,11 @@ function gbb_liste_stages_liste($args) {
                     strftime('%d/%m/%y', strtotime($dateF)));
       };
     } else { $dates =''; };
-
+    $DA = "";
+    if ($DAdd !="NaN" && $DAdd !="1970-01-01 00:00:00") {
+      $DA = "&nbsp;" . theme('image', variable_get('_gbb_DA_rendu'))
+                     . " " .strftime('%d/%m/%y', strtotime($DAdd));
+    };
   $queryev = db_select('gbb_evaluation', 'e');
   $queryev ->condition('e.co_modu', $r->co_modu, '=')
            ->condition('e.co_degre', arg(2), '=')
@@ -558,7 +569,7 @@ function gbb_liste_stages_liste($args) {
                   'data' => nl2br($r->organisation). $formateurs ,
                 ),
                 'col4' => array(
-                  'data' => $dates . $evalbilan,
+                  'data' => $dates . $evalbilan . $DA,
                 ),
     );
     $libd_precedent = $r->libd;

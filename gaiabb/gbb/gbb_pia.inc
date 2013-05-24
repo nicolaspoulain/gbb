@@ -124,8 +124,8 @@ function gbb_pia_stages($type,$arg) {
   $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
   $query->fields('gt', array('co_modu'));
-  $query->fields('gm', array('lib'));
-  $query->fields('gd', array('id_disp'));
+  $query->fields('gm', array('lib','lcont','lmoda','lform','duree_prev'));
+  $query->fields('gd', array('id_disp','lobjt'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
@@ -145,6 +145,11 @@ function gbb_pia_stages($type,$arg) {
     $dispo[$stage->id_disp][] = array('co_modu' => $stage->co_modu,
                                       'id_disp' => $stage->id_disp,
                                       'lib_dispo' => $stage->lib_dispo,
+                                      'lobjt' => $stage->lobjt,
+                                      'lcont' => $stage->lcont,
+                                      'lmoda' => $stage->lmoda,
+                                      'lform' => $stage->lform,
+                                      'duree' => $stage->duree_prev,
                                       'categories' => $catss,
                                       'lib' => $stage->lib);
   };
@@ -158,12 +163,17 @@ function gbb_pia_stages($type,$arg) {
       $html .= $d[0]['lib_dispo'];
        $html .= " ".$d[0]['categories'];
       $html .= "<div id=\"$k\" style=\"display: none;\">";
-      $html .= "details dispo";
+      // détails dispo
+      $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
       $html .= "<div class=\"liste\">";
       $html .= "<span class=\"comodu\">" . $d[0]['co_modu'] . "</span>";
       $html .= $d[0]['lib'];
       $html .= "<div>";
-      $html .= "details module";
+      // détails module
+      $html .= "<span class=\"titre\">Contenu </span>: " . $d[0]['lcont'] . "<br/>";
+      $html .= "<span class=\"titre\">Modalité </span>: " . $d[0]['lmoda'] . "<br/>";
+      $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['lmoda'] . "h<br/>";
+      $html .= "<span class=\"titre\">Forme : </span>" . $d[0]['lform'] . "<br/>";
       $html .= "</div>";
       $html .= "</div>";
       $html .= "</div>";
@@ -172,16 +182,21 @@ function gbb_pia_stages($type,$arg) {
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
       $html .= "<div id=\"$k\" style=\"display: none;\">";
-      $html .= "details dispo";
+      // détails dispo
+      $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
       $html .= "</div>";
       foreach ($d as $m) {
         $html .= "<div class=\"liste\">";
         $html .= "<span class=\"comodu\">" . $m['co_modu'] . "</span>";
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
         $html .= $m['lib'];
-         $html .= " ".$m['categories'];
+        $html .= " ".$m['categories'];
         $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
-        $html .= "details module";
+        // détails module
+        $html .= "<span class=\"titre\">Contenu </span>: " . $d[0]['lcont'] . "<br/>";
+        $html .= "<span class=\"titre\">Modalité </span>: " . $d[0]['lmoda'] . "<br/>";
+        $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['lmoda'] . "h<br/>";
+        $html .= "<span class=\"titre\">Forme : </span>" . $d[0]['lform'] . "<br/>";
         $html .= "</div>";
         $html .= "</div>";
       }
@@ -237,4 +252,5 @@ function gbb_pia_vocab($vid,$title) {
   $title="";
   $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
   return $output;
-  }
+}
+

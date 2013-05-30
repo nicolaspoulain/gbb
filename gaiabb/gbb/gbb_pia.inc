@@ -172,7 +172,7 @@ function gbb_pia_stages($type,$arg) {
       // détails module
       $html .= "<span class=\"titre\">Contenu </span>: " . $d[0]['lcont'] . "<br/>";
       $html .= "<span class=\"titre\">Modalité </span>: " . $d[0]['lmoda'] . "<br/>";
-      $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['lmoda'] . "h<br/>";
+      $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['duree'] . "h<br/>";
       $html .= "<span class=\"titre\">Forme : </span>" . $d[0]['lform'] . "<br/>";
       $html .= "</div>";
       $html .= "</div>";
@@ -195,7 +195,7 @@ function gbb_pia_stages($type,$arg) {
         // détails module
         $html .= "<span class=\"titre\">Contenu </span>: " . $d[0]['lcont'] . "<br/>";
         $html .= "<span class=\"titre\">Modalité </span>: " . $d[0]['lmoda'] . "<br/>";
-        $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['lmoda'] . "h<br/>";
+        $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['duree'] . "h<br/>";
         $html .= "<span class=\"titre\">Forme : </span>" . $d[0]['lform'] . "<br/>";
         $html .= "</div>";
         $html .= "</div>";

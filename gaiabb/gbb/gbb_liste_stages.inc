@@ -420,7 +420,7 @@ function gbb_liste_stages_liste($args) {
          ->condition('mp.co_degre', arg(2), '=')
          ->condition('mp.co_modu', $r->co_modu, '=');
     $ddt = $dda->execute()->fetchObject();
-    $DAdd = ($ddt) ? $ddt->DA_date_depot : "Nan";
+    $DAdd = ($ddt) ? $ddt->DA_date_depot : "NaN";
 
     $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
     $options_co_modu = array('attributes' =>

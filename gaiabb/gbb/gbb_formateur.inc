@@ -314,7 +314,7 @@ function gbb_formateur_stages($args) {
            '#title' => t('Répartition'),
            '#type' => CHART_TYPE_BAR_H,
            // taille adaptative mais limitée à 900px :
-           '#size' => chart_size(min(900,max(200,2*$dech,2*$r->sumprevue)), 130), 
+           '#size' => chart_size(floor(min(900,max(200,2*$dech,2*$r->sumprevue))), 130), 
         );
     $centpcent = max(max($dech,$r->sumprevue),0.1);
     $chart['#data']['dech'] = 100*$dech/$centpcent;
@@ -327,13 +327,19 @@ function gbb_formateur_stages($args) {
       chart_mixed_axis_label($centpcent);
 
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-      chart_mixed_axis_label(t('Fait ('.$r->sumapayer.'h)'));
+      chart_mixed_axis_label(t('D.à payer ('.$r->sumapayer.'h)'));
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-      chart_mixed_axis_label(t('Prév.('.$r->sumprevue.'h)'));
+      chart_mixed_axis_label(t('Durée prév ('.$r->sumprevue.'h)'));
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-      chart_mixed_axis_label(t('Déch.('.$dech.'h)'));
+      chart_mixed_axis_label(t('Décharge ('.$dech.'h)'));
 
-    return theme('chart', array('chart' => $chart));
+    $ret = theme('chart', array('chart' => $chart));
+    //$ret .= "dech : " . 100*$dech/$centpcent;
+    //$ret .= "prev : " . 100*$r->sumprevue/$centpcent;
+    //$ret .= "prev : " . 100*$r->sumapayer/$centpcent;
+
+
+    return $ret;
   };
 }
 

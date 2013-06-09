@@ -125,7 +125,7 @@ function gbb_pia_stages($type,$arg) {
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
   $query->fields('gt', array('co_modu'));
   $query->fields('gm', array('lib','lcont','lmoda','lform','duree_prev'));
-  $query->fields('gd', array('id_disp','lobjt'));
+  $query->fields('gd', array('id_disp','lobjt','co_tcan'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
@@ -150,10 +150,18 @@ function gbb_pia_stages($type,$arg) {
                                       'lmoda' => $stage->lmoda,
                                       'lform' => $stage->lform,
                                       'duree' => $stage->duree_prev,
+                                      'co_tcan' => $stage->co_tcan,
                                       'categories' => $catss,
                                       'lib' => $stage->lib);
   };
   //$html = "<p class=\"retour\"><a href=\"pia\">Retour</a></p> ";
+  $tcan=array( 1 => "",      // Initaiative indivieduelle
+               2 => "",      // FIL,
+               3 => "P.dés."
+             );
+  #print "<pre>";
+  #print_r($dispo);
+  #print "</pre>";
   $html = "";
   if (isset($dispo)) {
   foreach ($dispo as $k=>$d) {
@@ -161,7 +169,8 @@ function gbb_pia_stages($type,$arg) {
       $html .= "<p><span class=\"iddisp\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
-       $html .= " ".$d[0]['categories'];
+      $html .= " " . $tcan[$d[0]['co_tcan']];
+      $html .= " ".$d[0]['categories'];
       $html .= "<div id=\"$k\" style=\"display: none;\">";
       // détails dispo
       $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
@@ -170,10 +179,10 @@ function gbb_pia_stages($type,$arg) {
       $html .= $d[0]['lib'];
       $html .= "<div>";
       // détails module
-      $html .= "<span class=\"titre\">Contenu </span>: " . $d[0]['lcont'] . "<br/>";
-      $html .= "<span class=\"titre\">Modalité </span>: " . $d[0]['lmoda'] . "<br/>";
-      $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['duree'] . "h<br/>";
-      $html .= "<span class=\"titre\">Forme : </span>" . $d[0]['lform'] . "<br/>";
+      $html .= "<span class=\"titre\">Contenu : </span>"  . $d[0]['lcont'] . "<br/>";
+      $html .= "<span class=\"titre\">Modalité : </span>" . $d[0]['lmoda'] . "<br/>";
+      $html .= "<span class=\"titre\">Durée : </span>"    . $d[0]['duree'] . "h<br/>";
+      $html .= "<span class=\"titre\">Forme : </span>"    . $d[0]['lform'] . "<br/>";
       $html .= "</div>";
       $html .= "</div>";
       $html .= "</div>";
@@ -181,6 +190,7 @@ function gbb_pia_stages($type,$arg) {
       $html .= "<p><span class=\"iddisp\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
+      $html .= " " . $tcan[$d[0]['co_tcan']];
       $html .= "<div id=\"$k\" style=\"display: none;\">";
       // détails dispo
       $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
@@ -193,10 +203,10 @@ function gbb_pia_stages($type,$arg) {
         $html .= " ".$m['categories'];
         $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
         // détails module
-        $html .= "<span class=\"titre\">Contenu </span>: " . $d[0]['lcont'] . "<br/>";
-        $html .= "<span class=\"titre\">Modalité </span>: " . $d[0]['lmoda'] . "<br/>";
-        $html .= "<span class=\"titre\">Durée : </span>" . $d[0]['duree'] . "h<br/>";
-        $html .= "<span class=\"titre\">Forme : </span>" . $d[0]['lform'] . "<br/>";
+        $html .= "<span class=\"titre\">Contenu : </span>"  . $m['lcont'] . "<br/>";
+        $html .= "<span class=\"titre\">Modalité : </span>" . $m['lmoda'] . "<br/>";
+        $html .= "<span class=\"titre\">Durée : </span>"    . $m['duree'] . "h<br/>";
+        $html .= "<span class=\"titre\">Forme : </span>"    . $m['lform'] . "<br/>";
         $html .= "</div>";
         $html .= "</div>";
       }

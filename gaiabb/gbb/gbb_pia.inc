@@ -115,16 +115,25 @@ function gbb_pia_stages($type,$arg) {
       break;
     case 2:
       $query->condition(
-           db_or()->condition('gd.lib', '%' . db_like($arg) . '%', 'LIKE')
-                  ->condition('gm.lib', '%' . db_like($arg) . '%', 'LIKE')
+           db_or()->condition('gd.lib',   '%' . db_like($arg) . '%', 'LIKE')
+                  ->condition('gd.lobjt', '%' . db_like($arg) . '%', 'LIKE')
+                  ->condition('gm.lib',   '%' . db_like($arg) . '%', 'LIKE')
+                  ->condition('gm.lpeda', '%' . db_like($arg) . '%', 'LIKE')
+                  ->condition('gm.lcont', '%' . db_like($arg) . '%', 'LIKE')
       );
       break;
   }
   $query->condition('id_disp', db_like('13') . '%', 'LIKE');
   $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
+  $query->join('gbb_gdire', 'gdr','gdr.co_modu = gm.co_modu
+                               AND gdr.co_tres = 3 
+                               AND gdr.co_degre = gm.co_degre');
+  $query->join('gbb_gresp', 'gr', 'gr.co_resp = gdr.co_resp
+                               AND gr.co_degre = gdr.co_degre');
+  $query->fields('gr', array('prenom', 'nomu'));
   $query->fields('gt', array('co_modu'));
-  $query->fields('gm', array('lib','lcont','lmoda','lform','duree_prev'));
+  $query->fields('gm', array('lib','lcont','lmoda','lpeda','lform','duree_prev'));
   $query->fields('gd', array('id_disp','lobjt','co_tcan'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('weight', 'ASC');
@@ -147,10 +156,12 @@ function gbb_pia_stages($type,$arg) {
                                       'lib_dispo' => $stage->lib_dispo,
                                       'lobjt' => $stage->lobjt,
                                       'lcont' => $stage->lcont,
+                                      'lpeda' => $stage->lpeda,
                                       'lmoda' => $stage->lmoda,
                                       'lform' => $stage->lform,
                                       'duree' => $stage->duree_prev,
                                       'co_tcan' => $stage->co_tcan,
+                                      'resppeda' => $stage->prenom . " " . $stage->nomu,
                                       'categories' => $catss,
                                       'lib' => $stage->lib);
   };
@@ -179,10 +190,12 @@ function gbb_pia_stages($type,$arg) {
       $html .= $d[0]['lib'];
       $html .= "<div>";
       // détails module
+      $html .= "<span class=\"titre\">Objectif : </span>"  . $d[0]['lpeda'] . "<br/>";
       $html .= "<span class=\"titre\">Contenu : </span>"  . $d[0]['lcont'] . "<br/>";
       $html .= "<span class=\"titre\">Modalité : </span>" . $d[0]['lmoda'] . "<br/>";
       $html .= "<span class=\"titre\">Durée : </span>"    . $d[0]['duree'] . "h<br/>";
       $html .= "<span class=\"titre\">Forme : </span>"    . $d[0]['lform'] . "<br/>";
+      $html .= "<span class=\"titre\">Responsable pédagogique: </span>" . $d[0]['resppeda'] . "<br/>";
       $html .= "</div>";
       $html .= "</div>";
       $html .= "</div>";
@@ -203,10 +216,12 @@ function gbb_pia_stages($type,$arg) {
         $html .= " ".$m['categories'];
         $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
         // détails module
+        $html .= "<span class=\"titre\">Objectif : </span>"  . $m['lpeda'] . "<br/>";
         $html .= "<span class=\"titre\">Contenu : </span>"  . $m['lcont'] . "<br/>";
         $html .= "<span class=\"titre\">Modalité : </span>" . $m['lmoda'] . "<br/>";
         $html .= "<span class=\"titre\">Durée : </span>"    . $m['duree'] . "h<br/>";
         $html .= "<span class=\"titre\">Forme : </span>"    . $m['lform'] . "<br/>";
+        $html .= "<span class=\"titre\">Responsable pédagogique: </span>" . $m['resppeda'] . "<br/>";
         $html .= "</div>";
         $html .= "</div>";
       }

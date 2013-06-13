@@ -56,7 +56,7 @@ function gbb_pia_view($args = 'NaN') {
 function gbb_pia_search_form($form, &$form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Rechercher un STAGE'),
+    '#title' => "<img src=\"http://www.missloving.com/im/icones/icone_recherche.gif\">".t('Rechercher un STAGE'),
     '#attributes' => array('class' => array('collapsible',)),
   );
   $form['f']['kw'] = array(
@@ -107,6 +107,14 @@ function gbb_pia_search_form_submit($form, &$form_state) {
  *     WHERE weight <500 AND id_disp like '13%'
  */
 function gbb_pia_stages($type,$arg) {
+
+    $query = db_select('taxonomy_term_data', 'ttd');
+    $query->condition('tid', arg(2));
+    $query->fields('ttd', array('name'));
+    $names = $query->distinct()->execute()->fetchCol();
+    $nb = $query->countQuery()->execute()->fetchField();
+    $html = ($nb >0)? "<h1>" . $names[0] . "</h1>" : "<h1>Résultat(s)</h1>";
+
   $query = db_select('gbb_gmodu_taxonomy', 'gt');
   $query->condition('weight', 500, '<');
   switch ($type) {
@@ -126,31 +134,40 @@ function gbb_pia_stages($type,$arg) {
   $query->condition('id_disp', db_like('13') . '%', 'LIKE');
   $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
-  $query->join('gbb_gdire', 'gdr','gdr.co_modu = gm.co_modu
-                               AND gdr.co_tres = 3 
-                               AND gdr.co_degre = gm.co_degre');
-  $query->join('gbb_gresp', 'gr', 'gr.co_resp = gdr.co_resp
-                               AND gr.co_degre = gdr.co_degre');
-  $query->fields('gr', array('prenom', 'nomu'));
+  #$query->join('gbb_gdire', 'gdr','gdr.co_modu = gm.co_modu
+  #                             AND gdr.co_tres = 3 
+  #                             AND gdr.co_degre = gm.co_degre');
+  #$query->join('gbb_gresp', 'gr', 'gr.co_resp = gdr.co_resp
+  #                             AND gr.co_degre = gdr.co_degre');
+  #$query->fields('gr', array('prenom', 'nomu'));
   $query->fields('gt', array('co_modu'));
-  $query->fields('gm', array('lib','lcont','lmoda','lpeda','lform','duree_prev'));
+  $query->fields('gm', array('lib','lcont','lmoda','lpeda','lform','duree_prev','co_degre'));
   $query->fields('gd', array('id_disp','lobjt','co_tcan'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
+  #print($query);
   foreach ($res as $stage) {
-    /*
-    $query = db_select('taxonomy_term_data', 'ttd');
-    $query->condition('tid', $stage->tid);
-    $query->fields('ttd', array('name'));
-    $cats = $query->distinct()->execute()->fetchCol();
-    */
+
     $query = db_select('gbb_gmodu_taxonomy', 'gt');
     $query->join('taxonomy_term_data', 'ttd', 'gt.tid=ttd.tid');
     $query->condition('co_modu', $stage->co_modu);
     $query->fields('ttd', array('vid'));
     $cats = $query->distinct()->execute()->fetchCol();
     $catss = "<span class=\"ul-custom-class".implode("\">&nbsp;&nbsp;</span> <span class=\"ul-custom-class",$cats)."\">&nbsp;&nbsp;</span>";
+
+    $query = db_select('gbb_gdire', 'gdr');
+    $query->condition('gdr.co_modu', $stage->co_modu, "=");
+    $query->condition('gdr.co_degre', $stage->co_degre, "=");
+    $query->condition('gdr.co_tres', 3, "=");
+    $query->join('gbb_gresp', 'gr', 'gr.co_resp = gdr.co_resp
+                              AND gr.co_degre = gdr.co_degre');
+    $query->fields('gr', array('nomu','prenom'));
+    $resps = $query->distinct()->execute()->fetchAll();
+    $nb = $query->countQuery()->execute()->fetchField();
+    $resp = ($nb >0)? $resps[0]->prenom." ".$resps[0]->nomu : "?";
+
+
     $dispo[$stage->id_disp][] = array('co_modu' => $stage->co_modu,
                                       'id_disp' => $stage->id_disp,
                                       'lib_dispo' => $stage->lib_dispo,
@@ -161,7 +178,8 @@ function gbb_pia_stages($type,$arg) {
                                       'lform' => $stage->lform,
                                       'duree' => $stage->duree_prev,
                                       'co_tcan' => $stage->co_tcan,
-                                      'resppeda' => $stage->prenom . " " . $stage->nomu,
+                                      #'resppeda' => $stage->prenom . " " . $stage->nomu,
+                                      'resppeda' => $resp,
                                       'categories' => $catss,
                                       'lib' => $stage->lib);
   };
@@ -173,11 +191,12 @@ function gbb_pia_stages($type,$arg) {
   #print "<pre>";
   #print_r($dispo);
   #print "</pre>";
-  $html = "";
   if (isset($dispo)) {
   foreach ($dispo as $k=>$d) {
+    $dclass = (preg_match("/^13A/", $k))? "iddispA" : "iddispD";
+    $mclass = (preg_match("/^13A/", $k))? "comoduA" : "comoduD";
     if (count($d) == 1) {
-      $html .= "<p><span class=\"iddisp\">$k</span>";
+      $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
       $html .= " " . $tcan[$d[0]['co_tcan']];
@@ -186,7 +205,7 @@ function gbb_pia_stages($type,$arg) {
       // détails dispo
       $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
       $html .= "<div class=\"liste\">";
-      $html .= "<span class=\"comodu\">" . $d[0]['co_modu'] . "</span>";
+      $html .= "<span class=\"$mclass\">" . $d[0]['co_modu'] . "</span>";
       $html .= $d[0]['lib'];
       $html .= "<div>";
       // détails module
@@ -200,7 +219,7 @@ function gbb_pia_stages($type,$arg) {
       $html .= "</div>";
       $html .= "</div>";
     } else {
-      $html .= "<p><span class=\"iddisp\">$k</span>";
+      $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= $d[0]['lib_dispo'];
       $html .= " " . $tcan[$d[0]['co_tcan']];
@@ -210,7 +229,7 @@ function gbb_pia_stages($type,$arg) {
       $html .= "</div>";
       foreach ($d as $m) {
         $html .= "<div class=\"liste\">";
-        $html .= "<span class=\"comodu\">" . $m['co_modu'] . "</span>";
+        $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
         $html .= $m['lib'];
         $html .= " ".$m['categories'];
@@ -265,8 +284,9 @@ function gbb_pia_vocab($vid,$title) {
     $query->condition('tid', $term->tid);
     $query->fields('gt', array('co_modu'));
     $nb = $query->countQuery()->execute()->fetchField();
-    $str = str_repeat(' - ', $term->depth) . $term->name;
+    $str = $term->name;
     if ($nb > 0) $str = l($str,"pia/$vid/$term->tid");
+    $str = str_repeat(' &nbsp;&nbsp;&nbsp; ', $term->depth) . $str;
     $items[] = array('data'=>$str);
   };
   $type = 'ul';

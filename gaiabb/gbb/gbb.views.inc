@@ -111,7 +111,28 @@ function gbb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_numeric'),
             'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
-
+  $data['gbb_gmodu']['nb_groupe'] = array(
+            'title' => t('nb_groupe'),
+            'help' => t('nombre de groupes possible'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu']['nb_eff_groupe'] = array(
+            'title' => t('nb_eff_groupe'),
+            'help' => t('Effectif par groupe'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
 
   // --------------------------------------------------------
   // GBB_GMODU_TAXONOMY

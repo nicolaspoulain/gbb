@@ -61,13 +61,13 @@ function gbb_ctplan_tab($args) {
   foreach ($terms_select as $key=>$val) {
     $pos= array_key_exists($key,$check)? $check[$key] : 1;
     $ischk= array_key_exists($key,$check);
-    $rows[] = array(array('data'=>render(drupal_get_form('gbb_ctplan_taxonomy_form',$key,$val,$pos,$ischk,arg(1)))));
+    $rows[] = array(array('data'=>render(drupal_get_form('gbb_ctplan_taxonomy_form',$key,$val,$pos,$ischk,arg(1),arg(2)))));
   }
   $output = theme('table',array('rows'   => $rows,'attributes' => array('id' => 'ctplan-table'.$key) ));
   return $output;
   }
 
-  function gbb_ctplan_taxonomy_form($form, &$form_state, $tid,$voc,$pos,$ischk,$co_modu) {
+  function gbb_ctplan_taxonomy_form($form, &$form_state, $tid,$voc,$pos,$ischk,$co_modu,$co_degre) {
     $form['f']['co_modu']  = array('#type' => 'hidden','#value' => $co_modu );
     $form['f']['tid']  = array('#type' => 'hidden','#value' => $tid );
     $form['f'][$tid] = array(
@@ -79,6 +79,10 @@ function gbb_ctplan_tab($args) {
       '#ajax' => array(
         'callback' => 'gbb_ctplan_taxonomy_form_submit',
         'progress' => array('type' => 'throbber', 'message' => '')),
+      );
+    $form['f']['co_degre'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $co_degre,
       );
     $form['f']['weight'] = array(
       '#type' => 'textfield',
@@ -104,18 +108,21 @@ function gbb_ctplan_taxonomy_form_submit($form, &$form_state) {
     db_delete('gbb_gmodu_taxonomy')
         ->condition('co_modu', $form_state['values']['co_modu'] )
         ->condition('tid', $form_state['values']['tid'] )
+        ->condition('co_degre', $form_state['values']['co_degre'] )
         ->execute();
   } else {           // $form_state['values']['disc'][$key] was checked
       $nb = db_select('gbb_gmodu_taxonomy','m')
           ->fields('m',array('tid'))
           ->condition('co_modu', $form_state['values']['co_modu'] )
           ->condition('tid', $form_state['values']['tid']  )
+          ->condition('co_degre', $form_state['values']['co_degre'] )
           ->execute()->rowCount();
       if ($nb==0) {
         db_insert('gbb_gmodu_taxonomy')
           ->fields(array('co_modu' => $form_state['values']['co_modu'] ,
-                              'tid' => $form_state['values']['tid'] ,
-                         'weight' => $form_state['values']['weight']
+                             'tid' => $form_state['values']['tid'] ,
+                          'weight' => $form_state['values']['weight'],
+                        'co_degre' => $form_state['values']['co_degre']
             ))
             ->execute();
       } else {
@@ -123,6 +130,7 @@ function gbb_ctplan_taxonomy_form_submit($form, &$form_state) {
           ->fields(array('weight'=>$form_state['values']['weight']))
           ->condition('co_modu', $form_state['values']['co_modu'] )
           ->condition('tid', $form_state['values']['tid'] )
+          ->condition('co_degre', $form_state['values']['co_degre'] )
           ->execute();
       }
   }

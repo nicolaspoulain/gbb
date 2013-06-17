@@ -169,7 +169,8 @@ function gbb_liste_stages_choix($form, &$form_state, $args) {
 
   $periode = array( 10 => '2010-2011',
                     11 => '2011-2012',
-                    12 => '2012-2013'  );
+                    12 => '2012-2013',
+                    13 => '2013-2014'  );
   $form['f']['year'] = array(
     '#type' => 'select',
     '#title' => t('Année'),
@@ -321,9 +322,9 @@ function gbb_liste_stages_liste($args) {
   // -----------------------------------------------------------------
   $query  ->condition('id_disp',    db_like(arg(1)) . '%', 'LIKE')
           ->condition('m.co_degre', arg(2), '=');
-  if (arg(3)!=0) {
+  if (arg(3) && arg(3)!="0") {
     $query->condition('j.co_tres',  arg(3), '='); };
-  if (arg(5)!=0) {
+  if (arg(5) && arg(5)!="0") {
     $query->condition('d.co_orie',  arg(5), '='); };
 
   // -------------------------------------------

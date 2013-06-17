@@ -56,12 +56,12 @@ function gbb_pia_view($args = 'NaN') {
 function gbb_pia_search_form($form, &$form_state, $args) {
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => "<img src=\"http://www.missloving.com/im/icones/icone_recherche.gif\">".t('Rechercher un STAGE'),
+    '#title' => t('Rechercher un STAGE'),
     '#attributes' => array('class' => array('collapsible',)),
   );
   $form['f']['kw'] = array(
     '#type' => 'textfield',
-    '#description' => t('par ex. : Agrégation, lettre ou théâtre...'),
+    '#description' => t('par ex. : Agrégation, lettres ou théâtre...'),
     #'#element_validate' => array('element_validate_integer_positive'),
     #'#prefix' => '<div class="ajaxform inline">',
     #'#suffix' => '</div>',
@@ -141,7 +141,7 @@ function gbb_pia_stages($type,$arg) {
   #                             AND gr.co_degre = gdr.co_degre');
   #$query->fields('gr', array('prenom', 'nomu'));
   $query->fields('gt', array('co_modu'));
-  $query->fields('gm', array('lib','lcont','lmoda','lpeda','lform','duree_prev','co_degre'));
+  $query->fields('gm', array('lib','lcont','lmoda','lpeda','lform','duree_prev','co_degre','lcibl'));
   $query->fields('gd', array('id_disp','lobjt','co_tcan'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('weight', 'ASC');
@@ -171,6 +171,7 @@ function gbb_pia_stages($type,$arg) {
     $dispo[$stage->id_disp][] = array('co_modu' => $stage->co_modu,
                                       'id_disp' => $stage->id_disp,
                                       'lib_dispo' => $stage->lib_dispo,
+                                      'lcibl' => $stage->lcibl,
                                       'lobjt' => $stage->lobjt,
                                       'lcont' => $stage->lcont,
                                       'lpeda' => $stage->lpeda,
@@ -186,15 +187,15 @@ function gbb_pia_stages($type,$arg) {
   //$html = "<p class=\"retour\"><a href=\"pia\">Retour</a></p> ";
   $tcan=array( 1 => "",      // Initaiative indivieduelle
                2 => "",      // FIL,
-               3 => "P.dés."
+               3 => "<img src=\"http://www.ent-paris.fr/gbbdr/sites/all/themes/sky/pubDes.png\">"
              );
   #print "<pre>";
   #print_r($dispo);
   #print "</pre>";
   if (isset($dispo)) {
   foreach ($dispo as $k=>$d) {
-    $dclass = (preg_match("/^13A/", $k))? "iddispA" : "iddispD";
-    $mclass = (preg_match("/^13A/", $k))? "comoduA" : "comoduD";
+    $dclass = (preg_match("/^13D/", $k))? "iddispD" : "iddispA";
+    $mclass = (preg_match("/^13D/", $k))? "comoduD" : "comoduA";
     if (count($d) == 1) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
@@ -211,6 +212,7 @@ function gbb_pia_stages($type,$arg) {
       // détails module
       $html .= "<span class=\"titre\">Objectif : </span>"  . $d[0]['lpeda'] . "<br/>";
       $html .= "<span class=\"titre\">Contenu : </span>"  . $d[0]['lcont'] . "<br/>";
+      $html .= "<span class=\"titre\">Public : </span>"  . $d[0]['lcibl'] . "<br/>";
       $html .= "<span class=\"titre\">Modalité : </span>" . $d[0]['lmoda'] . "<br/>";
       $html .= "<span class=\"titre\">Durée : </span>"    . $d[0]['duree'] . "h<br/>";
       $html .= "<span class=\"titre\">Forme : </span>"    . $d[0]['lform'] . "<br/>";
@@ -238,6 +240,7 @@ function gbb_pia_stages($type,$arg) {
         $html .= "<span class=\"titre\">Objectif : </span>"  . $m['lpeda'] . "<br/>";
         $html .= "<span class=\"titre\">Contenu : </span>"  . $m['lcont'] . "<br/>";
         $html .= "<span class=\"titre\">Modalité : </span>" . $m['lmoda'] . "<br/>";
+        $html .= "<span class=\"titre\">Public : </span>"  . $d[0]['lcibl'] . "<br/>";
         $html .= "<span class=\"titre\">Durée : </span>"    . $m['duree'] . "h<br/>";
         $html .= "<span class=\"titre\">Forme : </span>"    . $m['lform'] . "<br/>";
         $html .= "<span class=\"titre\">Responsable pédagogique: </span>" . $m['resppeda'] . "<br/>";

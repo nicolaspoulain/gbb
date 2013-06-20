@@ -17,10 +17,12 @@ function gbb_pia_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
+  $ledispo = arg(3);
   setlocale(LC_CTYPE, 'fr_FR.ISO-8859-1');
-  if (is_numeric(arg(2))) {
+  if (is_numeric(arg(2)) && !preg_match('/^13/',$ledispo)) {
     $build['tab'] = gbb_pia_stages(1,arg(2));
-  //} elseif (isset($_GET['kw']) && ctype_lower(iconv( "UTF-8", "ISO-8859-1", $_GET['kw']))) {
+  } elseif (is_numeric(arg(2)) && preg_match('/^13/',$ledispo)) {
+    $build['tab'] = gbb_pia_stages(3,arg(2),$ledispo);
   } elseif (isset($_GET['kw']) && preg_match('#[[:alpha:]]#', $_GET['kw'])) {
     $build['tab'] = gbb_pia_stages(2,$_GET['kw']);
   } else {
@@ -106,14 +108,14 @@ function gbb_pia_search_form_submit($form, &$form_state) {
  *     left join gbb_gmoof_taxonomy as gt on gt.co_omodu=g.co_omodu  
  *     WHERE weight <500 AND id_disp like '13%'
  */
-function gbb_pia_stages($type,$arg) {
+function gbb_pia_stages($type,$arg,$id=NULL) {
 
     $query = db_select('taxonomy_term_data', 'ttd');
     $query->condition('tid', arg(2));
     $query->fields('ttd', array('name'));
     $names = $query->distinct()->execute()->fetchCol();
     $nb = $query->countQuery()->execute()->fetchField();
-    $html = ($nb >0)? "<h1>" . $names[0] . "</h1>" : "<h1>Résultat(s)</h1>";
+    $html = ($nb >0)? "<h1><a href=\"/gbbdr/pia/".arg(1)."/".arg(2)."\">" . $names[0] . "</a></h1>" : "<h1>Résultat(s)</h1>";
 
   $query = db_select('gbb_gmodu_taxonomy', 'gt');
   $query->condition('weight', 500, '<');
@@ -129,6 +131,10 @@ function gbb_pia_stages($type,$arg) {
                   ->condition('gm.lpeda', '%' . db_like($arg) . '%', 'LIKE')
                   ->condition('gm.lcont', '%' . db_like($arg) . '%', 'LIKE')
       );
+      break;
+    case 3:
+      $query->condition('tid', $arg);
+      $query->condition('id_disp', $id);
       break;
   }
   $query->condition('id_disp', db_like('13') . '%', 'LIKE');
@@ -199,10 +205,14 @@ function gbb_pia_stages($type,$arg) {
     if (count($d) == 1) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-      $html .= $d[0]['lib_dispo'];
+      $html .= "<a href=\"/gbbdr/".current_path()."/".$k."\">" . $d[0]['lib_dispo'];
       $html .= " " . $tcan[$d[0]['co_tcan']];
-      $html .= " ".$d[0]['categories'];
-      $html .= "<div id=\"$k\" style=\"display: none;\">";
+      $html .= " ".$d[0]['categories'] . "</a>";
+      if ($type==3) {
+        $html .= "<div id=\"$k\">";
+      } else {
+        $html .= "<div id=\"$k\" style=\"display: none;\">";
+      }
       // détails dispo
       $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
       $html .= "<div class=\"liste\">";
@@ -223,9 +233,13 @@ function gbb_pia_stages($type,$arg) {
     } else {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-      $html .= $d[0]['lib_dispo'];
-      $html .= " " . $tcan[$d[0]['co_tcan']];
-      $html .= "<div id=\"$k\" style=\"display: none;\">";
+      $html .= "<a href=\"".$k."\">" . $d[0]['lib_dispo'];
+      $html .= " " . $tcan[$d[0]['co_tcan']] . "</a>";
+      if ($type==3) {
+        $html .= "<div id=\"$k\">";
+      } else {
+        $html .= "<div id=\"$k\" style=\"display: none;\">";
+      }
       // détails dispo
       $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
       $html .= "</div>";
@@ -235,7 +249,11 @@ function gbb_pia_stages($type,$arg) {
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
         $html .= $m['lib'];
         $html .= " ".$m['categories'];
-        $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
+        if ($type==3) {
+          $html .= "<div id=\"".$m['co_modu']."\">";
+        } else {
+          $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
+        }
         // détails module
         $html .= "<span class=\"titre\">Objectif : </span>"  . $m['lpeda'] . "<br/>";
         $html .= "<span class=\"titre\">Contenu : </span>"  . $m['lcont'] . "<br/>";

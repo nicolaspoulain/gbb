@@ -233,7 +233,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     } else {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-      $html .= "<a href=\"".$k."\">" . $d[0]['lib_dispo'];
+      $html .= "<a href=\"/gbbdr/".current_path()."/".$k."\">" . $d[0]['lib_dispo'];
       $html .= " " . $tcan[$d[0]['co_tcan']] . "</a>";
       if ($type==3) {
         $html .= "<div id=\"$k\">";
@@ -247,7 +247,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
         $html .= "<div class=\"liste\">";
         $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-        $html .= $m['lib'];
+        $html .= "<a href=\"/gbbdr/".current_path()."/".$k."\">" . $m['lib'] .  "</a>";
         $html .= " ".$m['categories'];
         if ($type==3) {
           $html .= "<div id=\"".$m['co_modu']."\">";
@@ -258,7 +258,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
         $html .= "<span class=\"titre\">Objectif : </span>"  . $m['lpeda'] . "<br/>";
         $html .= "<span class=\"titre\">Contenu : </span>"  . $m['lcont'] . "<br/>";
         $html .= "<span class=\"titre\">Modalité : </span>" . $m['lmoda'] . "<br/>";
-        $html .= "<span class=\"titre\">Public : </span>"  . $d[0]['lcibl'] . "<br/>";
+        $html .= "<span class=\"titre\">Public : </span>"  . $m['lcibl'] . "<br/>";
         $html .= "<span class=\"titre\">Durée : </span>"    . $m['duree'] . "h<br/>";
         $html .= "<span class=\"titre\">Forme : </span>"    . $m['lform'] . "<br/>";
         $html .= "<span class=\"titre\">Responsable pédagogique: </span>" . $m['resppeda'] . "<br/>";

@@ -162,6 +162,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $cats = $query->distinct()->execute()->fetchCol();
     $catss = "<span class=\"ul-custom-class".implode("\">&nbsp;&nbsp;</span> <span class=\"ul-custom-class",$cats)."\">&nbsp;&nbsp;</span>";
 
+    
     $query = db_select('gbb_gdire', 'gdr');
     $query->condition('gdr.co_modu', $stage->co_modu, "=");
     $query->condition('gdr.co_degre', $stage->co_degre, "=");
@@ -200,12 +201,17 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   #print "</pre>";
   if (isset($dispo)) {
   foreach ($dispo as $k=>$d) {
+    $query=db_select('gbb_gmodu_taxonomy', 'gt');
+    $query->condition('gt.co_modu', $d[0]['co_modu'], "=");
+    $query->fields('gt', array('tid'));
+    $ttid = $query->distinct()->execute()->fetchCol();
+
     $dclass = (preg_match("/^13D/", $k))? "iddispD" : "iddispA";
     $mclass = (preg_match("/^13D/", $k))? "comoduD" : "comoduA";
     if (count($d) == 1) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-      $html .= "<a href=\"/gbbdr/".current_path()."/".$k."\">" . $d[0]['lib_dispo'];
+      $html .= "<a href=\"/gbbdr/pia/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
       $html .= " " . $tcan[$d[0]['co_tcan']];
       $html .= " ".$d[0]['categories'] . "</a>";
       if ($type==3) {
@@ -231,9 +237,14 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $html .= "</div>";
       $html .= "</div>";
     } else {
+      $query=db_select('gbb_gmodu_taxonomy', 'gt');
+      $query->condition('gt.co_modu', $d[0]['co_modu'], "=");
+      $query->fields('gt', array('tid'));
+      $ttid = $query->distinct()->execute()->fetchCol();
+
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-      $html .= "<a href=\"/gbbdr/".current_path()."/".$k."\">" . $d[0]['lib_dispo'];
+      $html .= "<a href=\"/gbbdr/pia/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
       $html .= " " . $tcan[$d[0]['co_tcan']] . "</a>";
       if ($type==3) {
         $html .= "<div id=\"$k\">";
@@ -247,7 +258,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
         $html .= "<div class=\"liste\">";
         $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
-        $html .= "<a href=\"/gbbdr/".current_path()."/".$k."\">" . $m['lib'] .  "</a>";
+        $html .= "<a href=\"/gbbdr/pia/x/".$ttid[0]."/".$k."\">" . $m['lib'] .  "</a>";
         $html .= " ".$m['categories'];
         if ($type==3) {
           $html .= "<div id=\"".$m['co_modu']."\">";

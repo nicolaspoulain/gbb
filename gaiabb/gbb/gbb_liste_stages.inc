@@ -310,9 +310,9 @@ function gbb_liste_stages_liste($args) {
   $query ->join('gbb_gdire', 'j', 
                 'j.co_modu = m.co_modu AND j.co_degre = m.co_degre');
   $query ->fields('m',  array('co_modu', 'co_anmo'))
-         ->fields('mp', array('module_alert', 'module_printed', 
+         ->fields('mp', array('module_alert', 'module_printed',
                               'prioritaire', 'organisation' ))
-         ->fields('d',  array('co_disp', 'id_disp', 
+         ->fields('d',  array('co_disp', 'id_disp', 'co_tcan',
                               'co_camp', 'co_andi'));
   $query ->addField('m', 'lib', 'libm');
   $query ->addField('d', 'lib', 'libd');
@@ -430,6 +430,8 @@ function gbb_liste_stages_liste($args) {
                              'html' => FALSE,
     );
     $d_ouvert_ou_ferme = ($r->co_andi == '')? '' : 'Ferme';
+    $can = array(1 => "", 2 => "", 3 => theme('image', variable_get('_gbb_pub_des')));
+    $candidature = $can[$r->co_tcan];
     $paf_ou_fil = ($r->co_camp == 'BS')? 'fil' : 'paf';
     $libd_class = ($r->co_camp == 'BS')? 'fil' : 'paf';
     $libd_class = ($r->libd == $libd_precedent)? "gris" : $libd_class;
@@ -544,7 +546,7 @@ function gbb_liste_stages_liste($args) {
                 'col0' => array(
                   'data' => "<span class='invisible'>$paf_ou_fil*</span>" .
                             "<span class='$paf_ou_fil $d_ouvert_ou_ferme'>" .
-                            "[" . strtoupper($paf_ou_fil) . "] " .
+                            "[" . strtoupper($paf_ou_fil) . "] $candidature ".
                             $r->id_disp . ' ' . t($r->libd) . '</span> '
                 ),
                 'col1' => array(

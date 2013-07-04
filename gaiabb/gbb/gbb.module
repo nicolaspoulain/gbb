@@ -371,6 +371,12 @@ variable_set('_gbb_DA_rendu', array(
   'title' => t('Dossier Administratif déposé'),
   'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
 );
+variable_set('_gbb_pub_des', array(
+  'path' => drupal_get_path('module', 'gbb') . '/images/16p.png',
+  'alt' => 'Public désigné',
+  'title' => t('Stage à public désigné'),
+  'attributes' => array('class' => 'some-img', 'id' => 'my-img'))
+);
 
 
 module_load_include('inc', 'gbb', 'gbb_liste_stages');

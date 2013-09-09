@@ -28,7 +28,7 @@ function gbb_formateur_view($args = 'NaN') {
                                  'class' => array('details'),
                                ),
                                '#children' => '',
-                               '#title' => t('Graphique de répartition des heures en 2012-2013'),
+                               '#title' => t('Graphique de répartition des heures en 2013-2014'),
                                '#value' => gbb_formateur_stages($args),
                              )
                            )
@@ -298,7 +298,7 @@ function gbb_formateur_stages($args) {
            );
   $query ->condition('s.co_resp', arg(1), '=')
          ->condition('s.co_degre', '2', '=')
-         ->condition('id_disp', db_like('12') . '%', 'LIKE')
+         ->condition('id_disp', db_like('13') . '%', 'LIKE')
          ->fields('r', array('decharge',))
          ->distinct();
   $query ->addExpression('SUM(duree_prevue)', 'sumprevue');

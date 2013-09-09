@@ -107,7 +107,7 @@ function gbb_infos_general($args) {
     if ($r->co_tres == 1 || $r->co_tres == 2 || $r->co_tres == 3 ) {
       $str .= $TRES[$r->co_tres] . " : ";
       $str .= l( $r->prenom . ' ' . $r->nomu, 
-                 'liste/12/' . $r->co_degre . '/'. $voir .'/' . $r->nomu, 
+                 'liste/13/' . $r->co_degre . '/'. $voir .'/' . $r->nomu, 
                  array('query' => array('voir_encours' => $voirEnCours))
               ) ;
       $str .= "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;";

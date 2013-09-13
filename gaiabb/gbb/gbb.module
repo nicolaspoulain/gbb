@@ -195,6 +195,12 @@ function gbb_menu() {
         'access arguments' => array('stable gbb'),
         'type' => MENU_CALLBACK,
   );
+  $items['plan_edit'] = array(
+        'title' => '',
+        'page callback' => 'gbb_plan_edit_view',
+        'access arguments' => array('stable gbb'),
+        'type' => MENU_CALLBACK,
+  );
 
   // Pages pour autocomplete AJAX
   // TODO : décrire
@@ -385,6 +391,7 @@ module_load_include('inc', 'gbb', 'gbb_formateur');
 module_load_include('inc', 'gbb', 'gbb_etablissement');
 module_load_include('inc', 'gbb', 'gbb_evaluation');
 module_load_include('inc', 'gbb', 'gbb_bilan');
+module_load_include('inc', 'gbb', 'gbb_plan_edit');
 module_load_include('inc', 'gbb', 'gbb_offres');
 module_load_include('inc', 'gbb', 'gbb_offre');
 module_load_include('inc', 'gbb', 'gbb_ctplan');

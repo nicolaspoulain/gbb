@@ -83,8 +83,23 @@ function gbb_liste_stages_search($form, &$form_state, $args) {
                      l( theme('image',variable_get('_gbb_etab_add_icon')),
                         'etablissement/',
                         array('attributes' =>  array('class' => 'anchor-class'),
-                                                     'html' => TRUE)) . '</p>'
+                                                     'html' => TRUE)) . '</p>'.
+                   t('<p>Ajouter un formateur&nbsp;') .
+                     l( theme('image',variable_get('_gbb_user_add_icon')),
+                     'formateur/add',
+                     array('attributes' => array('class' => 'anchor-class'),
+                                                 'html' => TRUE))
     );
+  } else {
+    $form['f']['lieu'] = array(
+      '#markup' => 
+                   t('<p>Ajouter un formateur&nbsp;') .
+                     l( theme('image',variable_get('_gbb_user_add_icon')),
+                     'formateur/add',
+                     array('attributes' => array('class' => 'anchor-class'),
+                                                 'html' => TRUE))
+    );
+
   };
   return $form;
 }
@@ -467,7 +482,18 @@ function gbb_liste_stages_liste($args) {
     $plus  = ($r->organisation == '')? '' :
         '&nbsp;' .
         theme('image', variable_get('_gbb_comment_icon'));
-
+    $rsp = db_select('gbb_gdire', 'd');
+    $rsp ->fields('d', array('co_resp', 'co_tres'))
+         ->condition('d.co_degre', arg(2), '=')
+         ->condition('d.co_tres', 3, '=')
+         ->condition('d.co_modu', $r->co_modu, '=');
+    $rsp ->leftjoin('gbb_gresp', 'r',  
+                    'r.co_resp  = d.co_resp AND r.co_degre = d.co_degre');
+    $rsp ->fields('r', array('nomu', 'prenom'));
+    $respo = $rsp->execute()->fetchObject();
+    if ($paf_ou_fil=='paf') {
+      $plus .= " <i>(Resp.péda : ".$respo->nomu.")</i>";
+    };
     $timer = theme('image', variable_get('_gbb_timer_green_icon'));
     if (strtotime($dateD) < time()) { // le premier jour dépassé
       $timer = theme('image', variable_get('_gbb_timer_red_icon'));
@@ -616,7 +642,7 @@ function _gbb_autocompstage($string) {
   $query  ->addField('d', 'lib', 'lib');
   $query  ->addField('m', 'lib', 'libmodu');
   $query  ->addField('m', 'co_modu', 'co_modu');
-  $query  ->condition('id_disp', db_like('12') . '%', 'LIKE')
+  $query  ->condition('id_disp', db_like('13') . '%', 'LIKE')
           ->condition(db_or()->condition('id_disp', '%' . db_like($string) . '%', 'LIKE')
                              ->condition('m.lib', '%' . db_like($string) . '%', 'LIKE')
                              ->condition('m.co_modu', '%' . db_like($string) . '%', 'LIKE')

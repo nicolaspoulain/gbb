@@ -106,6 +106,7 @@ function gbb_formateur_fiche($form, &$form_state) {
                               'resp_dafor',
                               'decharge',
                               'grade',
+                              'statut',
                               'divers'));
   $r = $query->execute();
   if ($r->rowCount() == 0) {
@@ -157,6 +158,13 @@ function gbb_formateur_fiche($form, &$form_state) {
     '#maxlength' => 128,
     '#required' => TRUE,
     '#disabled' => (($record['co_resp'] == "1")? TRUE : FALSE),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  $form['f']['statut'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('IUFM'),
+    '#default_value' => $record['statut'],
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br/>',
   );
@@ -270,6 +278,7 @@ function gbb_formateur_fiche_submit($form, &$form_state) {
                    'resp_dafor' => $form_state['values']['resp_dafor'],
                    'decharge'   => $form_state['values']['decharge'],
                    'grade'      => $form_state['values']['grade'],
+                   'statut'     => $form_state['values']['statut'],
                    'divers'     => $form_state['values']['divers'],
              ))
     ->execute();

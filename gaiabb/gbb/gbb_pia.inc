@@ -116,7 +116,8 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $names = $query->distinct()->execute()->fetchCol();
     $nb = $query->countQuery()->execute()->fetchField();
     $html = ($nb >0)? "<h1><a href=\"/gbbdr/pia/".arg(1)."/".arg(2)."\">" . $names[0] . "</a></h1>" : "<h1>Résultat(s)</h1>";
-
+    if (arg(2)==113) $html .= "<p>Les enseignants du <strong>premier degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>13D</strong>.</p>";
+    if (arg(2)==113) $html .= "<p>Les enseignants du <strong>second degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>13A</strong>.</p>";
   $query = db_select('gbb_gmodu_taxonomy', 'gt');
   $query->condition('weight', 500, '<');
   switch ($type) {

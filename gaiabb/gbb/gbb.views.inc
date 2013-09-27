@@ -501,6 +501,45 @@ function gbb_views_data() {
   );
 
   // --------------------------------------------------------
+  // gbb_gresp_plus
+  // --------------------------------------------------------
+
+
+  $data['gbb_gresp_plus']['table'] = array(
+            'group' => t('gbb_gresp_plus'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'left_table' => 'gbb_session',
+                'left_field' => 'co_resp',
+                'field' => 'co_resp',
+              ),
+            ),
+  );
+  $data['gbb_gresp_plus']['decharge'] = array(
+            'title' => t('decharge'),
+            'help' => t('Decharge'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+  $data['gbb_gresp_plus']['statut'] = array(
+            'title' => t('Statut(IUFM)'),
+            'help' => t('1=IUFM'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
+  // --------------------------------------------------------
   // gbb_gresp_dafor
   // --------------------------------------------------------
 

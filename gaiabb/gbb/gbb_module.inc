@@ -463,6 +463,8 @@ function gbb_sess_formatr($form, $form_state, $args) {
                     'mp.co_modu = s.co_modu AND mp.co_degre = s.co_degre');
   $query ->leftjoin('gbb_gresp_dafor', 'r', 
                     'r.co_resp = s.co_resp AND r.co_degre = s.co_degre');
+  $query ->leftjoin('gbb_gresp_plus', 'p', 
+                    'p.co_resp = s.co_resp');
   $query ->leftjoin('gbb_netab_dafor', 'e',
                     'e.co_lieu = s.co_lieu');
   $query ->leftjoin('users', 'u',
@@ -478,6 +480,7 @@ function gbb_sess_formatr($form, $form_state, $args) {
                              'horaires', 'co_lieu', 'co_resp', 'groupe',
                              'date_modif'))
          ->fields('r', array('prenom', 'nomu', 'co_resp'))
+         ->fields('p', array('statut'))
          ->fields('u', array('name'))
          ->fields('e', array('denom_princ', 'denom_comp', 'sigle'));
   // Une condition supplémentaire pour les administratifs
@@ -518,12 +521,17 @@ function gbb_sess_formatr($form, $form_state, $args) {
                          'html' => TRUE )
                 ),
       'groupe' => $r->groupe,
-      'formateur' => $r->prenom . ' ' . $r->nomu . '&nbsp;' .
-                l( theme('image', variable_get('_gbb_user_edit_icon')),
+      'formateur' => (($r->statut)? '<span class="espe">':'')
+                .$r->prenom . ' ' . $r->nomu . '&nbsp;'
+                .(($r->statut)? '</span>':'')
+                .l( theme('image', variable_get('_gbb_user_edit_icon')),
                    'formateur/' . $r->co_resp,
                    array('attributes' => array('class' => 'anchor-class'),
                          'html' => TRUE )
-                ),
+                       )
+                       .(($r->statut && user_access('gest_convocs gbb') && !user_access('gest_sessions gbb'))? 
+                       '<br/>ATTENTION : intervenant ESPE, ne pas envoyer la convocation':'')
+                       ,
       'duree_prevue' => $r->duree_prevue . "h",
       'duree_a_payer' => $r->duree_a_payer . "h",
       'TypePaiement' => $r->type_paiement,

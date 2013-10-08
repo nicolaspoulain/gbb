@@ -164,7 +164,7 @@ function gbb_formateur_fiche($form, &$form_state) {
   $form['f']['statut'] = array(
     '#type' => 'checkbox',
     '#title' => t('IUFM'),
-    '#default_value' => $record['statut'],
+    '#default_value' => (isset($record['statut']) && $record['statut']==1) ? 1 : 0,
     '#prefix' => '<div class="inline">',
     '#suffix' => '</div><br/>',
   );

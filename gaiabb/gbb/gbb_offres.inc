@@ -45,21 +45,21 @@ function gbb_offres_filter($form, &$form_state, $args) {
     '#type' => 'textfield',
     '#title' => t('NoOffre'),
     '#default_value' => (isset($_GET['no_offre']))? $_GET['no_offre'] : '',
-    '#description' => t('p.ex.:20130020'),
+    '#description' => t('p.ex.:20140020'),
     '#size' => 20, 
   );
    $form['f']['nomu'] = array(
     '#type' => 'textfield',
     '#title' => t('Resp. (dispo)'),
     '#default_value' => (isset($_GET['nomu']))? $_GET['nomu'] : '',
-    '#description' => t('p.ex.:DENISE'),
+    '#description' => t('p.ex.:CORDIER'),
     '#size' => 20, 
   );
    $form['f']['nomu2'] = array(
     '#type' => 'textfield',
     '#title' => t('Resp. (module)'),
     '#default_value' => (isset($_GET['nomu2']))? $_GET['nomu2'] : '',
-    '#description' => t('p.ex.:POULAIN'),
+    '#description' => t('p.ex.:BESNARD'),
     '#size' => 20, 
   );
    $form['f']['co_tpla'] = array(
@@ -89,8 +89,9 @@ function gbb_offres_tab($args) {
     'no_offre' => t('No Offre/ Code Module'),
     'libl' => t('Titre'),
     'nomu2' => t('Resp. péda.'),
-    array('data' => t('IUFM'), 'class' => 'jaune'),
+    array('data' => t('ESPE'), 'class' => 'jaune'),
     array('data' => t('Nouv. offreur'), 'class' => 'jaune'),
+    array('data' => t('Offre nouvelle'), 'class' => 'jaune'),
     array('data' => t('Pub. Dés.'), 'class' => 'jaune'),
     'lmoda' => t('Modalités'),
     'lcomm' => t('Commentaires (GAIA)'),
@@ -99,9 +100,8 @@ function gbb_offres_tab($args) {
     array('data' => t('Nbre HP'), 'class' => 'jaune'),
     array('data' => t('Nbre vac.'), 'class' => 'jaune'),
     array('data' => t('Hors CDC'), 'class' => 'jaune'),
-    array('data' => t('Priorité Nat.'), 'class' => 'jaune'),
-    array('data' => t('Priorité Aca.'), 'class' => 'jaune'),
-    array('data' => t('Offre nouvelle'), 'class' => 'jaune'),
+    #array('data' => t('Priorité Nat.'), 'class' => 'jaune'),
+    #array('data' => t('Priorité Aca.'), 'class' => 'jaune'),
     array('data' => t('&nbsp;&nbsp;&nbsp;Observations&nbsp;&nbsp;&nbsp;'), 'class' => 'jaune'),
   );
   // Number of records (or nodes, in our case) to show per page.
@@ -116,7 +116,7 @@ function gbb_offres_tab($args) {
                     'd.co_resp = r.co_resp AND r.co_degre = 2');
   $query ->leftjoin('gbb_gresp', 'r2',
                     'm.co_resp = r2.co_resp AND r2.co_degre = 2');
-  $query ->condition('d.no_offre', '20130000', '>')
+  $query ->condition('d.no_offre', '20140000', '>')
          ->fields('d', array('no_offre', 'co_tpla', 'co_orie'))
          ->fields('m', array('libl', 'co_omodu', 'lmoda', 'lcomm','nb_groupe','duree_prev'))
          ->fields('r', array('nomu'));
@@ -169,6 +169,7 @@ function gbb_offres_tab($args) {
                 array('data' => $r->nomu2),
                 array('data' => $iufm),
                 array('data' => $nouv_offreur),
+                array('data' => $offre_new),
                 array('data' => $pub_des),
                 array('data' => $r->lmoda),
                 array('data' => $r->lcomm),
@@ -177,9 +178,8 @@ function gbb_offres_tab($args) {
                 array('data' => $hp),
                 array('data' => $vac),
                 array('data' => $hors_cdc),
-                array('data' => $prio_nat),
-                array('data' => $prio_aca),
-                array('data' => $offre_new),
+                #array('data' => $prio_nat),
+                #array('data' => $prio_aca),
                 array('data' => $comment),
               );
   }

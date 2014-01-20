@@ -4,6 +4,7 @@ opt=`getopt :nspgmre: $*`; statut=$?
 echo "Usage: `basename $0` [-n nettoyage] [-s Sauvegardes locales] [-p Put FTP des sauvegardes] [-g getFPT] [-m mysqlInjections] [-r rapport par email]"
 
 HOME="/var/www/gbbdr/sites/default/modules/gbb/unl_mysql"
+SCPDIR="/home/gaia/martine"
 BACKUPANDMIGRATE="/var/www/gbbdr/sites/default/files/private/backup_migrate/*"
 BDD="gbbdr"
 source $HOME/BB-include.sh
@@ -56,23 +57,23 @@ case "$1" in
     shift;;
   -g) ## recuperation des donnees par ftp**G**et
 	echo "_G_et FTP des donnees"
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GDISP.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GMODU.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GDIRE.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GRESP.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NCONT.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NTCAN.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$NORIE.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GDIOF.unl
-	/usr/bin/ncftpget -R -u bgfc -p bgfc@bgfc ftpweb8.scola.ac-paris.fr $HOME/ /ftpbgfc/$GMOOF.unl
+	cp -p $SCPDIR/$GDISP.unl $HOME
+	cp -p $SCPDIR/$GMODU.unl $HOME
+	cp -p $SCPDIR/$GDIRE.unl $HOME
+	cp -p $SCPDIR/$GRESP.unl $HOME
+	cp -p $SCPDIR/$NCONT.unl $HOME
+	cp -p $SCPDIR/$NTCAN.unl $HOME
+	cp -p $SCPDIR/$NORIE.unl $HOME
+	cp -p $SCPDIR/$GDIOF.unl $HOME
+	cp -p $SCPDIR/$GMOOF.unl $HOME
     cd $HOME && echo `ls -alh *.unl`
     shift;;
   -r) ## **R**apport par mail
   if grep -q "Erreur" $HOME/LOG.log
     then
-      /usr/bin/mail -s "$(echo -e "ECHEC de la mise à jour BB")" nico.poulain@gmail.com azouz.manai@ac-paris.fr jean-pierre.charpentrat@ac-paris.fr Isabelle.Cordier@ac-paris.fr christian.muir@ac-paris.fr jean-luc.simonet@ac-paris.fr < $HOME/LOG.log
+      /usr/bin/mail -s "$(echo -e "ECHEC de la mise à jour BB")" nico.poulain@gmail.com marc-emmanuel.argo@ac-paris.fr jean-pierre.charpentrat@ac-paris.fr Isabelle.Cordier@ac-paris.fr christian.muir@ac-paris.fr jean-luc.simonet@ac-paris.fr < $HOME/LOG.log
     else
-      /usr/bin/mail -s "$(echo -e "SUCCÈS de la mise à jour BB")" nico.poulain@gmail.com azouz.manai@ac-paris.fr jean-pierre.charpentrat@ac-paris.fr Isabelle.Cordier@ac-paris.fr christian.muir@ac-paris.fr jean-luc.simonet@ac-paris.fr < $HOME/LOG.log
+      /usr/bin/mail -s "$(echo -e "SUCCÈS de la mise à jour BB")" nico.poulain@gmail.com marc-emmanuel.argo@ac-paris.fr jean-pierre.charpentrat@ac-paris.fr Isabelle.Cordier@ac-paris.fr christian.muir@ac-paris.fr jean-luc.simonet@ac-paris.fr < $HOME/LOG.log
     fi
 
     shift;;
@@ -222,7 +223,7 @@ case "$1" in
     echo "  NbChamps: duFichierUnl = attendu ;" >> LOG.log
     echo "  Poids: duFichierUnl > minimum attendu" >> LOG.log
     echo " " >> LOG.log
-    /usr/bin/tail -n 7 ETAT.log >> LOG.log
+    /usr/bin/tail -n 9 ETAT.log >> LOG.log
     shift;;
   --) # Fin des options - Sortie de boucle
    shift; break;;

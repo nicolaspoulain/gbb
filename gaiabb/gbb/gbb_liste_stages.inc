@@ -326,7 +326,7 @@ function gbb_liste_stages_liste($args) {
                 'j.co_modu = m.co_modu AND j.co_degre = m.co_degre');
   $query ->fields('m',  array('co_modu', 'co_anmo'))
          ->fields('mp', array('module_alert', 'module_printed',
-                              'prioritaire', 'organisation' ))
+                              'prioritaire', 'organisation','color' ))
          ->fields('d',  array('co_disp', 'id_disp', 'co_tcan',
                               'co_camp', 'co_andi'));
   $query ->addField('m', 'lib', 'libm');
@@ -441,6 +441,7 @@ function gbb_liste_stages_liste($args) {
     $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
     $options_co_modu = array('attributes' =>
                                 array('class' => array($m_ouvert_ou_ferme),
+                                      'style' => 'background-color:'.$r->color,
                                       'id' => 'cool-id'         ),
                              'html' => FALSE,
     );
@@ -468,7 +469,7 @@ function gbb_liste_stages_liste($args) {
                        '<span class="nb_sa">' . $nb_ea . '</span>';
     $voirEnCours = (isset($_GET['voir_encours']))?
                        (($_GET['voir_encours']==1)? TRUE : FALSE) : FALSE;
-    $module_printed = ($r->module_printed && $voirEnCours)?
+    $module_printed = ($r->module_printed)?
         theme('image', variable_get('_gbb_print_icon')) . ' ' : '';
     $prioritaire = (!$r->prioritaire)? '' :
         theme('image', variable_get('_gbb_prioritaire_icon')) .

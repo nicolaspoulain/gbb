@@ -34,6 +34,7 @@ function gbb_module_view($args = 'NaN') {
                                   )
                             );
   if (user_access('gest_sessions gbb')) {
+      $build['color_form']  = render(drupal_get_form('gbb_color_form', $args));
       $build['organis_form'] = render(drupal_get_form('gbb_organis_form', $args));
   }
 
@@ -81,7 +82,7 @@ function gbb_infos_general($args) {
   $query ->condition('m.co_modu', arg(2), '=')
          ->condition('m.co_degre', arg(1), '=')
          ->fields('m',  array('co_modu', 'lautre', 'duree_prev',
-                              'lmoda', 'lform',))
+                              'lmoda', 'lform', 'co_anmo'))
          ->fields('ds', array('lobjt', 'id_disp',
                               'co_camp', 'co_andi',))
          ->fields('r',  array('prenom', 'nomu',))
@@ -142,17 +143,18 @@ function gbb_infos_general($args) {
   };
   // Construction du tableau à trois lignes
   $paf_ou_fil = ($r->co_camp == 'BS')? 'fil' : 'paf';
-  $ouvert_ou_ferme = ($r->co_andi == 'Fe')? 'Ferme' : '';
+  $d_ouvert_ou_ferme = ($r->co_andi == '')? '' : 'Ferme';
+  $m_ouvert_ou_ferme = ($r->co_anmo == '')? '' : 'Ferme';
   $rows[] = array( 
               array('data' => strtoupper($paf_ou_fil) . '&nbsp;-&nbsp;' . 
-                              $r->id_disp . ' ' . $r->libd,
-                    'class' => array($paf_ou_fil, $ouvert_ou_ferme),
+                              $r->id_disp . ' ' . $r->libd.$r->co_anmo,
+                    'class' => array($paf_ou_fil, $d_ouvert_ou_ferme),
                     'colspan' => '2'),
               array('data' => $evalStr),
             );
   $rows[] = array( 
               array('data' => $r->co_modu . ' ' . $r->libm,
-                    'class' => array($ouvert_ou_ferme),
+                    'class' => array($m_ouvert_ou_ferme),
                     'colspan' => '2'),
               array('data' => $bilanStr),
             );
@@ -213,6 +215,79 @@ function gbb_infos_detail($args) {
                    array('data' => $r['lform']),);
   return theme('table', array('rows' => $rows));
 }
+
+
+/**
+ * 
+ */
+function gbb_color_form($args) {
+
+  $query = db_select('gbb_gmodu_plus', 'm')
+     ->condition('m.co_modu', arg(2))
+     ->condition('m.co_degre', arg(1))
+     ->fields('m', array('color'));
+  $value = $query->execute()->fetchField();
+
+  $divid = 'div-field-color-field1-und-0--rgb';
+  $id = 'edit-field-color-field1-und-0--rgb'; 
+
+  $settings['value'] = $value;
+  $settings['id'] = $id;
+
+  $form['f'] = array( '#type' => 'fieldset',
+                      '#title' => t('Choisissez la couleur que vous voulez pour le module dans la liste des stages'),
+                      '#attributes' => array('class' => array('color',
+                                                              'collapsible'  )),
+  );
+
+  $form['f']['color'] = array(
+    '#suffix' => '<div id=' . $divid . '></div>',
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'gbb') . '/color_field/color_field.js',
+        drupal_get_path('module', 'gbb') . '/color_field/color_field.jquery.js',
+        array(
+          'data' => array('color_field' => array('#' . $divid => $settings)),
+          'type' => 'setting',
+        ),
+      ),
+      'css' => array(drupal_get_path('module', 'gbb') . '/color_field/color_field.css'),
+    ),
+  );
+
+  $form['f']['colormodule'] = array(
+    '#attributes' => array('class' => array('element-invisible'),'id' => $id),
+    '#type' => 'token',
+    '#default_value' => $value,
+    '#size' => 7,
+    '#maxlength' => 7,
+  );
+
+  $comodu = isset($form_state['values']['comodu'])? 
+               $form_state['values']['comodu'] : arg(2);
+  $form['f']['comodu'] = array('#type' => 'hidden',
+                               '#value' => $comodu );
+
+  $codegre = isset($form_state['values']['codegre'])? 
+                $form_state['values']['codegre'] : arg(1);
+  $form['f']['codegre'] = array('#type' => 'hidden',
+                                '#value' => $codegre );
+
+ $form['f']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#attributes' => array('class' => array('inline')),
+             );
+  return $form;
+}
+function gbb_color_form_submit(&$form, &$form_state) {
+  db_merge('gbb_gmodu_plus')
+    ->key(array('co_modu'  => $form_state['values']['comodu'],
+                'co_degre' => $form_state['values']['codegre'] ))
+    ->fields(array('color' => $form_state['values']['colormodule']))
+    ->execute();
+}
+
 
 /**
  * Formulaire d' ** ORGANISATION ** de la formation
@@ -1429,13 +1504,20 @@ function gbb_convoc_form($form, &$form_state) {
                      'm.co_modu=mp.co_modu AND m.co_degre=mp.co_degre');
   $query ->condition('m.co_modu', arg(2), '=')
          ->condition('m.co_degre', arg(1), '=')
-         ->fields('mp', array('convoc_info_off', 'convoc_info_on',
-                              'module_printed', 'module_alert'    ));
+         ->fields('mp', array('convoc_info_off', 'convoc_info_on', 'user_id',
+                              'module_printed', 'module_alert', 'date_modification'    ));
   $r = $query->execute()->fetchAssoc();
+
+  $str = "Pas de modif. récente (càd depuis le 17 novembre 2013)";
+  if ( $r['user_id'] != 0 ) {
+    $str = "Dernière modification : ";
+    $str.= utf8_encode(strftime('%A %e %B %Y %T', strtotime($r['date_modification'])));
+    $str.= " par " . user_load($r['user_id'])->name;
+    }
 
   $form['f'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Convocation'),
+    '#title' => t('Convocation - '. $str),
     '#attributes' => array('class' => array('collapsible', 'convoc')),
   );
 
@@ -1531,39 +1613,53 @@ function gbb_convoc_form($form, &$form_state) {
  * ----> Submit
  */
 function gbb_convoc_form_convoc_info_off_submit(&$form, &$form_state) {
+  global $user;
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
-    ->fields(array('convoc_info_off' => $form_state['values']['convoc_info_off']))
+    ->fields(array('convoc_info_off' => $form_state['values']['convoc_info_off'],
+                   'date_modification' => date('Y-m-d H:i:s'),
+                   'user_id' => $user->uid))
     ->execute();
 }
 function gbb_convoc_form_convoc_info_on_submit(&$form, &$form_state) {
+  global $user;
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
-    ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on']))
+    ->fields(array('convoc_info_on' => $form_state['values']['convoc_info_on'],
+                   'date_modification' => date('Y-m-d H:i:s'),
+                   'user_id' => $user->uid))
     ->execute();
 }
 function gbb_convoc_form_module_alert_submit(&$form, &$form_state) {
+  global $user;
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
-    ->fields(array('module_alert' => $form_state['values']['module_alert'],))
+    ->fields(array('module_alert' => $form_state['values']['module_alert'],
+                   'date_modification' => date('Y-m-d H:i:s'),
+                   'user_id' => $user->uid))
     ->execute();
   if ($form_state['values']['module_alert']==1) {
     db_merge('gbb_gmodu_plus')
       ->key(array('co_modu'  => $form_state['values']['comodu'],
                   'co_degre' => $form_state['values']['codegre'] ))
-      ->fields(array('module_printed' => 0,))
+      ->fields(array('module_printed' => 0,
+                   'date_modification' => date('Y-m-d H:i:s'),
+                   'user_id' => $user->uid))
       ->execute();
   };
 
  }
 function gbb_convoc_form_module_printed_submit(&$form, &$form_state) {
+  global $user;
   db_merge('gbb_gmodu_plus')
     ->key(array('co_modu'  => $form_state['values']['comodu'],
                 'co_degre' => $form_state['values']['codegre'] ))
-    ->fields(array('module_printed' => $form_state['values']['module_printed'],))
+    ->fields(array('module_printed' => $form_state['values']['module_printed'],
+                   'date_modification' => date('Y-m-d H:i:s'),
+                   'user_id' => $user->uid))
     ->execute();
 }
 

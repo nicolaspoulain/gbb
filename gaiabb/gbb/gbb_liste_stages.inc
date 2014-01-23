@@ -393,6 +393,18 @@ function gbb_liste_stages_liste($args) {
     $dt = $qdt->execute()->fetchObject();
     $dateD = $dt->dateD;
     $dateF = $dt->dateF;
+    if ($_GET['voir_encours'] == 1) {
+      $qdt = db_select('gbb_session', 's');
+      $qdt ->fields('s', array('sess_id'))
+           ->condition('s.co_degre', arg(2), '=')
+           ->condition('s.co_modu', $r->co_modu, '=')
+           ->condition('s.en_attente', '0', '=')
+           ->condition('s.convoc_sent', '0', '=');
+      $qdt ->addExpression('MIN(date)','dateD');
+      $dt = $qdt->execute()->fetchObject();
+      $dateD = $dt->dateD;
+      $dateF = '2061-07-16';
+    };
 
     $qnea = db_select('gbb_session', 's');
     $qnea ->fields('s', array('sess_id'))
@@ -501,12 +513,12 @@ function gbb_liste_stages_liste($args) {
     } elseif(strtotime($dateD) < time() + 1296000) { // le premier jour est dans moins de 15 jours.
       $timer = theme('image', variable_get('_gbb_timer_orange_icon'));
     };
-    if (strtotime($dateF) < time()) { // le dernier jour jour dépassé donc formation finie
+    if ($dateF != '2061-07-16' && strtotime($dateF) < time()) { // le dernier jour jour dépassé donc formation finie
       $timer = theme('image', variable_get('_gbb_timer_end_icon'));
     }
 
     if ($dateD > 0) {
-      if ($dateD==$dateF) {
+      if ($dateD==$dateF || $dateF=='2061-07-16') {
         $dates = $timer . 
                  t( "&nbsp;" . 
                     strftime('%d/%m/%y', strtotime($dateD))) ; 

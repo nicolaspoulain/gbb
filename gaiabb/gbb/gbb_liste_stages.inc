@@ -31,6 +31,27 @@ function gbb_liste_view($args = 'NaN') {
 }
 
 /**
+ * Fonction d'appel aux deux views d'affichage des stages à
+ * traiter
+ */
+function gbb_atraiter_view($args = 'NaN') {
+  // Charge la feuille des style et les fichiers javascript pour le module
+  drupal_add_css(drupal_get_path('module', 'gbb') . '/css/gbb.css', 
+                 array('group' => CSS_SYSTEM -1 , 'preprocess' => FALSE));
+  drupal_add_library('system', 'drupal.collapse');
+
+  // Construction de la page
+  $build = array();
+  drupal_add_js(drupal_get_path('module', 'gbb') . '/js/jquery.dataTables.js', 
+                array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+  drupal_add_js(drupal_get_path('module', 'gbb') . '/js/jquery.dataTables.load.js',
+                array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+
+  $build['choix']  = render(drupal_get_form('gbb_atraiter_choix', $args));
+  return implode('', $build);
+}
+
+/**
  * Formulaire de ** FORMULAIRE DE RECHERCHE TOUS AZIMUTS **
  */
 function gbb_liste_stages_search($form, &$form_state, $args) {
@@ -115,6 +136,88 @@ function recherche_formatr_submit($form, &$form_state) {
   $form_state['redirect'] = url('formateur/' . $form_state['values']['co_resp'],
                                 array('absolute' => TRUE));
 }
+
+/**
+ * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
+ */
+function gbb_atraiter_choix($form, &$form_state, $args) {
+
+  $query = db_select('gbb_gdire', 'j');
+  $query ->rightjoin('gbb_gdisp', 's', 
+                     'j.co_disp=s.co_disp AND j.co_degre=s.co_degre');
+  $query ->join('gbb_gresp', 'r', 
+                'j.co_resp=r.co_resp AND j.co_degre=r.co_degre');
+  $query ->condition('j.co_degre', 2, '=')
+         ->condition('s.id_disp' , '13' . '%', 'LIKE')
+         ->fields('j', array('co_resp'))
+         ->fields('r', array('nomu'));
+  if (arg(3) != 0) { 
+    // si un co_tres est spécifié : on trie dessus
+    $query->condition('j.co_tres' , 2, '=');
+  }
+  elseif (!user_access('gest_sessions gbb')  && arg(3) == 0) {
+    // si pas de co_tres : resp orga par défaut pour les administratifs
+    $query->condition('j.co_tres' , 2, '=');
+  }
+  else {
+    // si pas de co_tres : tout par défaut pour les non administratifs
+  };
+  $result = $query->execute();
+
+  foreach ($result as $r) {
+    $rows[$r->co_resp] = $r->nomu;
+  }
+  unset($rows['']);
+  $rows['0'] = ' ** TOUS ** ';
+  asort($rows);
+
+  $form['f'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Service Administratif : Recherche des stages à traiter'),
+    '#attributes' => array('class' => array('collapsible',)),
+  );
+
+  // ------------
+  // Ici on récupère le conseiller par défaut si arg(4) est vide
+  // cela pour caler le select sur le bon conseiller
+  global $user;
+  $query = db_select('field_data_field_nomu', 'u')
+         ->condition('u.entity_id', $user->uid, '=')
+         ->fields('u', array('field_nomu_value'));
+  $nomu = ( isset($_GET['nomu']) )? $_GET['nomu'] : 'TOUS';
+  if ($nomu=="") { $nomu = "TOUS";};
+
+
+  $form['f']['people'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Responsable organisationnel'),
+    '#default_value' => $nomu,
+    '#size' => 20,
+    #'#element_validate' => array('_choix_conseiller_validate'),
+    '#autocomplete_path' => 'autocomp/responsable',
+    '#prefix' => '<br/><div class="ajaxform inline">',
+    '#suffix' => '</div>&nbsp;',
+  );
+
+  $form['f']['submit'] = array('#type' => 'submit',
+                               '#value' => 'Envoyer',);
+
+  return $form;
+}
+/**
+ * ----> Submit
+ */
+function gbb_atraiter_choix_submit($form, &$form_state) {
+  $nomu = $form_state['values']['people'];
+  if ($nomu=="TOUS") { $nomu = "";};
+  $url = url('atraiter',
+             array('query' => array(
+                     'nomu' => $nomu), 
+                     'absolute' => TRUE)
+  );
+  $form_state['redirect'] = $url;
+}
+
 
 /**
  * Formulaire de ** CHOIX D'UN FORMATEUR OU D'UNE ORIENTATION ** 
@@ -383,17 +486,18 @@ function gbb_liste_stages_liste($args) {
 /*
 (select count({gbb_file}.fid) from {gbb_file} JOIN {file_managed} ON {file_managed}.fid={gbb_file}.fid  Where co_modu=mp.co_modu AND co_degre=mp.co_degre AND status=1) as nb_pj
 */ 
-    $qdt = db_select('gbb_session', 's');
-    $qdt ->fields('s', array('sess_id'))
-         ->condition('s.co_degre', arg(2), '=')
-         ->condition('s.co_modu', $r->co_modu, '=')
-         ->condition('s.en_attente', '0', '=');
-    $qdt ->addExpression('MIN(date)','dateD');
-    $qdt ->addExpression('MAX(date)','dateF');
-    $dt = $qdt->execute()->fetchObject();
-    $dateD = $dt->dateD;
-    $dateF = $dt->dateF;
-    if ($_GET['voir_encours'] == 1) {
+    if (!isset($_GET['voir_encours']) OR $_GET['voir_encours'] == 0) {
+      $qdt = db_select('gbb_session', 's');
+      $qdt ->fields('s', array('sess_id'))
+           ->condition('s.co_degre', arg(2), '=')
+           ->condition('s.co_modu', $r->co_modu, '=')
+           ->condition('s.en_attente', '0', '=');
+      $qdt ->addExpression('MIN(date)','dateD');
+      $qdt ->addExpression('MAX(date)','dateF');
+      $dt = $qdt->execute()->fetchObject();
+      $dateD = $dt->dateD;
+      $dateF = $dt->dateF;
+    } else {
       $qdt = db_select('gbb_session', 's');
       $qdt ->fields('s', array('sess_id'))
            ->condition('s.co_degre', arg(2), '=')

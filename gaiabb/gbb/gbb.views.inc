@@ -300,6 +300,17 @@ function gbb_views_data() {
             'filter' => array('handler' => 'views_handler_filter_numeric'),
             'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
+  $data['gbb_session']['session_alert'] = array(
+            'title' => t('session_alert'),
+            'help' => t('Changement important sur la session (0/1)'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+             ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
   $data['gbb_session']['convoc_sent'] = array(
             'title' => t('convoc_sent'),
             'help' => t('La convocation a été envoyée (0/1)'),
@@ -348,6 +359,28 @@ function gbb_views_data() {
                 'extra' => 'gbb_gmodu_plus.co_degre = gbb_gmodu.co_degre',
               ),
             ),
+  );
+  $data['gbb_gmodu_plus']['module_alert'] = array(
+            'title' => t('module_alert'),
+            'help' => t('Changement important sur le module'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+             ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu_plus']['module_printed'] = array(
+            'title' => t('module_printed'),
+            'help' => t('Imprimé'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+             ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_numeric'),
+            'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
   $data['gbb_gmodu_plus']['organisation'] = array(
             'title' => t('organisation'),

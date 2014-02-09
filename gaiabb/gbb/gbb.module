@@ -82,6 +82,13 @@ function gbb_menu() {
         'type' => MENU_CALLBACK,
   );
 
+  $items['atraiter'] = array(
+        'title' => '',
+        'page callback' => 'gbb_atraiter_view',
+        'access arguments' => array('stable gbb'),
+        'type' => MENU_CALLBACK,
+  );
+
   // Etant donné un co_degré (1 ou 2)
   // Affiche la page de gestion du module co_modu
   //   exemple : module/2/26142

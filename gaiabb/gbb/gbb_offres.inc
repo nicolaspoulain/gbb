@@ -111,7 +111,7 @@ function gbb_offres_tab($args) {
     'duree_prev' => t('Duree prév. (h)'),
     array('data' => t('Nbre HP'), 'class' => 'jaune'),
     array('data' => t('Nbre vac.'), 'class' => 'jaune'),
-    array('data' => t('Hors CDC'), 'class' => 'jaune'),
+    #array('data' => t('Hors CDC'), 'class' => 'jaune'),
     array('data' => t('Priorité Nat.'), 'class' => 'jaune'),
     array('data' => t('Priorité Aca.'), 'class' => 'jaune'),
     array('data' => t('&nbsp;&nbsp;&nbsp;Observations&nbsp;&nbsp;&nbsp;'), 'class' => 'jaune'),
@@ -189,7 +189,7 @@ function gbb_offres_tab($args) {
                 array('data' => $r->duree_prev),
                 array('data' => $hp),
                 array('data' => $vac),
-                array('data' => $hors_cdc),
+                #array('data' => $hors_cdc),
                 array('data' => $prio_nat),
                 array('data' => $prio_aca),
                 array('data' => $comment),
@@ -257,8 +257,8 @@ function gbb_offres_prio_nat_form($form, &$form_state, $prio_nat, $co_omodu) {
   $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['prio_nat'] = array(
     '#type' => 'select', 
-    '#options' => array('Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','0'),
-    '#default_value' => (is_numeric($prio_nat)? $prio_nat : '10'),
+    '#options' => array('P0','P1','P2','P3','P4','P5','P6','P7','P8','P9','Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','0'),
+    '#default_value' => (is_numeric($prio_nat)? $prio_nat : '20'),
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_nat_form_submit',
       'progress' => array('type' => 'throbber', 'message' => '')),);
@@ -275,8 +275,8 @@ function gbb_offres_prio_aca_form($form, &$form_state, $prio_aca, $co_omodu) {
   $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['prio_aca'] = array(
     '#type' => 'select',
-    '#options' => array('P0','P1','P2','P3','P4','P5','P6','P7','P8','P9','0'),
-    '#default_value' => (is_numeric($prio_aca)? $prio_aca : '10'),
+    '#options' => array('1','2', '3','4','5', '0'),
+    '#default_value' => (is_numeric($prio_aca)? $prio_aca : '5'),
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_aca_form_submit',
       'progress' => array('type' => 'throbber', 'message' => '')),);

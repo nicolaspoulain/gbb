@@ -257,7 +257,7 @@ function gbb_offres_prio_nat_form($form, &$form_state, $prio_nat, $co_omodu) {
   $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['prio_nat'] = array(
     '#type' => 'select', 
-    '#options' => array('P0','P1','P2','P3','P4','P5','P6','P7','P8','P9','Q0','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','0'),
+    '#options' => array('R0','R1','R2','R3','R4','R5','R6','R7','R8','R9','S0','S1','S2','S3','S4','S5','S6','S7','S8','S9','0'),
     '#default_value' => (is_numeric($prio_nat)? $prio_nat : '20'),
     '#ajax' => array(
       'callback' => 'gbb_offres_prio_nat_form_submit',

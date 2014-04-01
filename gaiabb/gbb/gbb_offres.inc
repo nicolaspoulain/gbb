@@ -73,6 +73,9 @@ function gbb_offres_filter($form, &$form_state, $args) {
     '#type' => 'submit',
     '#value' => 'Envoyer',
   );
+  $form['some_text'] = array(
+      '#markup' => '<p>À propos de «Position» : Pour chaque orientation, classer les offres de 1 (indispensable) à 500 (non retenue). Ex-aequo autorisés.</p>'
+    );
 
   return $form;
 }
@@ -98,10 +101,11 @@ function gbb_offres_tab($args) {
     'nomu' => t('Interlocuteur dispo'),
     'co_tpla' => t('Type de Plan'),
     'co_orie' => t('Code Orientation'),
+    array('data' => t('Position'), 'class' => 'jaune'),
     'no_offre' => t('No Offre/ Code Module'),
     'libl' => t('Titre'),
     'nomu2' => t('Resp. péda.'),
-    array('data' => t('ESPE'), 'class' => 'jaune'),
+    array('data' => t('ÉSPÉ & Universités'), 'class' => 'jaune'),
     array('data' => t('Nouv. offreur'), 'class' => 'jaune'),
     array('data' => t('Offre nouvelle'), 'class' => 'jaune'),
     array('data' => t('Pub. Dés.'), 'class' => 'jaune'),
@@ -135,7 +139,7 @@ function gbb_offres_tab($args) {
   $query ->addField('r2', 'nomu', 'nomu2');
   $query ->fields('dd', array('nb_hp','nb_vac','hors_cdc','iufm',
                               'nouv_offreur','prio_nat','prio_aca','offre_new',
-                              'pub_des','comment' ));
+                              'pub_des','comment','position' ));
   $query = $query->extend('PagerDefault')->limit($count);
   $query ->distinct();
 
@@ -165,6 +169,8 @@ function gbb_offres_tab($args) {
     $comment = render(drupal_get_form('gbb_offres_comment_form',
                                 $r->comment, $r->co_omodu)) ;
     
+    $position = render(drupal_get_form('gbb_offres_position_form',
+                                $r->position, $r->co_omodu)) ;
     $iufm = render(drupal_get_form('gbb_offres_iufm_form',
                                 $r->iufm, $r->co_omodu)) ;
     $nouv_offreur = render(drupal_get_form('gbb_offres_nouv_offreur_form',
@@ -176,6 +182,7 @@ function gbb_offres_tab($args) {
                 array('data' => $r->nomu),
                 array('data' => $r->co_tpla),
                 array('data' => $r->co_orie),
+                array('data' => $position),
                 array('data' => $r->no_offre.' / '.$r->co_omodu),
                 array('data' => $r->libl),
                 array('data' => $r->nomu2),
@@ -216,6 +223,23 @@ function gbb_offres_nb_hp_form_submit($form, &$form_state) {
   db_merge('gbb_gdiof_dafor')
     ->key(array('co_omodu' => $form_state['values']['co_omodu']))
     ->fields(array('nb_hp'  => $form_state['values']['nb_hp'],
+  ))->execute();
+}
+
+function gbb_offres_position_form($form, &$form_state, $position, $co_omodu) {
+  $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
+  $form['f']['position'] = array(
+    '#type' => 'textfield', '#size' => 1,
+    '#default_value' => (isset($position))? (int)$position : '',
+    '#ajax' => array(
+      'callback' => 'gbb_offres_position_form_submit',
+      'progress' => array('type' => 'throbber', 'message' => '')),);
+  return $form;
+}
+function gbb_offres_position_form_submit($form, &$form_state) {
+  db_merge('gbb_gdiof_dafor')
+    ->key(array('co_omodu' => $form_state['values']['co_omodu']))
+    ->fields(array('position'  => $form_state['values']['position'],
   ))->execute();
 }
 
@@ -327,7 +351,9 @@ function gbb_offres_comment_form_submit($form, &$form_state) {
 function gbb_offres_iufm_form($form, &$form_state, $iufm, $co_omodu) {
   $form['f']['co_omodu']  = array('#type' => 'hidden','#value' => $co_omodu );
   $form['f']['iufm'] = array(
-    '#type' => 'checkbox', '#size' => 1,
+    #'#type' => 'checkbox', '#size' => 1,
+    '#type' => 'select',
+    '#options' => array('Choisir','ESPE','Paris1','Paris3','Paris4','Paris5','Paris6','Paris7','CNAM','Autres.'),
     '#default_value' => $iufm,
     '#ajax' => array(
       'callback' => 'gbb_offres_iufm_form_submit',

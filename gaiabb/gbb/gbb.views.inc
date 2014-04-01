@@ -69,7 +69,7 @@ function gbb_views_data() {
   );
   $data['gbb_gmodu']['lcont'] = array(
             'title' => t('lcont'),
-            'help' => t('Contenur litteral'),
+            'help' => t('Contenu litteral'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,
@@ -77,6 +77,39 @@ function gbb_views_data() {
             'sort' => array('handler' => 'views_handler_sort'),
             'filter' => array('handler' => 'views_handler_filter_string'),
             'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmodu']['lpeda'] = array(
+            'title' => t('lpeda'),
+            'help' => t('Objectif pedagogiqu'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+            'filter' => array('handler' => 'views_handler_filter_string'),
+            'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmodu']['lmoda'] = array(
+            'title' => t('lmoda'),
+            'help' => t('Modalité'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmodu']['lform'] = array(
+            'title' => t('lform'),
+            'help' => t('Forme'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
   );
   $data['gbb_gmodu']['cout_p_fonc'] = array(
             'title' => t('cout_p_fonc'),
@@ -125,6 +158,39 @@ function gbb_views_data() {
   $data['gbb_gmodu']['nb_eff_groupe'] = array(
             'title' => t('nb_eff_groupe'),
             'help' => t('Effectif par groupe'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu']['duree_prev'] = array(
+            'title' => t('duree_prev'),
+            'help' => t('Duree prevue'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu']['nb_place_prev'] = array(
+            'title' => t('nb_place_prev'),
+            'help' => t('Nombre de places prevues'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmodu']['nb_h_interv'] = array(
+            'title' => t('nb_h_interv'),
+            'help' => t('Nombre heures intervention'),
             'field' => array(
               'handler' => 'views_handler_field_numeric',
               'click sortable' => TRUE,
@@ -705,6 +771,17 @@ function gbb_views_data() {
   $data['gbb_gdisp']['co_orie'] = array(
             'title' => t('co_orie'),
             'help' => t('Code orientation'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gdisp']['lobjt'] = array(
+            'title' => t('lobjt'),
+            'help' => t('Objectif litteral'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,
@@ -1387,6 +1464,18 @@ function gbb_views_data() {
            'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
+  $data['gbb_gdiof_dafor']['position'] = array(
+            'title' => t('position'),
+            'help' => t('Position'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+
   // --------------------------------------------------------
   // gbb_gmoof
   // --------------------------------------------------------
@@ -1469,6 +1558,17 @@ function gbb_views_data() {
   $data['gbb_gmoof']['cout_p_fonc'] = array(
             'title' => t('cout_p_fonc'),
             'help' => t('Cout previsionnel de fonctionnement'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+  $data['gbb_gmoof']['cout_p_excep'] = array(
+            'title' => t('cout_p_excep'),
+            'help' => t('Cout previsionnel exceptionnel'),
             'field' => array(
               'handler' => 'views_handler_field_numeric',
               'click sortable' => TRUE,

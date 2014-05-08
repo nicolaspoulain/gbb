@@ -181,9 +181,10 @@ function gbb_offre_ctp($args) {
     $terms_select[$term->tid] = '((H' . $depth .'))' . $term->name . '<br/>';
   };
   foreach ($terms_select as $key=>$val) {
-    if ($vid == 3) {//on tape dans le plan
+    if ($vid != 999) {//on tape dans le plan
       $query = db_select('gbb_gmodu_taxonomy','t')
             ->condition('tid', $key )
+            ->condition('d.id_disp' , '14' . '%', 'LIKE')
             ->condition('weight', 500, '<')
             ->isNotNull('m.libl');
       $query->leftjoin('gbb_gmodu', 'm',

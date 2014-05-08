@@ -17,6 +17,10 @@ function gbb_pia_view($args = 'NaN') {
 
   // Construction de la page
   $build = array();
+  if (TRUE) {
+    return "Bientot";
+  }
+
   $ledispo = arg(3);
   setlocale(LC_CTYPE, 'fr_FR.ISO-8859-1');
   if (is_numeric(arg(2)) && !preg_match('/^13/',$ledispo)) {

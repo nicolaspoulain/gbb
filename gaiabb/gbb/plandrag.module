@@ -29,6 +29,7 @@ function plandrag_form($form, &$form_state) {
             ->fields('t')
             ->orderBy('weight', 'ASC')
             ->condition('tid', arg(1) )
+            ->condition('d.id_disp' , '14' . '%', 'LIKE')
             ->condition('weight', 500, '<' );
   $query  ->leftjoin('gbb_gmodu', 'm',  'm.co_modu = t.co_modu AND m.co_degre = t.co_degre');
   $query  ->leftjoin('gbb_gdisp', 'd',  'm.co_disp = d.co_disp AND m.co_degre = d.co_degre');

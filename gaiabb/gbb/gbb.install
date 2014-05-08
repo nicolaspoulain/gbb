@@ -1851,6 +1851,101 @@ $schema['gbb_gmoof'] = array(
   ),
 );
 
+// ---------------------------------------------------------------------------
+// NPRAC
+// ---------------------------------------------------------------------------
+$schema['gbb_nprac'] = array(
+  'description' => 'Copie conforme de la table GAIA nprac',
+  'fields' => array(
+    'co_prac' => array(
+      'description' => 'Code interne de la priorite academique',
+      'type' => 'char',
+      'length' => '8',
+      'not null' => TRUE,
+    ),
+    'lib_court' => array(
+      'description' => 'Libelle court de la priorite academique',
+      'type' => 'char',
+      'length' => '10',
+      'not null' => TRUE,
+    ),
+    'lib_long' => array(
+      'description' => 'Libelle long de la priorite academique',
+      'type' => 'char',
+      'length' => '50',
+      'not null' => TRUE,
+    ),
+    'dt_deb' => array(
+      'description' => 'Date debut',
+      'type' => 'varchar',
+      'mysql_type' => 'datetime',
+      'pgsql_type' => 'timestamp without time zone',
+      'sqlite_type' => 'VARCHAR',
+      'sqlsrv_type' => 'smalldatetime',
+      'not null' => TRUE,
+      'default' => '1970-01-01 00:00:00',
+    ),
+    'dt_fin' => array(
+      'description' => 'Date fin',
+      'type' => 'varchar',
+      'mysql_type' => 'datetime',
+      'pgsql_type' => 'timestamp without time zone',
+      'sqlite_type' => 'VARCHAR',
+      'sqlsrv_type' => 'smalldatetime',
+      'not null' => TRUE,
+      'default' => '1970-01-01 00:00:00',
+    ),
+  ),
+);
+
+
+
+// ---------------------------------------------------------------------------
+// NPRNA
+// ---------------------------------------------------------------------------
+$schema['gbb_nprna'] = array(
+  'description' => 'Copie conforme de la table GAIA nprna',
+  'fields' => array(
+    'co_prna' => array(
+      'description' => 'Code interne de la priorite nationale',
+      'type' => 'char',
+      'length' => '8',
+      'not null' => TRUE,
+    ),
+    'lib_court' => array(
+      'description' => 'Libelle court de la priorite nationale',
+      'type' => 'char',
+      'length' => '10',
+      'not null' => TRUE,
+    ),
+    'lib_long' => array(
+      'description' => 'Libelle long de la priorite nationale',
+      'type' => 'char',
+      'length' => '50',
+      'not null' => TRUE,
+    ),
+    'dt_deb' => array(
+      'description' => 'Date debut',
+      'type' => 'varchar',
+      'mysql_type' => 'datetime',
+      'pgsql_type' => 'timestamp without time zone',
+      'sqlite_type' => 'VARCHAR',
+      'sqlsrv_type' => 'smalldatetime',
+      'not null' => TRUE,
+      'default' => '1970-01-01 00:00:00',
+    ),
+    'dt_fin' => array(
+      'description' => 'Date fin',
+      'type' => 'varchar',
+      'mysql_type' => 'datetime',
+      'pgsql_type' => 'timestamp without time zone',
+      'sqlite_type' => 'VARCHAR',
+      'sqlsrv_type' => 'smalldatetime',
+      'not null' => TRUE,
+      'default' => '1970-01-01 00:00:00',
+    ),
+  ),
+);
 
 
  return $schema;

@@ -199,6 +199,103 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_numeric'),
            'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
+  $data['gbb_gmodu']['co_prna'] = array(
+            'title' => t('co_prna'),
+            'help' => t('Priorite nationale'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmodu']['co_prac'] = array(
+            'title' => t('co_prac'),
+            'help' => t('Priorite academique'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  // --------------------------------------------------------
+  // GBB_NPRAC
+  // --------------------------------------------------------
+
+  $data['gbb_nprac']['table'] = array(
+            'group' => t('gbb_nprac'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'left_field' => 'co_prac',
+                'field' => 'co_prac',
+              ),
+            ),
+  );
+  $data['gbb_nprac']['lib_court'] = array(
+            'title' => t('lib_court'),
+            'help' => t('Priorite academique lib_court'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  $data['gbb_nprac']['lib_long'] = array(
+            'title' => t('lib_long'),
+            'help' => t('Priorite academique lib_long'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+
+  // --------------------------------------------------------
+  // GBB_NPRNA
+  // --------------------------------------------------------
+
+  $data['gbb_nprna']['table'] = array(
+            'group' => t('gbb_nprna'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'left_field' => 'co_prna',
+                'field' => 'co_prna',
+              ),
+            ),
+  );
+  $data['gbb_nprna']['lib_court'] = array(
+            'title' => t('lib_court'),
+            'help' => t('Priorite nationale lib_court'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  $data['gbb_nprna']['lib_long'] = array(
+            'title' => t('lib_long'),
+            'help' => t('Priorite nationale lib_long'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
 
   // --------------------------------------------------------
   // GBB_GMODU_TAXONOMY
@@ -267,12 +364,12 @@ function gbb_views_data() {
             'title' => t('vid'),
             'help' => t('Identifiant du vocabulaire'),
             'field' => array(
-              'handler' => 'views_handler_field',
+              'handler' => 'views_handler_field_numeric',
               'click sortable' => TRUE,
             ),
            'sort' => array('handler' => 'views_handler_sort'),
-           'filter' => array('handler' => 'views_handler_filter_string'),
-           'argument' => array('handler' => 'views_handler_argument_string'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
   );
 
 

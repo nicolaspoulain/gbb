@@ -609,7 +609,8 @@ function gbb_liste_stages_liste($args) {
     $rsp ->fields('r', array('nomu', 'prenom'));
     $respo = $rsp->execute()->fetchObject();
     if ($paf_ou_fil=='paf') {
-      $plus .= " <i>(Resp.péda : ".$respo->nomu.")</i>";
+      $isnomu = $rsp->execute()->rowCount();
+      if ($isnomu > 0) $plus .= " <i>(Resp.péda : ".$respo->nomu.")</i>";
     };
     $timer = theme('image', variable_get('_gbb_timer_green_icon'));
     if (strtotime($dateD) < time()) { // le premier jour dépassé

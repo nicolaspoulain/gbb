@@ -193,8 +193,13 @@ function gbb_offre_ctp($args) {
                        'm.co_disp = d.co_disp');
       $query->leftjoin('gbb_gdire', 'gd',
                        'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_tres=3');
-      $query->leftjoin('gbb_gresp', 'rm',
+      if ($vid == 5) {//premier degre
+        $query->leftjoin('gbb_gresp', 'rm',
+                       'gd.co_resp = rm.co_resp AND rm.co_degre=1');
+      } else {
+        $query->leftjoin('gbb_gresp', 'rm',
                        'gd.co_resp = rm.co_resp AND rm.co_degre=2');
+      }
       $query->fields('t',array('tid'));
       $query->fields('m',array('co_modu','duree_prev','lpeda','lcont','lmoda','lform'));
       $query->addField('rm', 'nomu', 'nomu_modu');
@@ -302,9 +307,8 @@ function gbb_offre_ctp($args) {
           $q->condition('tid', $f->tid);
           $nbmod = $q->condition('d.no_offre', $f->no_offre)->execute()->rowCount();
         }
-        // Si 2nd degré ou encadrement, on n'affiche le lib dispo que si modules
-        // multiples
-        $str .= ($nbmod>1 || $vid==3 || $vid==5)? '((3))' . $f->lobjt : '((3))';
+        // affiche le lib dispo que si modules multiples
+        $str .= ($nbmod>1 || $vid==999 )? '((3))' . $f->lobjt : '((3))';
         $count = 0;
       } else { 
         $count = $count+1;

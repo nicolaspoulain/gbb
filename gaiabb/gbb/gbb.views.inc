@@ -876,6 +876,17 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
+  $data['gbb_gdisp']['co_tcan'] = array(
+           'title' => t('co_tcan'),
+           'help' => t('Code du type de candidature'),
+           'field' => array(
+             'handler' => 'views_handler_field',
+             'click sortable' => TRUE,
+           ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
   $data['gbb_gdisp']['co_tpla'] = array(
             'title' => t('co_tpla'),
             'help' => t('Code type plan'),
@@ -909,6 +920,81 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
+
+  // --------------------------------------------------------
+  // GBB_NTCAN
+  // --------------------------------------------------------
+
+   $data['gbb_ntcan']['table'] = array(
+            'group' => t('gbb_ntcan'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'left_table' => 'gbb_gdisp',
+                'left_field' => 'co_tcan',
+                'field' => 'co_tcan',
+              ),
+            ),
+          );
+  $data['gbb_ntcan']['lib_court'] = array(
+            'title' => t('lib_court'),
+            'help' => t('Candidature libellé court'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_ntcan']['lib_long'] = array(
+            'title' => t('lib_long'),
+            'help' => t('Candidature libellé long'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
+  // --------------------------------------------------------
+  // GBB_NCAMP
+  // --------------------------------------------------------
+
+   $data['gbb_ncamp']['table'] = array(
+            'group' => t('gbb_ncamp'),
+            'join' => array(
+              'gbb_gmodu' => array(
+                'left_table' => 'gbb_gdisp',
+                'left_field' => 'co_camp',
+                'field' => 'co_camp',
+              ),
+            ),
+          );
+  $data['gbb_ncamp']['lib_court'] = array(
+            'title' => t('lib_court'),
+            'help' => t('Campagne libellé court'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_ncamp']['lib_long'] = array(
+            'title' => t('lib_long'),
+            'help' => t('Campagne libellé long'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+            'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+
 
   // --------------------------------------------------------
   // GBB_NORIE

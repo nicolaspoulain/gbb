@@ -159,12 +159,23 @@ function gbb_offre_ctp_view($args = 'NaN') {
 function gbb_offre_ctp($args) {
 
   //print_r(taxonomy_get_vocabularies());
-  foreach (taxonomy_get_vocabularies() as $k=>$v) {
-    $header[] = array('data' => t($v->name.' ').l('('.t('edit').')',
-                            'admin/structure/taxonomy/'.$v->machine_name), 'class' => 'gris');
-    $rows[0][] = array('data' => gbb_offre_ctp_vocab($k),
-                       'class'=>'topAlign');
-  }
+  $str = "";
+  // $k ---- 2:2Deg  3:IATSS  4:MotsClé  5:1Deg  6: Encadr  7:Interdeg
+  $header[] = array('data' => t("CTP").l('('.t('edit').')', '#'), 'class' => 'gris');
+
+  $str .= "<br/>((H0))PREMIER DEGRÉ<br/>";
+  $str .= gbb_offre_ctp_vocab(5);
+  $str .= "<br/>((H0))INTERDEGRÉ<br/>";
+  $str .= gbb_offre_ctp_vocab(7);
+  $str .= "<br/>((H0))SECOND DEGRÉ<br/>";
+  $str .= gbb_offre_ctp_vocab(2);
+  $str .= "<br/>((H0))IATSS<br/>";
+  $str .= gbb_offre_ctp_vocab(3);
+  $str .= "<br/>((H0))ENCADREMENT<br/>";
+  $str .= gbb_offre_ctp_vocab(6);
+
+  $rows[0][] = array('data' => $str,
+                     'class'=>'topAlign');
   $output = theme('table',array('header' => $header, 'rows'   => $rows ));
   return $output;
 }
@@ -181,140 +192,78 @@ function gbb_offre_ctp($args) {
     $terms_select[$term->tid] = '((H' . $depth .'))' . $term->name . '<br/>';
   };
   foreach ($terms_select as $key=>$val) {
-    if ($vid != 999) {//on tape dans le plan
-      $query = db_select('gbb_gmodu_taxonomy','t')
-            ->condition('tid', $key )
-            ->condition('d.id_disp' , '14' . '%', 'LIKE')
-            ->condition('weight', 500, '<')
-            ->isNotNull('m.libl');
-      $query->leftjoin('gbb_gmodu', 'm',
-                       't.co_modu = m.co_modu');
-      $query->leftjoin('gbb_gdisp', 'd',
-                       'm.co_disp = d.co_disp');
-      $query->leftjoin('gbb_gdire', 'gd',
-                       'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_tres=3');
-      if ($vid == 5) {//premier degre
-        $query->leftjoin('gbb_gresp', 'rm',
-                       'gd.co_resp = rm.co_resp AND rm.co_degre=1');
-      } else {
-        $query->leftjoin('gbb_gresp', 'rm',
-                       'gd.co_resp = rm.co_resp AND rm.co_degre=2');
-      }
-      $query->fields('t',array('tid'));
-      $query->fields('m',array('co_modu','duree_prev','lpeda','lcont','lmoda','lform'));
-      $query->addField('rm', 'nomu', 'nomu_modu');
-      $query->addField('rm', 'prenom', 'prenom_modu');
-      $query->addField('rm', 'qualite', 'qualite');
-      $query->addField('m', 'libl', 'libmodu');
-      $query->addField('m', 'co_modu', 'co_omodu');
-      $query->addField('d', 'id_disp', 'no_offre');
-      $query->fields('d',array('libl','lobjt'));
-      $query->orderBy('weight', 'ASC');
-      $list= $query->execute()->fetchAll();
-
-    } else {        // on tape dans les offres
-      $query = db_select('gbb_gmoof_taxonomy','t')
-            ->condition('tid', $key )
-            ->condition('weight', 500, '<')
-            ->isNotNull('m.libl');
-      $query->leftjoin('gbb_gmoof', 'm',
-                       't.co_omodu = m.co_omodu');
-      $query->leftjoin('gbb_gdiof', 'd',
-                       'm.co_offre = d.co_offre');
-      if ($vid ==5) {
-        $query->leftjoin('gbb_gresp', 'rm',
-                         'm.co_resp = rm.co_resp AND rm.co_degre=2');
-      } else {
-        $query->leftjoin('gbb_gresp', 'rm',
-                         'm.co_resp = rm.co_resp AND rm.co_degre=2');
-      }
-      $query->fields('t',array('tid'));
-      $query->fields('m',array('co_omodu','duree_prev','lpeda','lcont','lmoda','lform'));
-      $query->addField('rm', 'nomu', 'nomu_modu');
-      $query->addField('rm', 'prenom', 'prenom_modu');
-      $query->addField('rm', 'qualite', 'qualite');
-      $query->addField('m', 'libl', 'libmodu');
-      $query->fields('d',array('no_offre','libl','lobjt'));
-      $query->orderBy('weight', 'ASC');
-      $list= $query->execute()->fetchAll();
-    };
-    $str = "";
-    $count= 0;
-    $no_offre = -1;
-
-    //%!postproc(tex): "\(\(1\)\)" //"\\begin{tabularx}{\\textwidth}{|>{\small}p{2cm}X|} \hline //\\rowcolor[gray]{.9}"
-    //%!postproc(tex): "\(\(2\)\)"  " & \hfill \\textbf{"
-    //%!postproc(tex): "\(\(3\)\)"  " } \hfill \phantom{Dur: 6 ~h} \\\\ & "
-    //%!postproc(tex): "\(\(4\)\)"  "  \\\\ \hline \n M : "
-    //%!postproc(tex): "\(\(5\)\)"  " & \hfill \\textbf{"
-    //%!postproc(tex): "\(\(6\)\)"  " } \hfill {\small Durée : "
-    //%!postproc(tex): "\(\(6b\)\)"  " } "
-    //%!postproc(tex): "\(\(7\)\)"  "~h} \\\\ \hline \nResponsable : & "
-    //%!postproc(tex): "\(\(8\)\)"  ", "
-    //%!postproc(tex): "\(\(9\)\)"  "\\\\ \nObjectif : &"
-    //%!postproc(tex): "\(\(10\)\)" "\\\\ \nContenu : &"
-    //%!postproc(tex): "\(\(11\)\)" "\\\\ \nModalité : &"
-    //%!postproc(tex): "\(\(12\)\)" "\\\\ \nForme : &"
-    //%!postproc(tex): "\(\(13\)\)" " \\\\ \hline\n\end{tabularx}\\\\[1em] \n\r"
-
-  /*
-    foreach ($list as $f) {
-      if ($no_offre != $f->no_offre) { //on crée un nouveau tableau
-        // si les modules ne sont pas dans le même dispo
-        if ($no_offre != -1) $str .= '((13))<br/>';
-        $str .= '((1))' . $f->no_offre;
-        $str .= '((2))' . strtoupperFr($f->libl);
-        $str .= '((3))';
-      };
-      $str .= '((4))' . $f->co_omodu;
-      $str .= '((5))' . strtoupperFr($f->libmodu);
-      $str .= '((6b))';
-      $no_offre = $f->no_offre;
-    };
-    $rowslight[] = $val." ".$str.(($str=="")? "":'((13))<br/>');
-  */
+    $query = db_select('gbb_gmodu_taxonomy','t')
+          ->condition('tid', $key )
+          ->condition('d.id_disp' , '14' . '%', 'LIKE')
+          ->condition('weight', 500, '<')
+          ->isNotNull('m.libl');
+    $query->leftjoin('gbb_gmodu', 'm',
+                     't.co_modu = m.co_modu');
+    $query->leftjoin('gbb_gdisp', 'd',
+                     'm.co_disp = d.co_disp');
+    $query->leftjoin('gbb_gdire', 'gd',
+                     'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_tres=3');
+    if ($vid == 5) {  // Responsable premier degre
+      $query->leftjoin('gbb_gresp', 'rm',
+                     'gd.co_resp = rm.co_resp AND rm.co_degre=1');
+    } else {          // Responsable second degré
+      $query->leftjoin('gbb_gresp', 'rm',
+                     'gd.co_resp = rm.co_resp AND rm.co_degre=2');
+    }
+    $query->fields('t',array('tid'));
+    $query->fields('m',array('co_modu','duree_prev','lpeda','lcont','lmoda','lform'));
+    $query->addField('rm', 'nomu', 'nomu_modu');
+    $query->addField('rm', 'prenom', 'prenom_modu');
+    $query->addField('rm', 'qualite', 'qualite');
+    $query->addField('m', 'libl', 'libmodu');
+    $query->addField('m', 'co_modu', 'co_omodu');
+    $query->addField('d', 'id_disp', 'no_offre');
+    $query->fields('d',array('lib','lobjt'));
+    $query->orderBy('weight', 'ASC');
+    $list= $query->execute()->fetchAll();
 
     $str = "";
     $count= 0;
     $no_offre = -1;
 
     foreach ($list as $f) {
-      if ($no_offre != $f->no_offre || $count==3) { //on crée un nouveau tableau
-        // si les modules ne sont pas dans le même dispo ou si le tableau a plus
-        // de 4 lignes.
+      if ($no_offre != $f->no_offre || $count==3) { 
+          //on crée un nouveau tableau si les modules ne sont pas dans le
+          //même dispo ou si le tableau a plus de 4 lignes.
         if ($no_offre != -1) $str .= '((13))<br/>';
-        $str .= '((1))' . $f->no_offre;
-        $str .= '((2))' . strtoupperFr($f->libl);
+
         $q = $query;
-        if ($vid == 3) {//on tape dans le plan
-          $q = db_select('gbb_gmodu','m');
-          $q->fields('m',array('co_modu'));
-          $q->leftjoin('gbb_gdisp', 'd',
-                       'm.co_disp = d.co_disp');
-          $q->leftjoin('gbb_gmodu_taxonomy', 't',
-                       't.co_modu = m.co_modu');
-          $q->condition('weight', 500, '<');
-          $q->condition('tid', $f->tid);
-          $nbmod = $q->condition('d.id_disp', $f->no_offre)->execute()->rowCount();
+        // Compte le nombre de modules
+        $q = db_select('gbb_gmodu','m');
+        $q->fields('m',array('co_modu'));
+        $q->leftjoin('gbb_gdisp', 'd',
+                     'm.co_disp = d.co_disp');
+        $q->leftjoin('gbb_gmodu_taxonomy', 't',
+                     't.co_modu = m.co_modu');
+        $q->condition('weight', 500, '<');
+        $q->condition('tid', $f->tid);
+        $nbmod = $q->condition('d.id_disp', $f->no_offre)->execute()->rowCount();
+
+        if ($nbmod>1) {
+          $str .= '((1))' . $f->no_offre;
         } else {
-          $q = db_select('gbb_gmoof','m');
-          $q->fields('m',array('co_omodu'));
-          $q->leftjoin('gbb_gdiof', 'd',
-                       'm.co_offre = d.co_offre');
-          $q->leftjoin('gbb_gmoof_taxonomy', 't',
-                       't.co_omodu = m.co_omodu');
-          $q->condition('weight', 500, '<');
-          $q->condition('tid', $f->tid);
-          $nbmod = $q->condition('d.no_offre', $f->no_offre)->execute()->rowCount();
+          $str .= '((1))' . $f->no_offre ."/" . $f->co_omodu;
+
         }
+        $str .= '((2))' . strtoupperFr($f->lib);
+
         // affiche le lib dispo que si modules multiples
-        $str .= ($nbmod>1 || $vid==999 )? '((3))' . $f->lobjt : '((3))';
+        if ($nbmod>1) {
+          $str .= '((3))' . $f->lobjt; 
+          $str .= '((4))' . $f->co_omodu;
+          $str .= '((5))' . strtoupperFr($f->libmodu);
+        }
         $count = 0;
       } else { 
         $count = $count+1;
+        $str .= '((4))' . $f->co_omodu;
+        $str .= '((5))' . strtoupperFr($f->libmodu);
       };
-      $str .= '((4))' . $f->co_omodu;
-      $str .= '((5))' . strtoupperFr($f->libmodu);
       $str .= '((6))' . $f->duree_prev;
       $str .= '((7))' . $f->prenom_modu.' '.$f->nomu_modu;
       $str .= '((8))' . $f->qualite;
@@ -326,7 +275,6 @@ function gbb_offre_ctp($args) {
     };
     $rows[] = $val." ".$str.(($str=="")? "":'((13))<br/>');
   }
-  //$output = implode('<br/>',$rowslight);
   $output = implode('<br/>',$rows);
   return $output;
   }

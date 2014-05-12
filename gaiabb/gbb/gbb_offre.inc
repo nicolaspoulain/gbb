@@ -201,12 +201,14 @@ function gbb_offre_ctp($args) {
                      't.co_modu = m.co_modu');
     $query->leftjoin('gbb_gdisp', 'd',
                      'm.co_disp = d.co_disp');
-    $query->leftjoin('gbb_gdire', 'gd',
-                     'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_tres=3');
     if ($vid == 5) {  // Responsable premier degre
+      $query->leftjoin('gbb_gdire', 'gd',
+                     'gd.co_modu = m.co_modu AND gd.co_degre=1 AND gd.co_tres=3');
       $query->leftjoin('gbb_gresp', 'rm',
                      'gd.co_resp = rm.co_resp AND rm.co_degre=1');
     } else {          // Responsable second degré
+      $query->leftjoin('gbb_gdire', 'gd',
+                     'gd.co_modu = m.co_modu AND gd.co_degre=2 AND gd.co_tres=3');
       $query->leftjoin('gbb_gresp', 'rm',
                      'gd.co_resp = rm.co_resp AND rm.co_degre=2');
     }

@@ -195,6 +195,8 @@ function gbb_offre_ctp($args) {
     $query = db_select('gbb_gmodu_taxonomy','t')
           ->condition('tid', $key )
           ->condition('d.id_disp' , '14' . '%', 'LIKE')
+          ->condition('d.co_andi' , '', '=')
+          ->condition('m.co_anmo' , '', '=')
           ->condition('weight', 500, '<')
           ->isNotNull('m.libl');
     $query->leftjoin('gbb_gmodu', 'm',

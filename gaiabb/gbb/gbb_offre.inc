@@ -215,7 +215,7 @@ function gbb_offre_ctp($args) {
                      'gd.co_resp = rm.co_resp AND rm.co_degre=2');
     }
     $query->fields('t',array('tid'));
-    $query->fields('m',array('co_modu','duree_prev','lpeda','lcont','lmoda','lform'));
+    $query->fields('m',array('co_modu','duree_prev','lpeda','lcont','lmoda','lform','lcibl'));
     $query->addField('rm', 'nomu', 'nomu_modu');
     $query->addField('rm', 'prenom', 'prenom_modu');
     $query->addField('rm', 'qualite', 'qualite');
@@ -271,6 +271,7 @@ function gbb_offre_ctp($args) {
       $str .= '((6))' . $f->duree_prev;
       $str .= '((7))' . $f->prenom_modu.' '.$f->nomu_modu;
       $str .= '((8))' . $f->qualite;
+      $str .= '((8b))' . $f->lcibl;
       $str .= '((9))' . $f->lpeda;
       $str .= '((10))' . $f->lcont;
       $str .= '((11))' . $f->lmoda;

@@ -1049,6 +1049,18 @@ function gbb_views_data() {
               ),
             ),
   );
+
+  $data['gbb_netab_dafor2']['table'] = array(
+            'group' => t('gbb_netab_dafor2'),
+            'join' => array(
+              'gbb_gdiof' => array(
+                'table' => 'gbb_netab_dafor',
+                'left_table' => 'gbb_gmoof',
+                'left_field' => 'co_etab_dem',
+                'field' => 'co_lieu',
+            ),
+            ),
+          );
   $data['gbb_netab_dafor']['denom_comp'] = array(
             'title' => t('denom_comp'),
             'help' => t('Dénomination complémentaire'),
@@ -1060,7 +1072,29 @@ function gbb_views_data() {
            'filter' => array('handler' => 'views_handler_filter_string'),
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
+  $data['gbb_netab_dafor2']['denom_comp'] = array(
+            'title' => t('denom_comp'),
+            'help' => t('Dénomination complémentaire'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
    $data['gbb_netab_dafor']['sigle'] = array(
+            'title' => t('sigle'),
+            'help' => t('Sigle (CLG, LP, LGT,...)'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+   $data['gbb_netab_dafor2']['sigle'] = array(
             'title' => t('sigle'),
             'help' => t('Sigle (CLG, LP, LGT,...)'),
             'field' => array(
@@ -1094,6 +1128,17 @@ function gbb_views_data() {
            'argument' => array('handler' => 'views_handler_argument_string'),
   );
    $data['gbb_netab_dafor']['cp'] = array(
+            'title' => t('cp'),
+            'help' => t('Code postal'),
+            'field' => array(
+              'handler' => 'views_handler_field_numeric',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_numeric'),
+           'argument' => array('handler' => 'views_handler_argument_numeric'),
+  );
+   $data['gbb_netab_dafor2']['cp'] = array(
             'title' => t('cp'),
             'help' => t('Code postal'),
             'field' => array(
@@ -1830,6 +1875,17 @@ function gbb_views_data() {
   $data['gbb_gmoof']['dt_crea'] = array(
             'title' => t('dt_crea'),
             'help' => t('Date création'),
+            'field' => array(
+              'handler' => 'views_handler_field',
+              'click sortable' => TRUE,
+            ),
+           'sort' => array('handler' => 'views_handler_sort'),
+           'filter' => array('handler' => 'views_handler_filter_string'),
+           'argument' => array('handler' => 'views_handler_argument_string'),
+  );
+  $data['gbb_gmoof']['co_etab_dem'] = array(
+            'title' => t('co_etab_dem'),
+            'help' => t('RNE de l etablissement demandeur'),
             'field' => array(
               'handler' => 'views_handler_field',
               'click sortable' => TRUE,

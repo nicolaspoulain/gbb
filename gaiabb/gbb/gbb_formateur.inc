@@ -314,6 +314,38 @@ function gbb_formateur_stages($args) {
   $query ->addExpression('SUM(duree_a_payer)', 'sumapayer');
   $r = $query->execute()->fetchObject();
 
+  //**** les vacations **************
+  $query = db_select('gbb_session', 's');
+  $query ->leftjoin('gbb_gmodu', 'm', 
+                    'm.co_modu = s.co_modu AND m.co_degre = s.co_degre'
+           );
+  $query ->leftjoin('gbb_gdisp', 'd', 
+                    'd.co_disp = m.co_disp AND d.co_degre = s.co_degre'
+           );
+  $query ->condition('s.co_resp', arg(1), '=')
+         ->condition('s.co_degre', '2', '=')
+         ->condition('s.type_paiement', 'VAC', 'LIKE')
+         ->condition('id_disp', db_like('13') . '%', 'LIKE')
+         ->distinct();
+  $query ->addExpression('SUM(duree_a_payer)', 'sumapayervac');
+  $r2 = $query->execute()->fetchObject();
+
+  //**** la decharge **************
+  $query = db_select('gbb_session', 's');
+  $query ->leftjoin('gbb_gmodu', 'm', 
+                    'm.co_modu = s.co_modu AND m.co_degre = s.co_degre'
+           );
+  $query ->leftjoin('gbb_gdisp', 'd', 
+                    'd.co_disp = m.co_disp AND d.co_degre = s.co_degre'
+           );
+  $query ->condition('s.co_resp', arg(1), '=')
+         ->condition('s.co_degre', '2', '=')
+         ->condition('s.type_paiement', 'DECH', 'LIKE')
+         ->condition('id_disp', db_like('13') . '%', 'LIKE')
+         ->distinct();
+  $query ->addExpression('SUM(duree_a_payer)', 'sumapayerdec');
+  $r3 = $query->execute()->fetchObject();
+
   //http://code.google.com/p/drupal-chart-api/wiki/Examples
   //http://code.google.com/p/drupal-chart-api/wiki/PublicAPI
   if (isset($r)) {
@@ -323,12 +355,14 @@ function gbb_formateur_stages($args) {
            '#title' => t('Répartition'),
            '#type' => CHART_TYPE_BAR_H,
            // taille adaptative mais limitée à 900px :
-           '#size' => chart_size(floor(min(900,max(200,2*$dech,2*$r->sumprevue))), 130), 
+           '#size' => chart_size(floor(min(900,max(200,2*$dech,2*$r->sumprevue))), 170), 
         );
     $centpcent = max(max($dech,$r->sumprevue),0.1);
     $chart['#data']['dech'] = 100*$dech/$centpcent;
     $chart['#data']['prevue'] = 100*$r->sumprevue/$centpcent;
     $chart['#data']['apayer'] = 100*$r->sumapayer/$centpcent;
+    $chart['#data']['dec'] = 100*$r3->sumapayerdec/$centpcent;
+    $chart['#data']['vac'] = 100*$r2->sumapayervac/$centpcent;
 
     $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][0][] =
       chart_mixed_axis_label(t('0'));
@@ -336,7 +370,11 @@ function gbb_formateur_stages($args) {
       chart_mixed_axis_label($centpcent);
 
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
-      chart_mixed_axis_label(t('D.à payer ('.$r->sumapayer.'h)'));
+      chart_mixed_axis_label(t('D.à payer VAC('.$r2->sumapayervac.'h)'));
+    $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
+      chart_mixed_axis_label(t('D.à payer DECH('.$r3->sumapayerdec.'h)'));
+    $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
+      chart_mixed_axis_label(t('D.à payer TOTAL('.$r->sumapayer.'h)'));
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =
       chart_mixed_axis_label(t('Durée prév ('.$r->sumprevue.'h)'));
     $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] =

@@ -188,6 +188,13 @@ function gbb_menu() {
 
   $items['pia'] = array(
         'title' => '',
+        'page callback' => 'gbb_pia_view2',
+        //'access arguments' => array('stable gbb'),
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+  );
+  $items['pia14'] = array(
+        'title' => '',
         'page callback' => 'gbb_pia_view',
         //'access arguments' => array('stable gbb'),
         'access callback' => TRUE,
@@ -403,4 +410,5 @@ module_load_include('inc', 'gbb', 'gbb_offres');
 module_load_include('inc', 'gbb', 'gbb_offre');
 module_load_include('inc', 'gbb', 'gbb_ctplan');
 module_load_include('inc', 'gbb', 'gbb_pia');
+module_load_include('inc', 'gbb', 'gbb_pia_old');
 

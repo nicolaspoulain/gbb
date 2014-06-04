@@ -240,7 +240,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $mclass = (preg_match("/^14D/", $k))? "comoduD" : "comoduA";
     if (count($d) == 1) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
-      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
+      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"A\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"A\">&nbsp;";
       $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
       $html .= "".$d[0]['categories'] . "</a>";
       $html .= "" . $tcan[$d[0]['co_tcan']];
@@ -274,7 +274,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $ttid = $query->distinct()->execute()->fetchCol();
 
       $html .= "<p><span class=\"$dclass\">$k</span>";
-      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
+      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"\" name=\"A\">";
       $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
       $html .= "" . $tcan[$d[0]['co_tcan']] . "</a>";
       $html .= "" . $axe[$d[0]['co_prac']] ;
@@ -289,7 +289,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       foreach ($d as $m) {
         $html .= "<div class=\"liste\">";
         $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
-        $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
+        $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"A\">&nbsp;";
         $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $m['lib'] .  "</a>";
         $html .= " ".$m['categories'];
         if ($type==3) {

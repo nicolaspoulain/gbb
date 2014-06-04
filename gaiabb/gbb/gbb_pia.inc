@@ -131,10 +131,12 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     if (arg(2)==113) $html .= "<p>Les enseignants du <strong>premier degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>14D</strong>.</p>";
     if (arg(2)==113) $html .= "<p>Les enseignants du <strong>second degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>14A</strong>.</p>";
   $query = db_select('gbb_gmodu_taxonomy', 'gt');
-  $query->condition('gt.weight', 500, '<');
+  $query->condition('gt.weight', 500, '<')
+        ->condition('gd.co_andi' , '', '=')
+        ->condition('gm.co_anmo' , '', '=');
   switch ($type) {
     case 1:
-      $query->condition('tid', $arg);
+      $query->condition('gt.tid', $arg);
       break;
     case 2:
       $query->condition(
@@ -146,7 +148,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       );
       break;
     case 3:
-      $query->condition('tid', $arg);
+      $query->condition('gt.tid', $arg);
       $query->condition('id_disp', $id);
       break;
     case 4:
@@ -171,7 +173,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('gt.weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
-  print($query);
+  #print($query);
   foreach ($res as $stage) {
 
     $query = db_select('gbb_gmodu_taxonomy', 'gt');
@@ -180,6 +182,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $query->fields('ttd', array('vid'));
     $cats = $query->distinct()->execute()->fetchCol();
     $catss = "<span class=\"ul-custom-class".implode("\">&nbsp;&nbsp;</span> <span class=\"ul-custom-class",$cats)."\">&nbsp;&nbsp;</span>";
+    $catss = "&nbsp;";
 
     
     $query = db_select('gbb_gdire', 'gdr');
@@ -216,9 +219,12 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
                2 => "",      // FIL,
                3 => "<span class=\"red\">&#10025;</span>"
              );
-  $axe=array(  "TD" => "<span class=\"red\">&#10102;</span>",
-               "TC" => "<span class=\"red\">&#10103;</span>",
-               "TB" => "<span class=\"red\">&#10104;</span>"
+  $axe=array(  "TA" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\">",
+               "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-16.png\">",
+               "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-16.png\">",
+               "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-16.png\">",
+               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\">",
+               "" => "",
              );
   #print "<pre>";
   #print_r($dispo);
@@ -236,9 +242,9 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
-      $html .= " ".$d[0]['categories'] . "</a>";
-      $html .= " " . $tcan[$d[0]['co_tcan']];
-      $html .= " " . $axe[$d[0]['co_prac']] ;
+      $html .= "".$d[0]['categories'] . "</a>";
+      $html .= "" . $tcan[$d[0]['co_tcan']];
+      $html .= "" . $axe[$d[0]['co_prac']] ;
       if ($type==3) {
         $html .= "<div id=\"$k\">";
       } else {
@@ -270,8 +276,8 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
       $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/ent1112b/pub/skins/dafor/image/magnifier.png\" name=\"A\">";
       $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
-      $html .= " " . $tcan[$d[0]['co_tcan']] . "</a>";
-      $html .= " " . $axe[$d[0]['co_prac']] ;
+      $html .= "" . $tcan[$d[0]['co_tcan']] . "</a>";
+      $html .= "" . $axe[$d[0]['co_prac']] ;
       if ($type==3) {
         $html .= "<div id=\"$k\">";
       } else {
@@ -354,8 +360,11 @@ function gbb_pia_vocab($vid,$title) {
    );
   $title="";
   $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
-  $axes =  l("A1","pia14/".arg(1)."/TC")." ";
-  $axes .= l("A2","pia14/".arg(1)."/TB")." ";
+  $axes = "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-32.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-32.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-32.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-32.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-32.png\"></a>&nbsp;&nbsp;<br/><br/>";
   return $axes.$output;
 }
 

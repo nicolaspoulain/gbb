@@ -80,6 +80,16 @@ function gbb_pia_search_form($form, &$form_state, $args) {
     #'#suffix' => '</div>',
     '#size' => 50, 
   );
+  /*
+    $form['f']['boxes'] = array(
+    '#type' => 'checkboxes',
+    '#options' => drupal_map_assoc(array(t('1D'), t('2D'))),
+    '#title' => t('Dans quel plan ?'),
+    '#prefix' => '<div class="inline">',
+    '#suffix' => '</div>',
+  );
+  */
+
   $form['f']['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Chercher',
@@ -360,11 +370,11 @@ function gbb_pia_vocab($vid,$title) {
    );
   $title="";
   $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
-  $axes = "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-32.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-32.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-32.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-32.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-32.png\"></a>&nbsp;&nbsp;<br/><br/>";
+  $axes = "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-b.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-b.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-b.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-b.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-b.png\"></a>&nbsp;&nbsp;<br/><br/>";
   return $axes.$output;
 }
 

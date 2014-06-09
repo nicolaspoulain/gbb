@@ -80,15 +80,24 @@ function gbb_pia_search_form($form, &$form_state, $args) {
     #'#suffix' => '</div>',
     '#size' => 50, 
   );
-  /*
+
+  $options = array();
+  $options["1"] = t('1er degré&nbsp;&nbsp;&nbsp;&nbsp;');
+  $options["2"] = t('Interdegré&nbsp;&nbsp;&nbsp;&nbsp;');
+  $options["3"] = t('2nd degré <br/>');
+  $options["4"] = t('IATSS&nbsp;&nbsp;&nbsp;&nbsp;');
+  $options["5"] = t('Encadrement&nbsp;&nbsp;&nbsp;&nbsp;');
+  $options["6"] = t('Intercatégoriel');
+
     $form['f']['boxes'] = array(
     '#type' => 'checkboxes',
-    '#options' => drupal_map_assoc(array(t('1D'), t('2D'))),
+    '#options' => $options,
+    #'#default_value' => array("2" ),
+    '#default_value' => array("1", "2", "3", "4", "5", "6"),
     '#title' => t('Dans quel plan ?'),
-    '#prefix' => '<div class="inline">',
+    '#prefix' => '<div class="container-inline">',
     '#suffix' => '</div>',
   );
-  */
 
   $form['f']['submit'] = array(
     '#type' => 'submit',
@@ -110,7 +119,7 @@ function gbb_pia_search_form_validate($form, &$form_state) {
 }
 function gbb_pia_search_form_submit($form, &$form_state) {
   $form_state['redirect'] = array('pia14',
-                    array('query' => array('kw' => $_POST['kw'])),
+                    array('query' => array('kw' => $_POST['kw'], 'opt' => $_POST['boxes'])),
                                  );
 }
 
@@ -227,13 +236,14 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   //$html = "<p class=\"retour\"><a href=\"pia\">Retour</a></p> ";
   $tcan=array( 1 => "",      // Initaiative indivieduelle
                2 => "",      // FIL,
-               3 => "<span class=\"red\">&#10025;</span>"
+               #3 => "<span class=\"red\">&#10025;</span>"
+               3 => "<img src=\"/gbbdr/sites/all/themes/sky/pubDes.png\" alt=\"pubDes\" title=\"public désigné\">&nbsp;"
              );
-  $axe=array(  "TA" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\">",
-               "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-16.png\">",
-               "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-16.png\">",
-               "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-16.png\">",
-               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\">",
+  $axe=array(  "TA" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Numérique\">",
+               "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-16.png\" title=\"Culture\" >",
+               "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-16.png\" title=\"International et LVE\" >",
+               "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-16.png\" title=\"Parcours scolaires\" >",
+               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Cadre Serein\" >",
                "" => "",
              );
   #print "<pre>";
@@ -250,9 +260,10 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $mclass = (preg_match("/^14D/", $k))? "comoduD" : "comoduA";
     if (count($d) == 1) {
       $html .= "<p><span class=\"$dclass\">$k</span>";
-      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"A\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"A\">&nbsp;";
-      $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
-      $html .= "".$d[0]['categories'] . "</a>";
+      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+      #$html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">"
+      $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
+      #$html .= "".$d[0]['categories'] . "</a>";
       $html .= "" . $tcan[$d[0]['co_tcan']];
       $html .= "" . $axe[$d[0]['co_prac']] ;
       if ($type==3) {
@@ -261,9 +272,9 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
         $html .= "<div id=\"$k\" style=\"display: none;\">";
       }
       // détails dispo
-      $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
+      #$html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
       $html .= "<div class=\"liste\">";
-      $html .= "<span class=\"$mclass\">" . $d[0]['co_modu'] . "</span>";
+      $html .= "<span class=\"$mclass\">" . $d[0]['co_modu'] . "</span>&nbsp;";
       $html .= $d[0]['lib'];
       $html .= "<div>";
       // détails module
@@ -273,7 +284,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $html .= "<span class=\"titre\">Modalité : </span>" . $d[0]['lmoda'] . "<br/>";
       $html .= "<span class=\"titre\">Durée : </span>"    . $d[0]['duree'] . "h<br/>";
       $html .= "<span class=\"titre\">Forme : </span>"    . $d[0]['lform'] . "<br/>";
-      $html .= "<span class=\"titre\">Responsable pédagogique: </span>" . $d[0]['resppeda'] . "<br/>";
+      $html .= "<span class=\"titre\">Responsable pédagogique : </span>" . $d[0]['resppeda'] . "<br/>";
       $html .= "</div>";
       $html .= "</div>";
       $html .= "</div>";
@@ -284,9 +295,11 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $ttid = $query->distinct()->execute()->fetchCol();
 
       $html .= "<p><span class=\"$dclass\">$k</span>";
-      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"\" name=\"A\">";
-      $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $d[0]['lib_dispo'];
-      $html .= "" . $tcan[$d[0]['co_tcan']] . "</a>";
+      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"A\">&nbsp;";
+      #$html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">";
+      $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
+      #$html .= "</a>";
+      $html .= $tcan[$d[0]['co_tcan']] ;
       $html .= "" . $axe[$d[0]['co_prac']] ;
       if ($type==3) {
         $html .= "<div id=\"$k\">";
@@ -298,9 +311,11 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $html .= "</div>";
       foreach ($d as $m) {
         $html .= "<div class=\"liste\">";
-        $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
-        $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"A\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"A\">&nbsp;";
-        $html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">" . $m['lib'] .  "</a>";
+        $html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
+        $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">&nbsp;";
+        #$html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">";
+        $html .= $m['lib'];
+        #$html .= "</a>";
         $html .= " ".$m['categories'];
         if ($type==3) {
           $html .= "<div id=\"".$m['co_modu']."\">";
@@ -314,7 +329,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
         $html .= "<span class=\"titre\">Public : </span>"  . $m['lcibl'] . "<br/>";
         $html .= "<span class=\"titre\">Durée : </span>"    . $m['duree'] . "h<br/>";
         $html .= "<span class=\"titre\">Forme : </span>"    . $m['lform'] . "<br/>";
-        $html .= "<span class=\"titre\">Responsable pédagogique: </span>" . $m['resppeda'] . "<br/>";
+        $html .= "<span class=\"titre\">Responsable pédagogique : </span>" . $m['resppeda'] . "<br/>";
         $html .= "</div>";
         $html .= "</div>";
       }
@@ -370,11 +385,13 @@ function gbb_pia_vocab($vid,$title) {
    );
   $title="";
   $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
-  $axes = "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-b.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-b.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-b.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-b.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-b.png\"></a>&nbsp;&nbsp;<br/><br/>";
+  $axes = "<h1>Axes du projet académique</h1>"; 
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-bloc.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-bloc.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-bloc.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-bloc.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-bloc.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<h1>Domaines et disciplines</h1>"; 
   return $axes.$output;
 }
 

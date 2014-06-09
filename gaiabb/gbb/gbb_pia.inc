@@ -157,7 +157,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     case 1:
       $query->condition('gt.tid', $arg);
       break;
-    case 2:
+    case 2:  # recherche
       $query->condition(
            db_or()->condition('gd.lib',   '%' . db_like($arg) . '%', 'LIKE')
                   ->condition('gd.lobjt', '%' . db_like($arg) . '%', 'LIKE')
@@ -165,6 +165,14 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
                   ->condition('gm.lpeda', '%' . db_like($arg) . '%', 'LIKE')
                   ->condition('gm.lcont', '%' . db_like($arg) . '%', 'LIKE')
       );
+      $plan = db_or()->condition('gm.lib', 'PAS DE STAGE', 'LIKE');
+      if ( isset($_GET['opt'][1]) ) { $plan->condition('gd.co_tpla', 'P', 'LIKE');};
+      if ( isset($_GET['opt'][2]) ) { $plan->condition('gd.co_tpla', 'D', 'LIKE');};
+      if ( isset($_GET['opt'][3]) ) { $plan->condition('gd.co_tpla', 'S', 'LIKE');};
+      if ( isset($_GET['opt'][4]) ) { $plan->condition('gd.co_tpla', 'A', 'LIKE');};
+      if ( isset($_GET['opt'][5]) ) { $plan->condition('gd.co_tpla', 'E', 'LIKE');};
+      if ( isset($_GET['opt'][6]) ) { $plan->condition('gd.co_tpla', 'C', 'LIKE');};
+      $query->condition( $plan );
       break;
     case 3:
       $query->condition('gt.tid', $arg);

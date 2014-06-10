@@ -200,6 +200,8 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->orderBy('gt.weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
+  $nb = $query->countQuery()->execute()->fetchField();
+  if ($type==2) $html = "<h1>$nb Résultat(s)</h1>";
   #print($query);
   foreach ($res as $stage) {
 
@@ -394,11 +396,11 @@ function gbb_pia_vocab($vid,$title) {
   $title="";
   $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
   $axes = "<h1>Axes du projet académique</h1>"; 
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-bloc.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-bloc.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-bloc.png\"></a>&nbsp;&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-bloc.png\"></a>&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-bloc.png\"></a>&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-bloc.png\"></a>";
   $axes .= "<h1>Domaines et disciplines</h1>"; 
   return $axes.$output;
 }

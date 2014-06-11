@@ -29,7 +29,6 @@ function gbb_pia_view($args = 'NaN') {
   } elseif (isset($_GET['kw']) && preg_match('#[[:alpha:]]#', $_GET['kw'])) {
     $build['tab'] = gbb_pia_stages(2,$_GET['kw']);
   } else {
-    //$build['tab'] = gbb_pia_categories($args);
     switch (arg(1)) {
       case "Axe1":
         $build['tab'] = gbb_pia_vocab(2,'Second degré');
@@ -57,6 +56,9 @@ function gbb_pia_view($args = 'NaN') {
   return implode('', $build);
 }
 
+/**
+ * désactive drupal js en conflit avec le système de toggle utilisé ici
+ */
 function gbb_js_alter(&$js) {
   if (arg(0) == "pia14") {
     unset( $js['misc/drupal.js']);
@@ -75,9 +77,6 @@ function gbb_pia_search_form($form, &$form_state, $args) {
   $form['f']['kw'] = array(
     '#type' => 'textfield',
     '#description' => t('par ex. : Agrégation, lettres ou théâtre...'),
-    #'#element_validate' => array('element_validate_integer_positive'),
-    #'#prefix' => '<div class="ajaxform inline">',
-    #'#suffix' => '</div>',
     '#size' => 50, 
   );
 
@@ -89,10 +88,9 @@ function gbb_pia_search_form($form, &$form_state, $args) {
   $options["5"] = t('Encadrement&nbsp;&nbsp;&nbsp;&nbsp;');
   $options["6"] = t('Intercatégoriel');
 
-    $form['f']['boxes'] = array(
+  $form['f']['boxes'] = array(
     '#type' => 'checkboxes',
     '#options' => $options,
-    #'#default_value' => array("2" ),
     '#default_value' => array("1", "2", "3", "4", "5", "6"),
     '#title' => t('Dans quel plan ?'),
     '#prefix' => '<div class="container-inline">',
@@ -131,13 +129,6 @@ function gbb_pia_search_form_submit($form, &$form_state) {
  * - pour un axe d'un tid (type=4, arg=tid/axe)
  *
  * récupération du classement dans l'offre vers le classement dans le plan.
- *
- *  insert into gbb_gmodu_taxonomy (co_modu,tid,weight)
- *   select co_modu,tid, weight
- *     from gbb_gdisp as d
- *     left join gbb_gmodu as g on g.co_disp=d.co_disp 
- *     left join gbb_gmoof_taxonomy as gt on gt.co_omodu=g.co_omodu  
- *     WHERE weight <500 AND id_disp like '13%'
  */
 function gbb_pia_stages($type,$arg,$id=NULL) {
 
@@ -173,6 +164,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       if ( isset($_GET['opt'][5]) ) { $plan->condition('gd.co_tpla', 'E', 'LIKE');};
       if ( isset($_GET['opt'][6]) ) { $plan->condition('gd.co_tpla', 'C', 'LIKE');};
       $query->condition( $plan );
+      $query->orderBy('gd.co_orie', 'ASC');
       break;
     case 3:
       $query->condition('gt.tid', $arg);
@@ -187,17 +179,14 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   $query->join('taxonomy_term_data', 'ttd', 'ttd.tid = gt.tid');
   $query->join('gbb_gmodu', 'gm', 'gt.co_modu = gm.co_modu');
   $query->join('gbb_gdisp', 'gd', 'gd.co_disp = gm.co_disp');
-  #$query->join('gbb_gdire', 'gdr','gdr.co_modu = gm.co_modu
-  #                             AND gdr.co_tres = 3 
-  #                             AND gdr.co_degre = gm.co_degre');
-  #$query->join('gbb_gresp', 'gr', 'gr.co_resp = gdr.co_resp
-  #                             AND gr.co_degre = gdr.co_degre');
-  #$query->fields('gr', array('prenom', 'nomu'));
+  $query->join('gbb_norie', 'go', 'go.co_orie = gd.co_orie');
   $query->fields('ttd', array('vid'));
   $query->fields('gt', array('co_modu'));
   $query->fields('gm', array('lib','lcont','lmoda','lpeda','lform','duree_prev','co_degre','lcibl','co_prac'));
-  $query->fields('gd', array('id_disp','lobjt','co_tcan'));
+  $query->fields('gd', array('id_disp','lobjt','co_tcan', 'co_orie'));
   $query->addField('gd', 'lib', 'lib_dispo');
+  $query->addField('go', 'lib_long', 'lib_orie');
+  $query->orderBy('gd.co_tcan', 'ASC');
   $query->orderBy('gt.weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
   $nb = $query->countQuery()->execute()->fetchField();
@@ -238,138 +227,21 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
                                       'duree' => $stage->duree_prev,
                                       'co_prac' => $stage->co_prac,
                                       'co_tcan' => $stage->co_tcan,
+                                      'co_orie' => $stage->co_orie,
+                                      'lib_orie' => $stage->lib_orie,
                                       #'resppeda' => $stage->prenom . " " . $stage->nomu,
                                       'resppeda' => $resp,
                                       'categories' => $catss,
                                       'lib' => $stage->lib);
   };
-  //$html = "<p class=\"retour\"><a href=\"pia\">Retour</a></p> ";
-  $tcan=array( 1 => "",      // Initaiative indivieduelle
-               2 => "",      // FIL,
-               #3 => "<span class=\"red\">&#10025;</span>"
-               3 => "<img src=\"/gbbdr/sites/all/themes/sky/pubDes.png\" alt=\"pubDes\" title=\"public désigné\">&nbsp;"
-             );
-  $axe=array(  "TA" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Numérique\">",
-               "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-16.png\" title=\"Culture\" >",
-               "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-16.png\" title=\"International et LVE\" >",
-               "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-16.png\" title=\"Parcours scolaires\" >",
-               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Cadre Serein\" >",
-               "" => "",
-             );
-  #print "<pre>";
-  #print_r($dispo);
-  #print "</pre>";
   if (isset($dispo)) {
-  foreach ($dispo as $k=>$d) {
-    $query=db_select('gbb_gmodu_taxonomy', 'gt');
-    $query->condition('gt.co_modu', $d[0]['co_modu'], "=");
-    $query->fields('gt', array('tid'));
-    $ttid = $query->distinct()->execute()->fetchCol();
-
-    $dclass = (preg_match("/^14D/", $k))? "iddispD" : "iddispA";
-    $mclass = (preg_match("/^14D/", $k))? "comoduD" : "comoduA";
-    if (count($d) == 1) {
-      $html .= "<p><span class=\"$dclass\">$k</span>";
-      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
-      #$html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">"
-      $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
-      #$html .= "".$d[0]['categories'] . "</a>";
-      $html .= "" . $tcan[$d[0]['co_tcan']];
-      $html .= "" . $axe[$d[0]['co_prac']] ;
-      if ($type==3) {
-        $html .= "<div id=\"$k\">";
-      } else {
-        $html .= "<div id=\"$k\" style=\"display: none;\">";
-      }
-      // détails dispo
-      #$html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
-      $html .= "<div class=\"liste\">";
-      $html .= "<span class=\"$mclass\">" . $d[0]['co_modu'] . "</span>&nbsp;";
-      $html .= $d[0]['lib'];
-      $html .= "<div>";
-      // détails module
-      $html .= "<span class=\"titre\">Objectif : </span>"  . $d[0]['lpeda'] . "<br/>";
-      $html .= "<span class=\"titre\">Contenu : </span>"  . $d[0]['lcont'] . "<br/>";
-      $html .= "<span class=\"titre\">Public : </span>"  . $d[0]['lcibl'] . "<br/>";
-      $html .= "<span class=\"titre\">Modalité : </span>" . $d[0]['lmoda'] . "<br/>";
-      $html .= "<span class=\"titre\">Durée : </span>"    . $d[0]['duree'] . "h<br/>";
-      $html .= "<span class=\"titre\">Forme : </span>"    . $d[0]['lform'] . "<br/>";
-      $html .= "<span class=\"titre\">Responsable pédagogique : </span>" . $d[0]['resppeda'] . "<br/>";
-      $html .= "</div>";
-      $html .= "</div>";
-      $html .= "</div>";
-    } else {
-      $query=db_select('gbb_gmodu_taxonomy', 'gt');
-      $query->condition('gt.co_modu', $d[0]['co_modu'], "=");
-      $query->fields('gt', array('tid'));
-      $ttid = $query->distinct()->execute()->fetchCol();
-
-      $html .= "<p><span class=\"$dclass\">$k</span>";
-      $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('fast');\" alt=\"A\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"A\">&nbsp;";
-      #$html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">";
-      $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
-      #$html .= "</a>";
-      $html .= $tcan[$d[0]['co_tcan']] ;
-      $html .= "" . $axe[$d[0]['co_prac']] ;
-      if ($type==3) {
-        $html .= "<div id=\"$k\">";
-      } else {
-        $html .= "<div id=\"$k\" style=\"display: none;\">";
-      }
-      // détails dispo
-      $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
-      $html .= "</div>";
-      foreach ($d as $m) {
-        $html .= "<div class=\"liste\">";
-        $html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
-        $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">&nbsp;";
-        #$html .= "<a href=\"/gbbdr/pia14/x/".$ttid[0]."/".$k."\">";
-        $html .= $m['lib'];
-        #$html .= "</a>";
-        $html .= " ".$m['categories'];
-        if ($type==3) {
-          $html .= "<div id=\"".$m['co_modu']."\">";
-        } else {
-          $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
-        }
-        // détails module
-        $html .= "<span class=\"titre\">Objectif : </span>"  . $m['lpeda'] . "<br/>";
-        $html .= "<span class=\"titre\">Contenu : </span>"  . $m['lcont'] . "<br/>";
-        $html .= "<span class=\"titre\">Modalité : </span>" . $m['lmoda'] . "<br/>";
-        $html .= "<span class=\"titre\">Public : </span>"  . $m['lcibl'] . "<br/>";
-        $html .= "<span class=\"titre\">Durée : </span>"    . $m['duree'] . "h<br/>";
-        $html .= "<span class=\"titre\">Forme : </span>"    . $m['lform'] . "<br/>";
-        $html .= "<span class=\"titre\">Responsable pédagogique : </span>" . $m['resppeda'] . "<br/>";
-        $html .= "</div>";
-        $html .= "</div>";
-      }
-    };
-    $html .= "</p>";
-  }
+    foreach ($dispo as $k=>$d) {
+      $html .= gbb_pia_aff_dispo($k, $d);
+    }
   } else {
     $html = " Aucun stage ne correspond à votre recherche.";
   };
   return $html;
-}
-
-/**
- * affiche le tableau des catégories
- */
-function gbb_pia_categories($args) {
-  foreach (taxonomy_get_vocabularies() as $k=>$v) {
-    if ($k == 6) {
-      $str .= gbb_pia_vocab($k,$v->name);
-    } else {
-      $str = gbb_pia_vocab($k,$v->name);
-    };
-    $rows[0][] = array('data' => $str,
-                       'class'=>'topAlign');
-  }
-  $item[0][] = $rows[0][3];
-  $item[0][] = $rows[0][0];
-  $item[0][] = $rows[0][4];
-  $output = theme('table',array('rows'   => $item ));
-  return $output;
 }
 
 /**
@@ -405,3 +277,68 @@ function gbb_pia_vocab($vid,$title) {
   return $axes.$output;
 }
 
+function gbb_pia_aff_dispo($k, $d) {
+  ## Les icônes permettant d'identifier les stages
+  $tcan=array( 1 => "",      // Initaiative indivieduelle
+               2 => "",      // FIL,
+               3 => "<img src=\"/gbbdr/sites/all/themes/sky/pubDes.png\" alt=\"pubDes\" title=\"public désigné\">&nbsp;"
+             );
+  $axe=array(  "TA" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Numérique\">",
+               "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-16.png\" title=\"Culture\" >",
+               "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-16.png\" title=\"International et LVE\" >",
+               "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-16.png\" title=\"Parcours scolaires\" >",
+               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Cadre Serein\" >",
+               "" => "",
+             );
+  $dclass = (preg_match("/^14D/", $k))? "iddispD" : "iddispA";
+  $mclass = (preg_match("/^14D/", $k))? "comoduD" : "comoduA";
+
+  $html = "<p><span class=\"$dclass\">$k</span>";
+  $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+  $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
+  $html .= "" . $tcan[$d[0]['co_tcan']];
+  $html .= "" . $axe[$d[0]['co_prac']] ;
+  #$html .= "" . $d[0]['lib_orie'] ;
+  if (count($d) > 1) {
+    $html .= "<div id=\"$k\" style=\"display: none;\">";
+    $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
+    $html .= "</div>";
+    foreach ($d as $m) {
+      $html .= gbb_pia_aff_details_module($m, $mclass, TRUE);
+    }
+  } else {
+    $html .= "<div id=\"$k\" style=\"display: none;\">";
+    $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
+    $html .= gbb_pia_aff_details_module($d[0], $mclass, FALSE);
+    $html .= "</div>";
+  }
+  $html .= "</p>";
+  return $html;
+}
+
+function gbb_pia_aff_details_module($m, $mclass, $is_hidden) {
+      $html  = "<div class=\"liste\">";
+      $html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+      $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
+      if ($is_hidden) {
+        $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+      }
+      $html .= "&nbsp;" . $m['lib'];
+      $html .= " ".$m['categories'];
+      if ($is_hidden) {
+        $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
+      } else {
+        $html .= "<div id=\"".$m['co_modu']."\">";
+      }
+
+      $html .= "<span class=\"titre\">Objectif : </span>" . $m['lpeda'] . "<br/>";
+      $html .= "<span class=\"titre\">Contenu :  </span>" . $m['lcont'] . "<br/>";
+      $html .= "<span class=\"titre\">Modalité : </span>" . $m['lmoda'] . "<br/>";
+      $html .= "<span class=\"titre\">Public :   </span>" . $m['lcibl'] . "<br/>";
+      $html .= "<span class=\"titre\">Durée :    </span>" . $m['duree'] . "h<br/>";
+      $html .= "<span class=\"titre\">Forme :    </span>" . $m['lform'] . "<br/>";
+      $html .= "<span class=\"titre\">Responsable pédagogique : </span>" . $m['resppeda'] . "<br/>";
+      $html .= "</div>";
+      $html .= "</div>";
+  return $html;
+}

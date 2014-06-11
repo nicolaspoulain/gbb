@@ -137,6 +137,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $query->fields('ttd', array('name'));
     $names = $query->distinct()->execute()->fetchCol();
     $nb = $query->countQuery()->execute()->fetchField();
+    
     $html = ($nb >0)? "<h1><a href=\"/gbbdr/pia14/".arg(1)."/".arg(2)."\">" . $names[0] . "</a></h1>" : "<h1>Résultat(s)</h1>";
     if (arg(2)==113) $html .= "<p>Les enseignants du <strong>premier degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>14D</strong>.</p>";
     if (arg(2)==113) $html .= "<p>Les enseignants du <strong>second degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>14A</strong>.</p>";
@@ -186,8 +187,10 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   $query->fields('gd', array('id_disp','lobjt','co_tcan', 'co_orie'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->addField('go', 'lib_long', 'lib_orie');
-  $query->orderBy('gd.co_tcan', 'ASC');
-  $query->orderBy('gt.weight', 'ASC');
+  if ($type!=4) {
+    $query->orderBy('gd.co_tcan', 'ASC');
+    $query->orderBy('gt.weight', 'ASC');
+  }
   $res = $query->distinct()->execute()->fetchAll();
   $nb = $query->countQuery()->execute()->fetchField();
   if ($type==2) $html = "<h1>$nb Résultat(s)</h1>";
@@ -234,10 +237,31 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
                                       'categories' => $catss,
                                       'lib' => $stage->lib);
   };
+    
+    $axe=array(  "TA" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-bloc.png\" title=\"Numérique\">",
+               "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-bloc.png\" title=\"Culture\" >",
+               "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-bloc.png\" title=\"International et LVE\" >",
+               "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-bloc.png\" title=\"Parcours scolaires\" >",
+               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe5-bloc.png\" title=\"Climat scolaire\" >",
+               "" => "",
+             );
   if (isset($dispo)) {
-    foreach ($dispo as $k=>$d) {
-      $html .= gbb_pia_aff_dispo($k, $d);
+    if ($type == 4) {
+      $orie ="<div>";
+      $html = "<h1>" . $axe[arg(2)] . "</h1>";
     }
+    foreach ($dispo as $k=>$d) {
+      if ($type == 4 && $orie != $d[0]['co_orie']) {
+        $html .= "</div><h4><a href=\"#\" class=\"image\" type=\"image\" onclick=\"$('#".$d[0]['co_orie']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+        $html .= "<span style=\"background:#4D453E;color: #FFF;\">&nbsp;+&nbsp;</span>&nbsp;";
+        $html .= $d[0]['lib_orie'] . "</a></h4>";
+        $html .= "<div id=\"".$d[0]['co_orie']."\" style=\"display: none;\">";
+      }
+      $html .= gbb_pia_aff_dispo($k, $d);
+      $orie = $d[0]['co_orie'];
+    }
+    if ($type == 4) {$orie ="</div>";}
+
   } else {
     $html = " Aucun stage ne correspond à votre recherche.";
   };
@@ -287,7 +311,7 @@ function gbb_pia_aff_dispo($k, $d) {
                "TB" => "<img src=\"/gbbdr/sites/all/themes/sky/axe2-16.png\" title=\"Culture\" >",
                "TC" => "<img src=\"/gbbdr/sites/all/themes/sky/axe3-16.png\" title=\"International et LVE\" >",
                "TD" => "<img src=\"/gbbdr/sites/all/themes/sky/axe4-16.png\" title=\"Parcours scolaires\" >",
-               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe1-16.png\" title=\"Cadre Serein\" >",
+               "TE" => "<img src=\"/gbbdr/sites/all/themes/sky/axe5-16.png\" title=\"Cadre Serein\" >",
                "" => "",
              );
   $dclass = (preg_match("/^14D/", $k))? "iddispD" : "iddispA";
@@ -308,7 +332,6 @@ function gbb_pia_aff_dispo($k, $d) {
     }
   } else {
     $html .= "<div id=\"$k\" style=\"display: none;\">";
-    $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
     $html .= gbb_pia_aff_details_module($d[0], $mclass, FALSE);
     $html .= "</div>";
   }

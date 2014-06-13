@@ -249,7 +249,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       $html = "<h1>" . $axe[arg(2)] . "</h1>";
     }
     foreach ($dispo as $k=>$d) {
-      if ($type == 4 && $orie != $d[0]['co_orie']) {
+      if ($type == 4 && arg(1) != 6 && $orie != $d[0]['co_orie']) {
         $html .= "</div><h4><a href=\"#\" class=\"image\" type=\"image\" onclick=\"$('#".$d[0]['co_orie']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
         $html .= "<span style=\"background:#4D453E;color: #FFF;\">&nbsp;+&nbsp;</span>&nbsp;";
         $html .= $d[0]['lib_orie'] . "</a></h4>";

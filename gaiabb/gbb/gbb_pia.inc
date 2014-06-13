@@ -165,7 +165,6 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
       if ( isset($_GET['opt'][5]) ) { $plan->condition('gd.co_tpla', 'E', 'LIKE');};
       if ( isset($_GET['opt'][6]) ) { $plan->condition('gd.co_tpla', 'C', 'LIKE');};
       $query->condition( $plan );
-      $query->orderBy('gd.co_orie', 'ASC');
       break;
     case 3:
       $query->condition('gt.tid', $arg);
@@ -174,6 +173,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     case 4:
       $query->condition('ttd.vid', $arg);
       $query->condition('co_prac', db_like($id), 'LIKE');
+      $query->orderBy('go.lib_long', 'ASC');
       break;
   }
   $query->condition('id_disp', db_like('14') . '%', 'LIKE');
@@ -187,10 +187,8 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
   $query->fields('gd', array('id_disp','lobjt','co_tcan', 'co_orie'));
   $query->addField('gd', 'lib', 'lib_dispo');
   $query->addField('go', 'lib_long', 'lib_orie');
-  if ($type!=4) {
-    $query->orderBy('gd.co_tcan', 'ASC');
-    $query->orderBy('gt.weight', 'ASC');
-  }
+  $query->orderBy('gd.co_tcan', 'ASC');
+  $query->orderBy('gt.weight', 'ASC');
   $res = $query->distinct()->execute()->fetchAll();
   $nb = $query->countQuery()->execute()->fetchField();
   if ($type==2) $html = "<h1>$nb Résultat(s)</h1>";

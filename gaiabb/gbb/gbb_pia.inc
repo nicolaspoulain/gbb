@@ -318,7 +318,18 @@ function gbb_pia_aff_dispo($k, $d) {
   $html = "<p><span class=\"$dclass\">$k</span>";
   $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
   $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
-  $html .= "" . $tcan[$d[0]['co_tcan']];
+  // Hack crade Nadia
+  if ($d[0]['id_disp'] == '14I0250001') {
+    $html = "<p><span class=\"$dclass\">14I0010046</span>";
+    $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+    $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
+  }
+  // un hack crade pour JPC
+  if ($d[0]['id_disp'] == '14A0010616') {
+    $html .= "" . $tcan[3];
+  } else {
+    $html .= "" . $tcan[$d[0]['co_tcan']];
+  }
   $html .= "" . $axe[$d[0]['co_prac']] ;
   #$html .= "" . $d[0]['lib_orie'] ;
   if (count($d) > 1) {
@@ -340,12 +351,18 @@ function gbb_pia_aff_dispo($k, $d) {
 function gbb_pia_aff_details_module($m, $mclass, $is_hidden) {
       $html  = "<div class=\"liste\">";
       $html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-      $html .= "<span class=\"$mclass\">" . $m['co_modu'] . "</span>";
+      // Hack crade Nadia
+      if ($m['co_modu'] == 36555) {
+      $html .= "<span class=\"$mclass module\">" . 37168;
+      } else {
+      $html .= "<span class=\"$mclass module\">" . $m['co_modu'];
+      }
       if ($is_hidden) {
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
       }
       $html .= "&nbsp;" . $m['lib'];
-      $html .= " ".$m['categories'];
+      $html .= "</span>";
+      #$html .= " ".$m['categories'];
       if ($is_hidden) {
         $html .= "<div id=\"".$m['co_modu']."\" style=\"display: none;\">";
       } else {

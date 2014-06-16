@@ -186,14 +186,14 @@ function gbb_menu() {
   // Affichage pia du plan
   // exemple : ctplan/26142
 
-  $items['pia'] = array(
+  $items['pia13'] = array(
         'title' => '',
         'page callback' => 'gbb_pia_view2',
         //'access arguments' => array('stable gbb'),
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
   );
-  $items['pia14'] = array(
+  $items['pia'] = array(
         'title' => '',
         'page callback' => 'gbb_pia_view',
         //'access arguments' => array('stable gbb'),

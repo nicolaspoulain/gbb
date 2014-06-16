@@ -60,7 +60,7 @@ function gbb_pia_view($args = 'NaN') {
  * désactive drupal js en conflit avec le système de toggle utilisé ici
  */
 function gbb_js_alter(&$js) {
-  if (arg(0) == "pia14") {
+  if (arg(0) == "pia") {
     unset( $js['misc/drupal.js']);
   }
 }
@@ -102,7 +102,7 @@ function gbb_pia_search_form($form, &$form_state, $args) {
     '#value' => 'Chercher',
     '#submit' => array('gbb_pia_search_form_submit'),
   );
-  $form['f']['#action'] = url('pia14', array('absolute' => TRUE));
+  $form['f']['#action'] = url('pia', array('absolute' => TRUE));
 
   return $form;
 }
@@ -116,7 +116,7 @@ function gbb_pia_search_form_validate($form, &$form_state) {
   }
 }
 function gbb_pia_search_form_submit($form, &$form_state) {
-  $form_state['redirect'] = array('pia14',
+  $form_state['redirect'] = array('pia',
                     array('query' => array('kw' => $_POST['kw'], 'opt' => $_POST['boxes'])),
                                  );
 }
@@ -138,7 +138,7 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     $names = $query->distinct()->execute()->fetchCol();
     $nb = $query->countQuery()->execute()->fetchField();
     
-    $html = ($nb >0)? "<h1><a href=\"/gbbdr/pia14/".arg(1)."/".arg(2)."\">" . $names[0] . "</a></h1>" : "<h1>Résultat(s)</h1>";
+    $html = ($nb >0)? "<h1><a href=\"/gbbdr/pia/".arg(1)."/".arg(2)."\">" . $names[0] . "</a></h1>" : "<h1>Résultat(s)</h1>";
     if (arg(2)==113) $html .= "<p>Les enseignants du <strong>premier degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>14D</strong>.</p>";
     if (arg(2)==113) $html .= "<p>Les enseignants du <strong>second degré</strong> désirant s'inscrire à un des stages interdegré ci-dessous doivent choisir le dispositif correspondant dont le code commence par <strong>14A</strong>.</p>";
   $query = db_select('gbb_gmodu_taxonomy', 'gt');
@@ -250,9 +250,9 @@ function gbb_pia_stages($type,$arg,$id=NULL) {
     }
     foreach ($dispo as $k=>$d) {
       if ($type == 4 && arg(1) != 6 && $orie != $d[0]['co_orie']) {
-        $html .= "</div><h4><a href=\"#\" class=\"image\" type=\"image\" onclick=\"$('#".$d[0]['co_orie']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+        $html .= "</div><h4><span class=\"togg\" onclick=\"$('#".$d[0]['co_orie']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
         $html .= "<span style=\"background:#4D453E;color: #FFF;\">&nbsp;+&nbsp;</span>&nbsp;";
-        $html .= $d[0]['lib_orie'] . "</a></h4>";
+        $html .= $d[0]['lib_orie'] . "</span></h4>";
         $html .= "<div id=\"".$d[0]['co_orie']."\" style=\"display: none;\">";
       }
       $html .= gbb_pia_aff_dispo($k, $d);
@@ -278,7 +278,7 @@ function gbb_pia_vocab($vid,$title) {
     $query->fields('gt', array('co_modu'));
     $nb = $query->countQuery()->execute()->fetchField();
     $str = $term->name;
-    if ($nb > 0) $str = l($str,"pia14/$vid/$term->tid");
+    if ($nb > 0) $str = l($str,"pia/$vid/$term->tid");
     $str = str_repeat(' &nbsp;&nbsp;&nbsp; ', $term->depth) . $str;
     $items[] = array('data'=>$str);
   };
@@ -290,11 +290,11 @@ function gbb_pia_vocab($vid,$title) {
   $title="";
   $output = theme_item_list(array('items' => $items, 'title' => $title, 'type' => $type, 'attributes' => $attributes));
   $axes = "<h1>Axes du projet académique</h1>"; 
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-bloc.png\"></a>&nbsp;&nbsp;&nbsp;";
-  $axes .= "<a href=\"/gbbdr/pia14/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-bloc.png\"></a>";
+  $axes .= "<a href=\"/gbbdr/pia/".arg(1)."/TA\"><img src=\"/gbbdr/sites/all/themes/sky/axe1-bloc.png\"></a>&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia/".arg(1)."/TB\"><img src=\"/gbbdr/sites/all/themes/sky/axe2-bloc.png\"></a>&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia/".arg(1)."/TC\"><img src=\"/gbbdr/sites/all/themes/sky/axe3-bloc.png\"></a>&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia/".arg(1)."/TD\"><img src=\"/gbbdr/sites/all/themes/sky/axe4-bloc.png\"></a>&nbsp;";
+  $axes .= "<a href=\"/gbbdr/pia/".arg(1)."/TE\"><img src=\"/gbbdr/sites/all/themes/sky/axe5-bloc.png\"></a>";
   $axes .= "<h1>Domaines et disciplines</h1>"; 
   return $axes.$output;
 }
@@ -315,14 +315,14 @@ function gbb_pia_aff_dispo($k, $d) {
   $dclass = (preg_match("/^14D/", $k))? "iddispD" : "iddispA";
   $mclass = (preg_match("/^14D/", $k))? "comoduD" : "comoduA";
 
-  $html = "<p><span class=\"$dclass\">$k</span>";
-  $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
-  $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
+  $html = "<p><span class=\"$dclass iddisp\">$k</span>";
+  $html .= "<span class=\"titredisp\"> <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
+  $html .= "<span class=\"togg\" onclick=\"$('#$k').toggle('slow');\"> &nbsp;" . $d[0]['lib_dispo'] . "</span>&nbsp;";
   // Hack crade Nadia
   if ($d[0]['id_disp'] == '14I0250001') {
-    $html = "<p><span class=\"$dclass\">14I0010046</span>";
+    $html = "<p><span class=\"$dclass iddisp\">14I0010046</span>";
     $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#$k').toggle('slow');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
-    $html .= "&nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
+    $html .= "<span class=\"togg\" onclick=\"$('#$k').toggle('slow');\"> &nbsp;" . $d[0]['lib_dispo'] . "&nbsp;";
   }
   // un hack crade pour JPC
   if ($d[0]['id_disp'] == '14A0010616') {
@@ -332,6 +332,7 @@ function gbb_pia_aff_dispo($k, $d) {
   }
   $html .= "" . $axe[$d[0]['co_prac']] ;
   #$html .= "" . $d[0]['lib_orie'] ;
+  $html .= "</span></p>" ;
   if (count($d) > 1) {
     $html .= "<div id=\"$k\" style=\"display: none;\">";
     $html .= "<span class=\"titre\">Objet : </span>" . $d[0]['lobjt'] . "<br/>";
@@ -350,17 +351,16 @@ function gbb_pia_aff_dispo($k, $d) {
 
 function gbb_pia_aff_details_module($m, $mclass, $is_hidden) {
       $html  = "<div class=\"liste\">";
-      $html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
       // Hack crade Nadia
       if ($m['co_modu'] == 36555) {
-      $html .= "<span class=\"$mclass module\">" . 37168;
+      $html .= "<span class=\"$mclass iddisp\">" . 37168 ."</span><span class=\"module\">";
       } else {
-      $html .= "<span class=\"$mclass module\">" . $m['co_modu'];
+      $html .= "<span class=\"$mclass iddisp\">" . $m['co_modu'] ."</span><span class=\"module\">";
       }
       if ($is_hidden) {
         $html .= " <input class=\"image\" type=\"image\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\" alt=\"info\" src=\"/gbbdr/sites/all/themes/sky/info.png\" name=\"info\">";
       }
-      $html .= "&nbsp;" . $m['lib'];
+      $html .= "<span class =\"togg\" onclick=\"$('#".$m['co_modu']."').toggle('fast');\"> &nbsp;" . $m['lib'] . "</span>";
       $html .= "</span>";
       #$html .= " ".$m['categories'];
       if ($is_hidden) {

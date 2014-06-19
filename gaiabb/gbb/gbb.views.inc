@@ -634,7 +634,7 @@ function gbb_views_data() {
       'gbb_gmodu' => array(
         'left_field' => 'co_modu',
         'field' => 'co_modu',
-        'extra' => 'gbb_gdire.co_degre = gbb_gmodu.co_degre AND gbb_gdire.co_tres=2',
+        'extra' => 'gbb_gdire.co_degre = gbb_gmodu.co_degre',
       ),
     ),
   );
@@ -2131,6 +2131,5 @@ function gbb_views_data() {
     'argument' => array('handler' => 'views_handler_argument_string'),
   );
 
-# fini !
   return $data;
 }

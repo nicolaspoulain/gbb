@@ -7,6 +7,17 @@ td.nowrap {
     whitespace:nowrap;
 }
 
+.dispotitle{
+  font-weight:bold;
+  color : #004A78;
+}
+.BS:before {
+  content: "[fil] ";
+}
+.BS {
+  font-weight:bold;
+  color : #8B00A6;
+}
 .fil {
   font-weight:bold;
   color : #8B00A6;
@@ -15,13 +26,16 @@ td.nowrap {
   font-weight:bold;
   color : #004A78;
 }
+.views-field-lib-1{
+  padding-left : 4em;
+}
 .Ferme {
   text-decoration: line-through;
 }
 td.group {
         background-color: #EEE;
-            border-bottom: 2px solid #A19B9E;
-                border-top: 2px solid #A19B9E;
+        border-bottom: 0px solid #A19B9E;
+        border-top: 4px solid #A19B9E;
 }
 
 #edit-da-date-depot-datepicker-popup-0 {

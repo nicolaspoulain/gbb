@@ -171,6 +171,7 @@ case "$1" in
 	  echo -e "fait."
 	  echo -e "\t\t\t\t\t\t\t$TEST"
 	fi
+	/usr/bin/mysql --user=root --password=$BDDPW $BDD < $HOME/annexes.sql
     echo "Rapport du jour" > LOG.log
     echo "===============" >> LOG.log
     echo " " >> LOG.log

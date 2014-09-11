@@ -28,6 +28,7 @@ function gbb_liste_view($args = 'NaN') {
   $build['choix']  = render(drupal_get_form('gbb_liste_stages_choix', $args));
   $build['liste']  = gbb_liste_stages_liste($args);
   return implode('', $build);
+  return "Redirigez-vous en Cliquant sur <a href=\"/bb/liste/14/2/0\">nouveau B&B</a>";
 }
 
 /**
@@ -148,7 +149,7 @@ function gbb_atraiter_choix($form, &$form_state, $args) {
   $query ->join('gbb_gresp', 'r', 
                 'j.co_resp=r.co_resp AND j.co_degre=r.co_degre');
   $query ->condition('j.co_degre', 2, '=')
-         ->condition('s.id_disp' , '13' . '%', 'LIKE')
+         ->condition('s.id_disp' , '14' . '%', 'LIKE')
          ->fields('j', array('co_resp'))
          ->fields('r', array('nomu'));
   if (arg(3) != 0) { 
@@ -761,7 +762,7 @@ function _gbb_autocompstage($string) {
   $query  ->addField('d', 'lib', 'lib');
   $query  ->addField('m', 'lib', 'libmodu');
   $query  ->addField('m', 'co_modu', 'co_modu');
-  $query  ->condition('id_disp', db_like('13') . '%', 'LIKE')
+  $query  ->condition('id_disp', db_like('14') . '%', 'LIKE')
           ->condition(db_or()->condition('id_disp', '%' . db_like($string) . '%', 'LIKE')
                              ->condition('m.lib', '%' . db_like($string) . '%', 'LIKE')
                              ->condition('m.co_modu', '%' . db_like($string) . '%', 'LIKE')

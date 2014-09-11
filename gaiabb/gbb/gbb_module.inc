@@ -64,6 +64,7 @@ function gbb_module_view($args = 'NaN') {
   $build['convoc_form']  = render(drupal_get_form('gbb_convoc_form', $args));
   $build['bilan_form']   = render(drupal_get_form('gbb_bilan_form',$args));
   return implode('', $build);
+  return "Redirigez-vous en Cliquant sur <a href=\"/bb/liste/14/2/0\">nouveau B&B</a>";
 }
 
 /**

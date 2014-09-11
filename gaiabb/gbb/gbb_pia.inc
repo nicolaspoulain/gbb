@@ -279,7 +279,7 @@ function gbb_pia_vocab($vid,$title) {
     $nb = $query->countQuery()->execute()->fetchField();
     $str = $term->name;
     if ($nb > 0) $str = l($str,"pia/$vid/$term->tid");
-    $str = str_repeat(' &nbsp;&nbsp;&nbsp; ', $term->depth) . $str;
+    $str = str_repeat(' &nbsp;&nbsp;&nbsp; ', $term->depth) . (($term->depth==0)? "":"- ") .$str;
     $items[] = array('data'=>$str);
   };
   $type = 'ul';

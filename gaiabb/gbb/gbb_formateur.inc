@@ -307,7 +307,7 @@ function gbb_formateur_stages($args) {
            );
   $query ->condition('s.co_resp', arg(1), '=')
          ->condition('s.co_degre', '2', '=')
-         ->condition('id_disp', db_like('13') . '%', 'LIKE')
+         ->condition('id_disp', db_like('14') . '%', 'LIKE')
          ->fields('r', array('decharge',))
          ->distinct();
   $query ->addExpression('SUM(duree_prevue)', 'sumprevue');
@@ -325,7 +325,7 @@ function gbb_formateur_stages($args) {
   $query ->condition('s.co_resp', arg(1), '=')
          ->condition('s.co_degre', '2', '=')
          ->condition('s.type_paiement', 'VAC', 'LIKE')
-         ->condition('id_disp', db_like('13') . '%', 'LIKE')
+         ->condition('id_disp', db_like('14') . '%', 'LIKE')
          ->distinct();
   $query ->addExpression('SUM(duree_a_payer)', 'sumapayervac');
   $r2 = $query->execute()->fetchObject();
@@ -341,7 +341,7 @@ function gbb_formateur_stages($args) {
   $query ->condition('s.co_resp', arg(1), '=')
          ->condition('s.co_degre', '2', '=')
          ->condition('s.type_paiement', 'DECH', 'LIKE')
-         ->condition('id_disp', db_like('13') . '%', 'LIKE')
+         ->condition('id_disp', db_like('14') . '%', 'LIKE')
          ->distinct();
   $query ->addExpression('SUM(duree_a_payer)', 'sumapayerdec');
   $r3 = $query->execute()->fetchObject();
